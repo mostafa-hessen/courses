@@ -1,0 +1,2192 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>المحاضرة الأولى: إطلاق الإبداع مع Flutter & Dart</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Outfit:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        /* Palette */
+        --flutter-blue: #02569b;
+        --flutter-teal: #13b9fd;
+        --flutter-dark: #042b59;
+        --flutter-light: #e6f7ff;
+        --accent-purple: #8257e5;
+        --accent-gold: #ffc107;
+
+        /* Dark Mode Defaults */
+        --bg-main: #0f172a;
+        --bg-card: rgba(30, 41, 59, 0.7);
+        --text-primary: #f8fafc;
+        --text-secondary: #cbd5e1;
+        --border-color: rgba(255, 255, 255, 0.1);
+        --glass-bg: rgba(255, 255, 255, 0.03);
+        --glass-border: rgba(255, 255, 255, 0.08);
+
+        /* UI colors */
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --info: #3b82f6;
+      }
+
+      .light-mode {
+        --bg-main: #f1f5f9;
+        --bg-card: rgba(255, 255, 255, 0.8);
+        --text-primary: #1e293b;
+        --text-secondary: #475569;
+        --border-color: rgba(0, 0, 0, 0.1);
+        --glass-bg: rgba(0, 0, 0, 0.02);
+        --glass-border: rgba(0, 0, 0, 0.05);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        scrollbar-width: thin;
+        scrollbar-color: var(--flutter-teal) transparent;
+      }
+
+      body {
+        font-family: "Tajawal", sans-serif;
+        background-color: var(--bg-main);
+        color: var(--text-primary);
+        direction: rtl;
+        overflow: hidden;
+        transition: background-color 0.4s ease;
+        background-image:
+          radial-gradient(
+            circle at 0% 0%,
+            rgba(2, 86, 155, 0.15) 0%,
+            transparent 35%
+          ),
+          radial-gradient(
+            circle at 100% 100%,
+            rgba(19, 185, 253, 0.1) 0%,
+            transparent 35%
+          );
+      }
+
+      #presentation-container {
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+      }
+
+      .slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        padding: 4rem 2rem;
+        opacity: 0;
+        visibility: hidden;
+        transform: scale(0.98) translateY(10px);
+        transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        overflow-y: auto;
+        z-index: 1;
+      }
+
+      .slide.active {
+        opacity: 1;
+        visibility: visible;
+        transform: scale(1) translateY(0);
+        z-index: 2;
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      /* Typography */
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-family: "Outfit", "Tajawal", sans-serif;
+        line-height: 1.3;
+      }
+
+      .title-gradient {
+        background: linear-gradient(135deg, #fff 30%, var(--flutter-teal));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+      }
+
+      /* Elements */
+      .glass-card {
+        background: var(--bg-card);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid var(--glass-border);
+        border-radius: 2rem;
+        padding: 2.5rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        margin-bottom: 2rem;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--flutter-teal);
+      }
+
+      .section-header i {
+        font-size: 2.5rem;
+      }
+
+      /* Story Hook */
+      .story-box {
+        background: linear-gradient(
+          to right,
+          rgba(130, 87, 229, 0.15),
+          transparent
+        );
+        border-right: 6px solid var(--accent-purple);
+        padding: 2rem;
+        border-radius: 1rem;
+        margin: 2rem 0;
+        font-size: 1.25rem;
+        line-height: 1.7;
+        position: relative;
+      }
+
+      .story-box::before {
+        content: "📖";
+        position: absolute;
+        top: -15px;
+        right: 20px;
+        font-size: 1.5rem;
+        background: var(--bg-main);
+        padding: 0 10px;
+      }
+
+      /* Challenge Box */
+      .challenge-box {
+        background: linear-gradient(
+          135deg,
+          rgba(239, 68, 68, 0.1),
+          rgba(245, 158, 11, 0.05)
+        );
+        border: 2px dashed var(--danger);
+        border-radius: 1.5rem;
+        padding: 2.5rem;
+        margin: 3rem 0;
+        position: relative;
+      }
+
+      .challenge-tag {
+        position: absolute;
+        top: -18px;
+        right: 30px;
+        background: var(--danger);
+        color: white;
+        padding: 4px 20px;
+        border-radius: 1rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+      }
+
+      /* Code Blocks */
+      .code-container {
+        background: #0d1117;
+        border-radius: 1.25rem;
+        overflow: hidden;
+        margin: 2rem 0;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        direction: ltr;
+        border: 1px solid #30363d;
+      }
+
+      .code-header {
+        background: #161b22;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: flex-start;
+        gap: 8px;
+        border-bottom: 1px solid #30363d;
+      }
+
+      .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+      .dot-red {
+        background: #ff5f56;
+      }
+      .dot-yellow {
+        background: #ffbd2e;
+      }
+      .dot-green {
+        background: #27c93f;
+      }
+
+      .code-body {
+        padding: 25px;
+        font-family: "Fira Code", monospace;
+        font-size: 1.05rem;
+        line-height: 1.6;
+        color: #c9d1d9;
+        overflow-x: auto;
+      }
+
+      .keyword {
+        color: #ff7b72;
+      }
+      .type {
+        color: #79c0ff;
+      }
+      .string {
+        color: #a5d6ff;
+      }
+      .comment {
+        color: #8b949e;
+        font-style: italic;
+      }
+      .number {
+        color: #d2a8ff;
+      }
+      .fn {
+        color: #d2a8ff;
+      }
+
+      /* Tables */
+      .modern-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 1.5rem;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        margin: 2rem 0;
+      }
+
+      .modern-table th {
+        background: var(--flutter-blue);
+        color: white;
+        padding: 1.25rem;
+        text-align: right;
+        font-weight: 700;
+      }
+
+      .modern-table td {
+        background: var(--glass-bg);
+        padding: 1.25rem;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-secondary);
+      }
+
+      .modern-table tr:last-child td {
+        border-bottom: none;
+      }
+      .modern-table tr:hover td {
+        background: rgba(19, 185, 253, 0.05);
+      }
+
+      /* Lists */
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+      }
+
+      .feature-item {
+        background: var(--glass-bg);
+        padding: 1.5rem;
+        border-radius: 1.25rem;
+        border-right: 4px solid var(--flutter-teal);
+        transition: transform 0.3s ease;
+      }
+
+      .feature-item:hover {
+        transform: translateY(-5px);
+      }
+
+      /* Navigation Controls */
+      .nav-ui {
+        position: fixed;
+        bottom: 2.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        z-index: 1000;
+      }
+
+      .nav-btn {
+        width: 65px;
+        height: 65px;
+        border-radius: 50%;
+        border: none;
+        background: var(--flutter-blue);
+        color: white;
+        font-size: 1.75rem;
+        cursor: pointer;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      .nav-btn:hover {
+        background: var(--flutter-teal);
+        transform: scale(1.15) translateY(-5px);
+      }
+      .nav-btn:active {
+        transform: scale(0.95);
+      }
+
+      .progress-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 6px;
+        background: linear-gradient(
+          to left,
+          var(--flutter-teal),
+          var(--flutter-blue)
+        );
+        width: 0%;
+        transition: width 0.4s ease;
+        z-index: 1001;
+      }
+
+      .slide-counter {
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        background: var(--flutter-blue);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 2rem;
+        font-weight: 800;
+        z-index: 1000;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .theme-btn {
+        position: fixed;
+        top: 2rem;
+        left: 2rem;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        color: var(--text-primary);
+        font-size: 1.25rem;
+        cursor: pointer;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Animations */
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .animate-up {
+        animation: slideUp 0.8s ease forwards;
+      }
+      .delay-1 {
+        animation-delay: 0.2s;
+      }
+      .delay-2 {
+        animation-delay: 0.4s;
+      }
+
+      /* Detailed sections styles (assignments, resources) */
+      .assignment-card {
+        border-right: 4px solid var(--info);
+        padding: 1.5rem;
+        background: rgba(59, 130, 246, 0.05);
+        border-radius: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .resource-link {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.25rem;
+        background: var(--glass-bg);
+        border-radius: 1rem;
+        text-decoration: none;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        transition: background 0.2s;
+      }
+
+      .resource-link:hover {
+        background: rgba(19, 185, 253, 0.1);
+      }
+
+      @media (max-width: 768px) {
+        .slide {
+          padding: 3rem 1.5rem;
+        }
+        .nav-btn {
+          width: 50px;
+          height: 50px;
+          font-size: 1.2rem;
+        }
+        h1 {
+          font-size: 2.2rem;
+        }
+        .feature-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="slide-counter" id="slideCounter">1 / 26</div>
+    <button class="theme-btn" id="themeBtn">🌙</button>
+
+    <div id="presentation-container">
+      <!-- Slide 1: Welcome -->
+      <div class="slide active">
+        <div class="container" style="text-align: center; padding-top: 5vh">
+          <div class="glass-card animate-up">
+            <h1
+              class="title-gradient"
+              style="font-size: 4rem; margin-bottom: 1.5rem"
+            >
+              إطلاق الإبداع
+            </h1>
+            <h2 style="font-size: 2.2rem; margin-bottom: 2rem">
+              المحاضرة الأولى: Flutter & Dart
+            </h2>
+            <p
+              style="
+                font-size: 1.5rem;
+                color: var(--text-secondary);
+                margin-bottom: 3rem;
+              "
+            >
+              رحلة البداية في احتراف تطوير التطبيقات
+            </p>
+
+            <div
+              style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 2rem;
+                margin-bottom: 2rem;
+              "
+            >
+              <img
+                src="https://i.ibb.co/Fbpfy9Y5/ITI2.jpg"
+                alt="Lecturer"
+                style="
+                  width: 120px;
+                  height: 120px;
+                  border-radius: 50%;
+                  border: 4px solid var(--flutter-teal);
+                "
+              />
+              <div style="text-align: right">
+                <h3 style="font-size: 1.8rem">مصطفى حسين</h3>
+                <p style="color: var(--flutter-teal); font-weight: bold">
+                  Senior Software Engineer & ITI instructor
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: The Hook - Am Mohamed -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>🏬</span>
+            <h2 style="font-size: 2.5rem">بداية القصة: "عم محمد"</h2>
+          </div>
+          <div class="story-box animate-up">
+            "عم محمد صاحب سوبر ماركت كبير، شغله زاد والطلبات بقت تجيله من كل حتة
+            على الواتساب والموضوع بقى فوضى. قرر إنه يطور محلّه ويعمل (Mobile
+            App) عشان الناس تطلب بسهولة وهو يقدر يدير المحل بذكاء."
+          </div>
+          <div class="glass-card animate-up delay-1">
+            <h3 style="color: var(--accent-gold); margin-bottom: 1rem">
+              المهمة المطلوبة منا كمطورين:
+            </h3>
+            <p style="font-size: 1.2rem">بناء تطبيق يساعد عم محمد في:</p>
+            <div class="feature-grid">
+              <div class="feature-item">
+                عرض المنتجات وتحديث أسعارها (Catalog).
+              </div>
+              <div class="feature-item">
+                استلام الطلبات ومتابعة حالة التوصيل (Orders).
+              </div>
+              <div class="feature-item">
+                إدارة المخزون والتنبيه عند نقص الكميات (Stock).
+              </div>
+              <div class="feature-item">
+                حساب الفواتير والخصومات آلياً (Finance).
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: The Platform Dilemma -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>📱</span>
+            <h2 style="font-size: 2.5rem">تفتكروا هنعمله نظام إيه؟</h2>
+          </div>
+          <div class="story-box animate-up">
+            "عم محمد دخل يسألك: يا ابني أنا ناسي ولاد أختي كلهم معاهم آيفون،
+            والناس في الشارع معاه أندرويد.. لازم التطبيق يشتغل عند كل الناس!"
+          </div>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 2rem;
+              margin-top: 2rem;
+            "
+          >
+            <div
+              class="glass-card animate-up delay-1"
+              style="text-align: center; border-color: #3ddc84"
+            >
+              <img
+                src="https://img.icons8.com/color/144/android-os.png"
+                alt="Android"
+              />
+              <h3 style="margin: 1rem 0">Android</h3>
+              <p style="color: var(--text-secondary)">
+                يغطي أكبر شريحة مستخدمين
+              </p>
+            </div>
+            <div
+              class="glass-card animate-up delay-2"
+              style="text-align: center; border-color: #fff"
+            >
+              <img
+                src="https://img.icons8.com/color/144/mac-os--v1.png"
+                alt="iOS"
+              />
+              <h3 style="margin: 1rem 0">iOS</h3>
+              <p style="color: var(--text-secondary)">
+                يغطي الفئة الشرائية الأعلى
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Native vs Cross-Platform -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>⚖️</span>
+            <h2 style="font-size: 2.5rem">التحدي: الـ Native مكلف جداً!</h2>
+          </div>
+          <div class="glass-card">
+            <p style="font-size: 1.2rem; margin-bottom: 1.5rem">
+              عشان نعمل تطبيق Native لكل موبايل (Java/Kotlin للأندرويد و Swift
+              للـ iOS):
+            </p>
+            <div class="feature-grid">
+              <div
+                class="feature-item"
+                style="border-right-color: var(--danger)"
+              >
+                <h4 style="color: var(--danger)">👨‍💻👨‍💻 كادر الضعف</h4>
+                <p>محتاج مبرمجين لغتين مختلفتين تماماً.</p>
+              </div>
+              <div
+                class="feature-item"
+                style="border-right-color: var(--danger)"
+              >
+                <h4 style="color: var(--danger)">💰 تكلفة مضاعفة</h4>
+                <p>
+                  أنت بتدفع مرتبين، وبتحجز سيرفرات مرتين، ووقت التطوير أطول.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="story-box animate-up"
+            style="
+              border-color: var(--success);
+              background: rgba(16, 185, 129, 0.1);
+            "
+          >
+            <strong>الحل السحري: Cross-Platform</strong>
+            <p>
+              كتابة كود واحد يشتغل على الـ Android والـ iOS في نفس الوقت.. وهنا
+              بيجي دور البطل بتاعنا!
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Welcome Flutter -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>🦋</span>
+            <h2 style="font-size: 2.5rem">أهلاً بك في Flutter</h2>
+          </div>
+          <div class="glass-card">
+            <h3 style="color: var(--flutter-teal); margin-bottom: 1.5rem">
+              ما هو Flutter؟
+            </h3>
+            <p style="font-size: 1.3rem; margin-bottom: 2rem">
+              هو
+              <span
+                style="
+                  background: var(--flutter-blue);
+                  padding: 0 8px;
+                  border-radius: 4px;
+                "
+                >UI Toolkit</span
+              >
+              من جوجل، بيسمحلك تبني تطبيقات جميلة وعالية الأداء لأي شاشة
+              (Android, iOS, Web, Desktop) من **قاعدة كود واحدة**.
+            </p>
+
+            <div class="feature-grid">
+              <div
+                class="feature-item"
+                style="border-right-color: var(--success)"
+              >
+                <h4 style="color: var(--success)">
+                  🚀 أداء أصلي (Native Performance)
+                </h4>
+                <p>
+                  فلاتر مش "web wrapper"، فلاتر بيرسم مباشرة بـ Skia Engine.
+                </p>
+              </div>
+              <div
+                class="feature-item"
+                style="border-right-color: var(--warning)"
+              >
+                <h4 style="color: var(--warning)">🔥 Hot Reload</h4>
+                <p>عدل في الكود وشوف النتيجة في أقل من ثانية بدون Restart.</p>
+              </div>
+              <div class="feature-item" style="border-right-color: var(--info)">
+                <h4 style="color: var(--info)">🎨 كل شيء هو Widget</h4>
+                <p>تصميم الواجهات بقى زي تركيب قطع الـ Lego.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Comparison Table Detailed -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>📊</span>
+            <h2 style="font-size: 2.5rem">مقارنة تفصيلية: Native vs Flutter</h2>
+          </div>
+          <table class="modern-table animate-up">
+            <thead>
+              <tr>
+                <th>المعيار</th>
+                <th>Native (أصيل)</th>
+                <th>Flutter (عابر للمنصات)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>عدد الأكواد (Codebase)</td>
+                <td>كود منفصل لكل نظام</td>
+                <td>كود واحد للكل</td>
+              </tr>
+              <tr>
+                <td>لغات البرمجة</td>
+                <td>Kotlin / Swift</td>
+                <td>Dart</td>
+              </tr>
+              <tr>
+                <td>سرعة التطوير</td>
+                <td>أبطأ (تحتاج تكرار العمل)</td>
+                <td>أسرع بـ 2x على الأقل</td>
+              </tr>
+              <tr>
+                <td>الأداء (Performance)</td>
+                <td>الأقصى (100%)</td>
+                <td>قريب جداً (99.9%)</td>
+              </tr>
+              <tr>
+                <td>التكلفة (Budget)</td>
+                <td>عالية (تحتاج فريقين)</td>
+                <td>اقتصادية (تحتاج مبرمج فلاتر واحد)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Slide 7: Programming Basics -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>💻</span>
+            <h2 style="font-size: 2.5rem">يعني إيه برمجة أصلاً؟</h2>
+          </div>
+          <div class="story-box">
+            "الكمبيوتر مبيفهمش غير 0 و 1 (Binary). البرمجة هي إنك تكون 'مترجم'
+            بياخد أفكارنا ويحولها لأوامر الكمبيوتر ينفذها."
+          </div>
+
+          <div class="glass-card animate-up">
+            <h3>مستويات اللغات:</h3>
+            <div class="feature-grid">
+              <div class="feature-item">
+                <h4 style="color: var(--danger)">Low Level (Binary)</h4>
+                <p style="font-family: monospace">01001001 001</p>
+              </div>
+              <div class="feature-item">
+                <h4 style="color: var(--success)">High Level (Dart/Java)</h4>
+                <p>أقرب للإنجليزي: <code>print("Hello")</code></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="challenge-box" style="border-color: var(--flutter-teal)">
+            <p style="font-size: 1.2rem">
+              **فكر فيها:** ليه بنتعلم لغة برمجة بدل ما نكلم الكمبيوتر مباشرة؟
+              عشان إحنا بنحتاج "تنظيم" و "منطق" بعيد عن تعقيدات الأرقام
+              الثنائية.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Why Dart? -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>🎯</span>
+            <h2 style="font-size: 2.5rem">المحرك الخفي: لغة Dart</h2>
+          </div>
+          <div class="glass-card animate-up">
+            <p style="font-size: 1.2rem; margin-bottom: 2rem">
+              جوجل اختارت Dart لـ Flutter لأسباب تقنية ذكية جداً:
+            </p>
+            <ul class="feature-list" style="list-style: none">
+              <li
+                style="
+                  margin-bottom: 1.5rem;
+                  padding-right: 2rem;
+                  position: relative;
+                "
+              >
+                <span
+                  style="
+                    position: absolute;
+                    right: 0;
+                    color: var(--flutter-teal);
+                  "
+                  >✔</span
+                >
+                <strong>مزدوجة الترجمة (JIT & AOT):</strong> بتقدم سرعة في
+                التطوير (Warm up) وسرعة في الإنتاج (Runtime).
+              </li>
+              <li
+                style="
+                  margin-bottom: 1.5rem;
+                  padding-right: 2rem;
+                  position: relative;
+                "
+              >
+                <span
+                  style="
+                    position: absolute;
+                    right: 0;
+                    color: var(--flutter-teal);
+                  "
+                  >✔</span
+                >
+                <strong>Null Safety:</strong> لغة آمنة جداً بتقلل أخطاء "التطبيق
+                قفل فجأة".
+              </li>
+              <li
+                style="
+                  margin-bottom: 1.5rem;
+                  padding-right: 2rem;
+                  position: relative;
+                "
+              >
+                <span
+                  style="
+                    position: absolute;
+                    right: 0;
+                    color: var(--flutter-teal);
+                  "
+                  >✔</span
+                >
+                <strong>Object Oriented:</strong> منظمة وبتخلي الكود "نظيف"
+                وقابل لإعادة الاستخدام.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Installation & Setup -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>🛠️</span>
+            <h2 style="font-size: 2.5rem">تجهيز بيئة العمل (SDK)</h2>
+          </div>
+          <div class="glass-card">
+            <h3>إزاي نبدأ كود؟</h3>
+            <div
+              style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+                margin-top: 1.5rem;
+              "
+            >
+              <div class="feature-item">
+                <h4 style="color: var(--flutter-teal)">1. Dart SDK</h4>
+                <p>حمل شنطة الأدوات اللي بتفهم كود Dart.</p>
+                <code
+                  style="
+                    background: #000;
+                    padding: 5px;
+                    border-radius: 4px;
+                    font-size: 0.8rem;
+                  "
+                  >choco install dart-sdk</code
+                >
+              </div>
+              <div class="feature-item">
+                <h4 style="color: var(--success)">2. DartPad</h4>
+                <p>جرب الكود فوراً في المتصفح بدون تثبيت أي شيء.</p>
+                <a
+                  href="https://dartpad.dev"
+                  target="_blank"
+                  style="color: var(--flutter-teal)"
+                  >dartpad.dev</a
+                >
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="note"
+            style="
+              border-right-color: var(--info);
+              background: rgba(59, 130, 246, 0.1);
+            "
+          >
+            <h4 class="note-title" style="color: var(--info)">
+              ما هو الـ SDK؟
+            </h4>
+            <p>
+              اختصار لـ **Software Development Kit**. هو المترجم والأدوات اللي
+              بتحول الكود اللي كتبته لبرنامج شغال فعلياً.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Detailed Choco Installation -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>🚀</span>
+            <h2 style="font-size: 2.5rem">تثبيت Dart SDK خطوة بخطوة</h2>
+          </div>
+
+          <div class="glass-card animate-up">
+            <h3 style="color: var(--flutter-teal); margin-bottom: 1.5rem">
+              1. استخدام Chocolatey (الطريقة الأسهل)
+            </h3>
+            <p style="margin-bottom: 1rem">
+              تأكد من فتح <strong>PowerShell</strong> كمسؤول (Administrator)، ثم
+              نفذ الآتي:
+            </p>
+            <p
+              style="
+                font-size: 0.9rem;
+                color: var(--text-secondary);
+                margin-bottom: 1rem;
+              "
+            >
+              * لو Chocolatey مش مثبت عندك، اتبع الخطوات دي بالظبط:
+            </p>
+            <ol
+              style="
+                margin-right: 2rem;
+                margin-bottom: 1rem;
+                font-size: 0.95rem;
+                line-height: 1.6;
+              "
+            >
+              <li>ابحث عن <strong>PowerShell</strong> في قائمة Start.</li>
+              <li>
+                اضغط كليك يمين واختار <strong>Run as Administrator</strong>.
+              </li>
+              <li>انسخ الكود اللي تحت وصقّه في الـ PowerShell واضغط Enter:</li>
+            </ol>
+            <div class="code-container" style="margin-bottom: 1.5rem">
+              <div class="code-body" style="font-size: 0.85rem">
+                Set-ExecutionPolicy Bypass -Scope Process -Force;
+                [System.Net.ServicePointManager]::SecurityProtocol =
+                [System.Net.ServicePointManager]::SecurityProtocol -bor 3072;
+                iex ((New-Object
+                System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+              </div>
+            </div>
+            <p style="font-size: 0.9rem; margin-bottom: 1rem">
+              بعد ما يخلص، اقفل الـ PowerShell وافتحه تاني كمسؤول، واكتب أمر
+              تثبيت الـ SDK:
+            </p>
+            <div class="code-container">
+              <div class="code-body">
+                <span class="comment"># تثبيت Dart SDK</span><br />
+                choco install dart-sdk
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card animate-up delay-1">
+            <h3 style="color: var(--accent-gold); margin-bottom: 1.5rem">
+              2. إعداد متغيرات البيئة (Environment Variables)
+            </h3>
+            <p style="margin-bottom: 1rem">
+              عادةً Choco بيقوم بالمهمة دي، لكن لو حبيت تتأكد أو تعملها يدوي:
+            </p>
+            <ol style="margin-right: 2rem; line-height: 1.8">
+              <li>
+                افتح قائمة Start وابحث عن
+                <strong>"Edit the system environment variables"</strong>.
+              </li>
+              <li>
+                اضغط على زر <strong>Environment Variables</strong> في الأسفل.
+              </li>
+              <li>
+                في خانة <strong>System Variables</strong> (اللي تحت)، ابحث عن
+                <code>Path</code> واضغط <strong>Edit</strong>.
+              </li>
+              <li>
+                اضغط <strong>New</strong> وأضف مسار الـ bin (غالباً:
+                <code>C:\tools\dart-sdk\bin</code>).
+              </li>
+              <li>
+                اضغط OK واقفل أي Terminal مفتوح وافتحه تاني عشان يحس بالتغيير.
+              </li>
+            </ol>
+          </div>
+
+          <div
+            class="challenge-box"
+            style="border-color: var(--success); margin-top: 2rem"
+          >
+            <h4 style="color: var(--success)">تأكيد النجاح (Verification):</h4>
+            <p>افتح الـ Terminal واكتب:</p>
+            <div class="code-container" style="margin: 1rem 0">
+              <div class="code-body">dart --version</div>
+            </div>
+            <p>
+              لو ظهر لك رقم الإصدار، يبقى مبروك! أول خطوة في رحلتك كملت بنجاح.
+              🎉
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Project Story - Data Model -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>🧠</span>
+            <h2 style="font-size: 2.5rem">تحليل مشروع "عم محمد"</h2>
+          </div>
+          <div class="story-box animate-up">
+            "عم محمد محتاج يخزن بيانات المنتجات.. تفتكروا إيه هي أنواع البيانات
+            اللي هنحتاجها عشان نمثل (الجبنة) مثلاً؟"
+          </div>
+          <div class="glass-card animate-up delay-1">
+            <ul style="list-style: none; padding: 0">
+              <li
+                style="
+                  margin-bottom: 1rem;
+                  border-bottom: 1px solid var(--border-color);
+                  padding-bottom: 0.5rem;
+                "
+              >
+                <strong>اسم المنتج:</strong> نص (Text) →
+                <span style="color: var(--flutter-teal)">String</span>
+              </li>
+              <li
+                style="
+                  margin-bottom: 1rem;
+                  border-bottom: 1px solid var(--border-color);
+                  padding-bottom: 0.5rem;
+                "
+              >
+                <strong>الكمية:</strong> عدد صحيح (Whole Number) →
+                <span style="color: var(--flutter-teal)">int</span>
+              </li>
+              <li
+                style="
+                  margin-bottom: 1rem;
+                  border-bottom: 1px solid var(--border-color);
+                  padding-bottom: 0.5rem;
+                "
+              >
+                <strong>السعر:</strong> عدد عشري (Decimal) →
+                <span style="color: var(--flutter-teal)">double</span>
+              </li>
+              <li
+                style="
+                  margin-bottom: 1rem;
+                  border-bottom: 1px solid var(--border-color);
+                  padding-bottom: 0.5rem;
+                "
+              >
+                <strong>متوفر في المخزن؟:</strong> صح أو خطأ (Yes/No) →
+                <span style="color: var(--flutter-teal)">bool</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Variables Intro -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>📦</span>
+            <h2 style="font-size: 2.5rem">المتغيرات: "درج في المكتب"</h2>
+          </div>
+          <div class="story-box">
+            "المتغير (Variable) هو مكان في ذاكرة الكمبيوتر (درج)، له اسم، وله
+            نوع معين بس يقدر يشيله. مينفعش تحط 'مكواة' في درج 'الأقلام'!"
+          </div>
+          <div class="code-container animate-up">
+            <div class="code-header">
+              <div class="dot dot-red"></div>
+              <div class="dot dot-yellow"></div>
+              <div class="dot dot-green"></div>
+            </div>
+            <div class="code-body">
+              <span class="type">String</span> product =
+              <span class="string">"Milk"</span>;<br />
+              <span class="type">int</span> stock =
+              <span class="number">15</span>;<br />
+              <span class="type">double</span> weight =
+              <span class="number">1.5</span>;<br />
+              <span class="type">bool</span> hasOffer =
+              <span class="keyword">false</span>;
+            </div>
+          </div>
+
+          <div class="challenge-box">
+            <div class="challenge-tag">Live Challenge 1</div>
+            <p style="font-size: 1.25rem">
+              افتح DartPad واكتب متغيرات لـ (جهاز لابتوب): الاسم، السعر،
+              الرامات، وهل هو جديد أم مستعمل؟ ثم اطبعهم بشكل منظم.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Data Types Deep Dive -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>📚</span>
+            <h2 style="font-size: 2.5rem">أنواع البيانات في Dart (التوثيق)</h2>
+          </div>
+          <table class="modern-table animate-up">
+            <thead>
+              <tr>
+                <th>النوع</th>
+                <th>الوصف</th>
+                <th>مثال</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span style="color: var(--flutter-teal)">int</span></td>
+                <td>أرقام صحيحة (بدون فاصلة)</td>
+                <td>1, -5, 100</td>
+              </tr>
+              <tr>
+                <td><span style="color: var(--flutter-teal)">double</span></td>
+                <td>أرقام عشرية</td>
+                <td>10.5, 3.14</td>
+              </tr>
+              <tr>
+                <td><span style="color: var(--flutter-teal)">String</span></td>
+                <td>نصوص</td>
+                <td>'Hello', "Dart"</td>
+              </tr>
+              <tr>
+                <td><span style="color: var(--flutter-teal)">bool</span></td>
+                <td>منطق (True/False)</td>
+                <td>true, false</td>
+              </tr>
+              <tr>
+                <td><span style="color: var(--flutter-teal)">var</span></td>
+                <td>يحدد النوع تلقائياً</td>
+                <td>var x = 5; (int)</td>
+              </tr>
+              <tr>
+                <td><span style="color: var(--flutter-teal)">dynamic</span></td>
+                <td>نوع مرن (ممكن يتغير)</td>
+                <td>dynamic y = "Hi"; y = 5;</td>
+              </tr>
+            </tbody>
+          </table>
+          <div
+            class="note"
+            style="
+              border-right-color: var(--info);
+              background: rgba(59, 130, 246, 0.1);
+            "
+          >
+            <strong>نصيحة:</strong> استخدم <code>var</code> لما يكون النوع واضح
+            من القيمة، واستخدم النوع الصريح (مثل <code>int</code>) عشان تخلي
+            كودك أوضح.
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Null Safety -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>🛡️</span>
+            <h2 style="font-size: 2.5rem">Null Safety: درع الحماية</h2>
+          </div>
+          <div class="story-box">
+            "في اللغات القديمة، لو المتغير 'فاضي' وحاولت تستخدمه التطبيق بيفجر
+            (Crash). دارت اخترعت الحل عشان تحمي تطبيقاتك."
+          </div>
+          <div class="glass-card animate-up">
+            <h3 style="margin-bottom: 1.5rem">علامة الاستفهام (؟)</h3>
+            <div class="code-container" style="margin: 0">
+              <div class="code-body">
+                <span class="type">int</span> age =
+                <span class="number">20</span>;
+                <span class="comment">// مستحيل يكون Null</span><br />
+                <span class="type">int?</span> score;
+                <span class="comment">// ممكن يكون Null (فاضي)</span
+                ><br /><br />
+                <span class="keyword">if</span> (score !=
+                <span class="keyword">null</span>) {<br />
+                &nbsp;&nbsp;<span class="fn">print</span>(score +
+                <span class="number">10</span>);<br />
+                }
+              </div>
+            </div>
+            <p style="margin-top: 1.5rem; color: var(--text-secondary)">
+              Null Safety بتجبرك تفكر: "هل المتغير ده مسموح يكون فاضي؟" وده
+              بيمنع 70% من أخطاء المبتدئين.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Operators Challenge -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>🧮</span>
+            <h2 style="font-size: 2.5rem">التحدي: حساب الفاتورة لعم محمد</h2>
+          </div>
+          <div class="story-box">
+            "عم محمد عايز يحسب إجمالي الفاتورة: (سعر المنتج * الكمية). ولو
+            الإجمالي أكبر من 200 جنيه، نطبق خصم 10%."
+          </div>
+          <div class="challenge-box" style="border-color: var(--accent-gold)">
+            <div class="challenge-tag" style="background: var(--accent-gold)">
+              Live Challenge 2
+            </div>
+            <p style="font-size: 1.25rem">
+              اكتب كود يحسب:<br />
+              1. <code>total = price * quantity;</code><br />
+              2. إذا كان <code>total > 200</code>، اطبع السعر بعد الخصم.
+            </p>
+          </div>
+
+          <p style="text-align: center; color: var(--text-secondary)">
+            محتاجين نعرف الـ **Operators** عشان نقدر نعمل العمليات دي.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 16: Operators Reference -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>➕</span>
+            <h2 style="font-size: 2.5rem">
+              العوامل (Operators): قاموس العمليات
+            </h2>
+          </div>
+          <div
+            style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem"
+          >
+            <div class="glass-card" style="padding: 1.5rem">
+              <h4 style="color: var(--flutter-teal)">عوامل حسابية</h4>
+              <ul style="list-style: none">
+                <li><code>+</code> الجمع</li>
+                <li><code>-</code> الطرح</li>
+                <li><code>*</code> الضرب</li>
+                <li><code>/</code> القسمة</li>
+                <li><code>%</code> باقي القسمة</li>
+                <li><code>~/</code> قسمة صحيحة</li>
+              </ul>
+            </div>
+            <div class="glass-card" style="padding: 1.5rem">
+              <h4 style="color: var(--flutter-teal)">عوامل منطقية</h4>
+              <ul style="list-style: none">
+                <li><code>&&</code> وَ (And)</li>
+                <li><code>||</code> أَوْ (Or)</li>
+                <li><code>!</code> نفي (Not)</li>
+              </ul>
+            </div>
+            <div
+              class="glass-card"
+              style="padding: 1.5rem; grid-column: span 2"
+            >
+              <h4 style="color: var(--flutter-teal)">عوامل مقارنة</h4>
+              <div style="display: flex; justify-content: space-around">
+                <code>==</code> يساوي | <code>!=</code> لا يساوي |
+                <code>></code> أكبر | <code><</code> أصغر | <code>>=</code> أكبر
+                أو يساوي
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: Control Flow Challenge -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>🚦</span>
+            <h2 style="font-size: 2.5rem">التحدي: "تاجر الجملة"</h2>
+          </div>
+          <div class="story-box">
+            "في السوبر ماركت، لو الزبون اشترى أكتر من 10 قطع، هو كده 'تاجر
+            جملة'. لازم التطبيق يتعرف عليه ويديه هدية مجانية مع الفاتورة."
+          </div>
+          <div class="challenge-box" style="border-color: var(--success)">
+            <div class="challenge-tag" style="background: var(--success)">
+              Live Challenge 3
+            </div>
+            <p style="font-size: 1.25rem">
+              استخدم جملة الشرط <code>if</code> عشان تختبر الكمية. لو > 10،
+              اطبع: "You are a Wholesale Customer! 🎁"
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 18: Control Flow Reference -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>🛣️</span>
+            <h2 style="font-size: 2.5rem">
+              التحكم (Control Flow): إشارات المرور
+            </h2>
+          </div>
+          <div class="glass-card">
+            <h3 style="color: var(--flutter-teal); margin-bottom: 1rem">
+              1. if - else (الشرط)
+            </h3>
+            <p style="margin-bottom: 1rem">
+              دي الطريقة الأساسية لاتخاذ القرارات. لو الشرط صح، نفذ الكود، لو
+              غلط روح للـ else.
+            </p>
+            <div class="code-container" style="margin: 0">
+              <div class="code-body">
+                <span class="keyword">if</span> (score >=
+                <span class="number">90</span>) {<br />
+                &nbsp;&nbsp;<span class="fn">print</span>(<span class="string"
+                  >"Excellent"</span
+                >);<br />
+                } <span class="keyword">else if</span> (score >=
+                <span class="number">50</span>) {<br />
+                &nbsp;&nbsp;<span class="fn">print</span>(<span class="string"
+                  >"Success"</span
+                >);<br />
+                } <span class="keyword">else</span> {<br />
+                &nbsp;&nbsp;<span class="fn">print</span>(<span class="string"
+                  >"Try harder!"</span
+                >);<br />
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card animate-up">
+            <h4 style="color: var(--flutter-teal)">
+              3. Loops (الحلقات التكرارية)
+            </h4>
+            <div style="display: flex; gap: 2rem; margin-top: 1rem">
+              <div style="flex: 1">
+                <strong>For Loop:</strong>
+                <p style="font-size: 0.9rem">
+                  لما تكون عارف هتكرر كام مرة بالظبط.
+                </p>
+              </div>
+              <div style="flex: 1">
+                <strong>While Loop:</strong>
+                <p style="font-size: 0.9rem">
+                  لما تكرر بناءً على شرط معين (طول ما هو صح كرر).
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 19: Switch Case Deep Dive -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>🔘</span>
+            <h2 style="font-size: 2.5rem">
+              الـ Switch: ملك القوائم (Menu Master)
+            </h2>
+          </div>
+          <div class="story-box">
+            "تخيل إنك بتبني نظام لشركة شحن. لو الشحنة (عادية) التكلفة 50، لو
+            (سريعة) التكلفة 100، لو (دولية) التكلفة 200... بدل ما تستخدم 100
+            'if'، الـ Switch بتسهل الموضوع."
+          </div>
+          <div class="glass-card animate-up">
+            <h3 style="color: var(--flutter-teal); margin-bottom: 1.5rem">
+              ليه نستخدم Switch؟
+            </h3>
+            <ul style="margin-right: 2rem; margin-bottom: 1.5rem">
+              <li>
+                <strong>الوضوح:</strong> الكود بيبقى أنضف وأسهل في القراءة.
+              </li>
+              <li>
+                <strong>الأداء:</strong> في بعض الحالات بيبقى أسرع من الـ nested
+                if.
+              </li>
+              <li><strong>الدقة:</strong> بتجبرك توضح كل حالة لوحدها.</li>
+            </ul>
+            <div class="code-container">
+              <div class="code-body">
+                <span class="keyword">String</span> orderType =
+                <span class="string">"Express"</span>;<br /><br />
+                <span class="keyword">switch</span> (orderType) {<br />
+                &nbsp;&nbsp;<span class="keyword">case</span>
+                <span class="string">"Normal"</span>:<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(<span
+                  class="string"
+                  >"Cost: 50 EGP"</span
+                >);<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">break</span>;
+                <span class="comment">// لازم تخرج من السويتش بعد التنفيذ</span
+                ><br />
+                &nbsp;&nbsp;<span class="keyword">case</span>
+                <span class="string">"Express"</span>:<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(<span
+                  class="string"
+                  >"Cost: 100 EGP"</span
+                >);<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">break</span
+                >;<br />
+                &nbsp;&nbsp;<span class="keyword">default</span>:
+                <span class="comment">// حالة الأمان (لو مدخلش في أي كيس)</span
+                ><br />
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(<span
+                  class="string"
+                  >"Invalid Type"</span
+                >);<br />
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 20: String Methods Challenge -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>📜</span>
+            <h2 style="font-size: 2.5rem">التحدي: تنظيف البيانات</h2>
+          </div>
+          <div class="story-box">
+            "الكاشير بيكتب اسم المنتج غلط بساعة.. أحياناً بيكتب ( Milk ) مع
+            مسافات زيادة.. إحنا عايزين الداتا تكون نظيفة دايماً."
+          </div>
+          <div class="challenge-box" style="border-color: var(--info)">
+            <div class="challenge-tag" style="background: var(--info)">
+              Live Challenge 4
+            </div>
+            <p style="font-size: 1.25rem">
+              استقبل نص من المستخدم وحوله لـ **Capital Letters** وامسح أي مسافات
+              من الجانبين (Trim).
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 21: String Methods Detailed -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>📜</span>
+            <h2 style="font-size: 2.5rem">أهم دوال النصوص (String Methods)</h2>
+          </div>
+          <div class="glass-card">
+            <div
+              style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem"
+            >
+              <div class="feature-item">
+                <h4 style="color: var(--flutter-teal)">.trim()</h4>
+                <p>مسح المسافات من الجانبين.</p>
+              </div>
+              <div class="feature-item">
+                <h4 style="color: var(--flutter-teal)">.toUpperCase()</h4>
+                <p>تحويل الحروف لـ Capital.</p>
+              </div>
+              <div class="feature-item">
+                <h4 style="color: var(--flutter-teal)">.contains('word')</h4>
+                <p>هل النص يحتوي على كلمة معينة؟</p>
+              </div>
+              <div class="feature-item">
+                <h4 style="color: var(--flutter-teal)">.length</h4>
+                <p>عدد حروف النص.</p>
+              </div>
+              <div class="feature-item">
+                <h4 style="color: var(--flutter-teal)">
+                  .replaceAll('old', 'new')
+                </h4>
+                <p>استبدال جزء من النص.</p>
+              </div>
+              <div class="feature-item">
+                <h4 style="color: var(--flutter-teal)">.padLeft(5, '0')</h4>
+                <p>إكمال النص ليد طول معين (للفواتير).</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="code-container">
+            <div class="code-body">
+              <span class="type">String</span> email =
+              <span class="string">" mostafa@gmail.com "</span>;<br />
+              <span class="fn">print</span>(email.trim().endsWith(<span
+                class="string"
+                >"@gmail.com"</span
+              >)); <span class="comment">// true</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 22: Interpolation & Input -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>🔗</span>
+            <h2 style="font-size: 2.5rem">دمج النصوص واستقبال البيانات</h2>
+          </div>
+
+          <div class="glass-card animate-up">
+            <h3 style="color: var(--flutter-teal); margin-bottom: 1.5rem">
+              1. String Interpolation (الدمج الذكي)
+            </h3>
+            <p style="margin-bottom: 1rem">
+              بدل ما نستخدم الـ <code>+</code> الكتير، بنستخدم علامة
+              <code>$</code>:
+            </p>
+            <div class="code-container" style="margin: 0">
+              <div class="code-body">
+                <span class="type">String</span> name =
+                <span class="string">"Ali"</span>;<br />
+                <span class="type">int</span> items =
+                <span class="number">5</span>;<br />
+                <span class="comment">// الطريقة العادية (Concatenation)</span
+                ><br />
+                <span class="fn">print</span>(<span class="string"
+                  >"Hello "</span
+                >
+                + name + <span class="string">", you have "</span> + items.<span
+                  class="fn"
+                  >toString</span
+                >() + <span class="string">" items."</span>);<br /><br />
+                <span class="comment">// الطريقة الذكية (Interpolation)</span
+                ><br />
+                <span class="fn">print</span>(<span class="string"
+                  >"Hello $name, you have $items items."</span
+                >);<br />
+                <span class="fn">print</span>(<span class="string"
+                  >"Total: ${items * 10} EGP"</span
+                >);
+                <span class="comment">// لو فيه عملية حسابية بنستخدم {}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card animate-up delay-1">
+            <h3 style="color: var(--flutter-teal); margin-bottom: 1.5rem">
+              2. User Input (استقبال البيانات)
+            </h3>
+            <p style="margin-bottom: 1rem">
+              عشان التطبيق "يتكلم" مع المستخدم، بنحتاج مكتبة
+              <code>dart:io</code>:
+            </p>
+            <div class="code-container" style="margin: 0">
+              <div class="code-body">
+                <span class="keyword">import</span>
+                <span class="string">'dart:io'</span>;<br /><br />
+                <span class="keyword">void</span> <span class="fn">main</span>()
+                {<br />
+                &nbsp;&nbsp;<span class="fn">stdout.write</span>(<span
+                  class="string"
+                  >"Enter your name: "</span
+                >);<br />
+                &nbsp;&nbsp;<span class="type">String?</span> input =
+                <span class="fn">stdin.readLineSync</span>();<br />
+                &nbsp;&nbsp;<span class="fn">print</span>(<span class="string"
+                  >"Welcome $input!"</span
+                >);<br />
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 23: Training Challenges -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>🎯</span>
+            <h2 style="font-size: 2.5rem">محطة التدريب: تحديات متنوعة</h2>
+          </div>
+
+          <div
+            style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem"
+          >
+            <!-- Drill: String Mania -->
+            <div
+              class="challenge-box"
+              style="
+                margin: 0;
+                padding: 1.5rem;
+                border-color: var(--flutter-teal);
+              "
+            >
+              <div
+                class="challenge-tag"
+                style="
+                  top: -10px;
+                  right: 10px;
+                  font-size: 0.8rem;
+                  background: var(--flutter-teal);
+                "
+              >
+                String Mania
+              </div>
+              <h4 style="margin-bottom: 0.5rem">تحدي "التحقق من الإيميل"</h4>
+              <p style="font-size: 0.95rem">
+                خد نص من المستخدم وشوف هل هو إيميل صح؟ (لازم ينتهي بـ gmail.com،
+                ولازم ميكونش فيه مسافات، ولازم أول حرف يكون سمول).
+              </p>
+            </div>
+
+            <!-- Drill: Login System -->
+            <div
+              class="challenge-box"
+              style="margin: 0; padding: 1.5rem; border-color: var(--danger)"
+            >
+              <div
+                class="challenge-tag"
+                style="
+                  top: -10px;
+                  right: 10px;
+                  font-size: 0.8rem;
+                  background: var(--danger);
+                "
+              >
+                System Drill
+              </div>
+              <h4 style="margin-bottom: 0.5rem">تحدي "نظام الدخول"</h4>
+              <p style="font-size: 0.95rem">
+                لو اليوزر دخل (admin) و الباسورد (1234) اطبع "Welcome Boss". لو
+                دخل باسورد غلط اطبع "Wrong Password". (استخدم <code>&&</code>).
+              </p>
+            </div>
+
+            <!-- Logic & Operators Challenge -->
+            <div
+              class="challenge-box"
+              style="
+                margin: 0;
+                grid-column: span 2;
+                border-color: var(--accent-purple);
+              "
+            >
+              <div
+                class="challenge-tag"
+                style="background: var(--accent-purple)"
+              >
+                تحدي الموظف المثالي
+              </div>
+              <p style="font-size: 1rem; margin-bottom: 0.5rem">
+                <strong>التحدي:</strong> اكتب برنامج يطلب (السن) و (الخبرة).
+                الموظف مقبول لو:
+              </p>
+              <ul style="margin-right: 2rem; font-size: 0.95rem">
+                <li>سنه > 21 <strong>و</strong> سنين خبرته > 3.</li>
+                <li><strong>أو</strong> لو سنه > 30 (حتى لو معندوش خبرة).</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Const vs Final Challenge -->
+          <div
+            class="glass-card animate-up"
+            style="margin-top: 1.5rem; padding: 1.5rem"
+          >
+            <h3 style="color: var(--flutter-teal); margin-bottom: 1rem">
+              تحدي الـ Constants: مين الصح؟
+            </h3>
+            <div
+              class="feature-grid"
+              style="grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0"
+            >
+              <div class="feature-item" style="padding: 1rem">
+                <strong>1. تاريخ ميلاد المستخدم</strong>
+                <p style="font-size: 0.85rem">
+                  بيتقابل لحظة التشغيل (Runtime).
+                </p>
+              </div>
+              <div class="feature-item" style="padding: 1rem">
+                <strong>2. قيمة ثابتة (API Key)</strong>
+                <p style="font-size: 0.85rem">ثابتة للأبد (Compile-time).</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Deep String Challenge -->
+          <div
+            class="challenge-box animate-up"
+            style="
+              border-color: var(--success);
+              margin-top: 1rem;
+              padding: 1.5rem;
+            "
+          >
+            <div class="challenge-tag" style="background: var(--success)">
+              إخفاء بيانات الفيزا
+            </div>
+            <p style="font-size: 1rem">
+              حوّل <code>"1234-5678-9012-3456"</code> إلى
+              <code>"****-****-****-3456"</code> باستخدام
+              <code>.substring()</code>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 24: ماراثون التحديات: Decision Making -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>🏋️‍♂️</span>
+            <h2 style="font-size: 2.5rem">واجب 1: ماراثون التحديات</h2>
+          </div>
+
+          <div
+            style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem"
+          >
+            <!-- Drill 1 -->
+            <div class="challenge-box" style="margin: 0; padding: 1.5rem">
+              <div
+                class="challenge-tag"
+                style="top: -10px; right: 10px; font-size: 0.8rem"
+              >
+                Switch Drill
+              </div>
+              <h4 style="margin-bottom: 0.5rem">تحدي "أيام الأسبوع"</h4>
+              <p style="font-size: 0.9rem">
+                اطلب رقم اليوم (1-7)، واطبع اسمه. لو دخل رقم غلط اطبع "Wrong Day
+                Number".
+              </p>
+            </div>
+
+            <!-- Drill 2 -->
+            <div
+              class="challenge-box"
+              style="
+                margin: 0;
+                padding: 1.5rem;
+                border-color: var(--flutter-teal);
+              "
+            >
+              <div
+                class="challenge-tag"
+                style="
+                  top: -10px;
+                  right: 10px;
+                  font-size: 0.8rem;
+                  background: var(--flutter-teal);
+                "
+              >
+                Logic Drill
+              </div>
+              <h4 style="margin-bottom: 0.5rem">تحدي "أرخص سعر"</h4>
+              <p style="font-size: 0.9rem">
+                اطلب 3 أسعار لثلاثة منتجات، واطلع "أرخص واحد" فيهم باستخدام
+                <code>if</code> والـ <code>&&</code>.
+              </p>
+            </div>
+
+            <!-- Drill 3 -->
+            <div
+              class="challenge-box"
+              style="
+                margin: 0;
+                padding: 1.5rem;
+                border-color: var(--accent-gold);
+              "
+            >
+              <div
+                class="challenge-tag"
+                style="
+                  top: -10px;
+                  right: 10px;
+                  font-size: 0.8rem;
+                  background: var(--accent-gold);
+                "
+              >
+                Pro Drill
+              </div>
+              <h4 style="margin-bottom: 0.5rem">تحدي "رسوم الشحن"</h4>
+              <p style="font-size: 0.9rem">
+                لو الوزن < 5 كجم الشحن بـ 20. لو من 5 لـ 20 الشحن بـ 50. لو > 20
+                الشحن بـ 100.
+              </p>
+            </div>
+
+            <!-- Drill 4 -->
+            <div
+              class="challenge-box"
+              style="margin: 0; padding: 1.5rem; border-color: var(--success)"
+            >
+              <div
+                class="challenge-tag"
+                style="
+                  top: -10px;
+                  right: 10px;
+                  font-size: 0.8rem;
+                  background: var(--success);
+                "
+              >
+                Smart Drill
+              </div>
+              <h4 style="margin-bottom: 0.5rem">تحدي "إشارة المرور"</h4>
+              <p style="font-size: 0.9rem">
+                خد لون (Red, Blue, Green). لو Red اطبع "Stop"، لو Blue "Run"، لو
+                Green "Go".
+              </p>
+            </div>
+
+            <!-- Drill 5 -->
+            <div
+              class="challenge-box"
+              style="margin: 0; padding: 1.5rem; border-color: var(--info)"
+            >
+              <div
+                class="challenge-tag"
+                style="
+                  top: -10px;
+                  right: 10px;
+                  font-size: 0.8rem;
+                  background: var(--info);
+                "
+              >
+                Time Drill
+              </div>
+              <h4 style="margin-bottom: 0.5rem">تحدي "تحية الوقت"</h4>
+              <p style="font-size: 0.9rem">
+                اطلب الساعة (0-23). لو من 5 لـ 11 "Good Morning"، لو من 12 لـ 17
+                "Good Afternoon".
+              </p>
+            </div>
+
+            <!-- Drill 6 -->
+            <div
+              class="challenge-box"
+              style="
+                margin: 0;
+                padding: 1.5rem;
+                border-color: var(--accent-purple);
+              "
+            >
+              <div
+                class="challenge-tag"
+                style="
+                  top: -10px;
+                  right: 10px;
+                  font-size: 0.8rem;
+                  background: var(--accent-purple);
+                "
+              >
+                Score Drill
+              </div>
+              <h4 style="margin-bottom: 0.5rem">تحدي "ناجح أم راسب؟"</h4>
+              <p style="font-size: 0.9rem">
+                خد الدرجة. لو >= 50 اطبع "Success ✅"، لو < 50 اطبع "Fail ❌".
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 25: واجبات اليوم (مبسطة وشاملة) -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>📝</span>
+            <h2 style="font-size: 2.5rem">واجبات اليوم (التطوير العملي)</h2>
+          </div>
+
+          <div class="glass-card animate-up">
+            <div class="feature-grid">
+              <!-- Assignment 1: Simplified Boss 1 -->
+              <div class="assignment-card">
+                <h4 style="color: var(--accent-gold)">
+                  ⭐ واجب 1: الخصم الذكي المحترف
+                </h4>
+                <p style="font-size: 0.95rem; line-height: 1.6">
+                  اطلب من المستخدم إجمالي المبلغ ونوع العميل (Gold أو Normal).
+                  <br />• لو المبلغ > 500 والعميل Gold اخصم 20%. <br />• لو
+                  المبلغ > 500 والعميل Normal اخصم 10%.
+                </p>
+              </div>
+
+              <!-- Assignment 2: Simplified Boss 2 -->
+              <div class="assignment-card">
+                <h4 style="color: var(--flutter-teal)">
+                  ⭐ واجب 2: معالج النصوص الذكي
+                </h4>
+                <p style="font-size: 0.95rem; line-height: 1.6">
+                  استلم نص من المستخدم وقم بالآتي: <br />• امسح المسافات، وحول
+                  النص لـ UPPERCASE. <br />• استبدل أي كلمة "bad" بكلمة
+                  "awesome". <br />• اطبع طول النص الناتج.
+                </p>
+              </div>
+
+              <!-- Assignment 3 -->
+              <div class="assignment-card">
+                <h4 style="color: var(--success)">
+                  ⭐ واجب 3: آلة حاسبة Switch
+                </h4>
+                <p style="font-size: 0.95rem; line-height: 1.6">
+                  اطلب رقمين وعملية حسابية. استخدم <code>switch</code> لعرض
+                  النتيجة بناءً على العلامة (+, -, *, /).
+                </p>
+              </div>
+
+              <!-- Assignment 4 -->
+              <div class="assignment-card">
+                <h4 style="color: var(--info)">
+                  ⭐ واجب 4: تحدي الأرقام الزوجية
+                </h4>
+                <p style="font-size: 0.95rem; line-height: 1.6">
+                  باستخدام For Loop، اطبع جميع الأرقام الزوجية فقط من 1 لـ 50.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 26: The Master Project - Am Mohamed Scenario -->
+      <div class="slide">
+        <div class="container">
+          <div class="section-header">
+            <span>🚀</span>
+            <h2 style="font-size: 2.5rem">المشروع الكبير: "سيستم عم محمد"</h2>
+          </div>
+
+          <div class="story-box animate-up">
+            "عم محمد طلب منك تعمل برنامج يدير محله الصغير. البرنامج لازم يكون
+            احترافي ويتعامل مع بيانات حقيقية."
+          </div>
+
+          <div class="glass-card animate-up delay-1">
+            <h3 style="color: var(--accent-gold); margin-bottom: 1rem">
+              السيناريو والمهام المطلوبة:
+            </h3>
+
+            <div style="display: flex; flex-direction: column; gap: 1rem">
+              <div
+                class="feature-item"
+                style="border-right-color: var(--flutter-teal)"
+              >
+                <strong>المهمة 1: تسجيل الدخول</strong>
+                <p style="font-size: 0.9rem">
+                  اطلب اسم المستخدم. لو الاسم "Mohamed" أو "Admin"، اطبع "أهلاً
+                  يا زعيم!". لو اسم تاني، اطبع "أهلاً يا ضيف".
+                </p>
+              </div>
+
+              <div
+                class="feature-item"
+                style="border-right-color: var(--success)"
+              >
+                <strong>المهمة 2: إضافة منتج</strong>
+                <p style="font-size: 0.9rem">
+                  اطلب اسم المنتج (مثلاً: " jUice "). قم بتنظيف النص (Trim)
+                  وتحويله لـ Lowercase. ثم اطلب السعر والكمية.
+                </p>
+              </div>
+
+              <div
+                class="feature-item"
+                style="border-right-color: var(--warning)"
+              >
+                <strong>المهمة 3: حساب الفاتورة الذكي</strong>
+                <p style="font-size: 0.9rem">
+                  احسب الإجمالي. طبق خصم 15% لو المنتج "juice" أو "milk" والكمية
+                  > 10. استخدم String Interpolation لطباعة الفاتورة بشكل جذاب.
+                </p>
+              </div>
+
+              <div
+                class="feature-item"
+                style="border-right-color: var(--danger)"
+              >
+                <strong>المهمة 4: القائمة التفاعلية</strong>
+                <p style="font-size: 0.9rem">
+                  استخدم Switch Case لعمل قائمة: (1) لعرض تفاصيل المنتج، (2)
+                  لتعديل الكمية، (3) للخروج.
+                </p>
+              </div>
+            </div>
+
+            <div
+              class="challenge-box"
+              style="
+                margin-top: 2rem;
+                padding: 1.5rem;
+                border-color: var(--accent-purple);
+              "
+            >
+              <p style="font-size: 1.1rem; text-align: center">
+                💡 <strong>نصيحة:</strong> حاول تجمع كل المهام دي في برنامج واحد
+                متكامل (One Dart File)!
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 27: Resources & Closing -->
+      <div class="slide">
+        <div class="container" style="text-align: center">
+          <div class="section-header" style="justify-content: center">
+            <span>🏁</span>
+            <h2 style="font-size: 2.5rem">المصادر ونهاية المحاضرة</h2>
+          </div>
+          <div class="glass-card">
+            <p style="font-size: 1.25rem; margin-bottom: 2rem">
+              ماتوقفش هنا.. دي مجرد البداية. كمل بحث وتطبيق:
+            </p>
+            <div style="text-align: right">
+              <a
+                href="https://dart.dev/guides"
+                target="_blank"
+                class="resource-link"
+              >
+                <span style="font-size: 1.5rem">📖</span>
+                <div>
+                  <strong>Official Dart Docs</strong>
+                  <p style="font-size: 0.85rem; color: var(--text-secondary)">
+                    المرجع الأول والأهم لأي مبرمج.
+                  </p>
+                </div>
+              </a>
+              <a
+                href="https://dart-tutorial.com/"
+                target="_blank"
+                class="resource-link"
+              >
+                <span style="font-size: 1.5rem">🌐</span>
+                <div>
+                  <strong>Dart Tutorial</strong>
+                  <p style="font-size: 0.85rem; color: var(--text-secondary)">
+                    شروحات مبسطة لكل المفاهيم البرمجية.
+                  </p>
+                </div>
+              </a>
+              <a
+                href="https://flutter.dev/docs"
+                target="_blank"
+                class="resource-link"
+              >
+                <span style="font-size: 1.5rem">🦋</span>
+                <div>
+                  <strong>Flutter Official Documentation</strong>
+                  <p style="font-size: 0.85rem; color: var(--text-secondary)">
+                    تعرف على الـ Widgets والـ Layouts.
+                  </p>
+                </div>
+              </a>
+              <a
+                href="https://chocolatey.org/install"
+                target="_blank"
+                class="resource-link"
+              >
+                <span style="font-size: 1.5rem">🍫</span>
+                <div>
+                  <strong>Chocolatey Installation</strong>
+                  <p style="font-size: 0.85rem; color: var(--text-secondary)">
+                    لتحميل وتثبيت الأدوات البرمجية بسهولة على Windows.
+                  </p>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          <h3 style="margin-top: 3rem; color: var(--flutter-teal)">
+            "البرمجة مش حفظ.. البرمجة هي تشغيل دماغ وحل مشكلات."
+          </h3>
+          <p style="margin-top: 1rem; color: var(--text-secondary)">
+            أشوفكم المحاضرة الجاية بإذن الله!
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="nav-ui">
+      <button class="nav-btn" id="prevBtn">↼</button>
+      <button class="nav-btn" id="nextBtn">⇀</button>
+    </div>
+
+    <script>
+      const slides = document.querySelectorAll(".slide");
+      const nextBtn = document.getElementById("nextBtn");
+      const prevBtn = document.getElementById("prevBtn");
+      const progressBar = document.getElementById("progressBar");
+      const slideCounter = document.getElementById("slideCounter");
+      const themeBtn = document.getElementById("themeBtn");
+
+      let currentIndex = 0;
+
+      function updateUI() {
+        slides.forEach((slide, index) => {
+          slide.classList.toggle("active", index === currentIndex);
+        });
+
+        const progress = ((currentIndex + 1) / slides.length) * 100;
+        progressBar.style.width = `${progress}%`;
+        slideCounter.innerText = `${currentIndex + 1} / ${slides.length}`;
+
+        // Scroll slide to top
+        slides[currentIndex].scrollTop = 0;
+
+        // Button states
+        prevBtn.style.opacity = currentIndex === 0 ? "0.3" : "1";
+        nextBtn.style.opacity =
+          currentIndex === slides.length - 1 ? "0.3" : "1";
+      }
+
+      nextBtn.addEventListener("click", () => {
+        if (currentIndex < slides.length - 1) {
+          currentIndex++;
+          updateUI();
+        }
+      });
+
+      prevBtn.addEventListener("click", () => {
+        if (currentIndex > 0) {
+          currentIndex--;
+          updateUI();
+        }
+      });
+
+      // Key Navigation
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === " ") {
+          if (currentIndex < slides.length - 1) {
+            currentIndex++;
+            updateUI();
+          }
+        } else if (e.key === "ArrowLeft") {
+          if (currentIndex > 0) {
+            currentIndex--;
+            updateUI();
+          }
+        }
+      });
+
+      // Theme Toggle
+      themeBtn.addEventListener("click", () => {
+        document.body.classList.toggle("light-mode");
+        themeBtn.innerText = document.body.classList.contains("light-mode")
+          ? "☀️"
+          : "🌙";
+      });
+
+      // Touch Support
+      let startX = 0;
+      document.addEventListener(
+        "touchstart",
+        (e) => (startX = e.touches[0].clientX),
+      );
+      document.addEventListener("touchend", (e) => {
+        const endX = e.changedTouches[0].clientX;
+        if (startX - endX > 50) nextBtn.click();
+        if (endX - startX > 50) prevBtn.click();
+      });
+
+      // Initial setup
+      updateUI();
+    </script>
+  </body>
+</html>

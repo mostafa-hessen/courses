@@ -1,0 +1,3153 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تعلم MUI الإصدار 7 - مصطفى حسين رمضان</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: "#f0f9ff",
+                100: "#e0f2fe",
+                200: "#bae6fd",
+                300: "#7dd3fc",
+                400: "#38bdf8",
+                500: "#0ea5e9",
+                600: "#0284c7",
+                700: "#0369a1",
+                800: "#075985",
+                900: "#0c4a6e",
+              },
+              secondary: {
+                50: "#f5f3ff",
+                100: "#ede9fe",
+                200: "#ddd6fe",
+                300: "#c4b5fd",
+                400: "#a78bfa",
+                500: "#8b5cf6",
+                600: "#7c3aed",
+                700: "#6d28d9",
+                800: "#5b21b6",
+                900: "#4c1d95",
+              },
+            },
+            fontFamily: {
+              sans: ["Tajawal", "Roboto", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <style>
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes slideUp {
+        from {
+          transform: translateY(20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      .slide {
+        min-height: 100vh;
+        scroll-snap-align: start;
+        animation: fadeIn 0.5s ease-out forwards;
+      }
+      .slide-content {
+        animation: slideUp 0.7s ease-out forwards;
+      }
+      html {
+        scroll-behavior: smooth;
+        scroll-snap-type: y mandatory;
+      }
+      .rtl-dir {
+        direction: rtl;
+      }
+      .ltr-dir {
+        direction: ltr;
+      }
+      .code-block {
+        font-family: "Roboto Mono", monospace;
+      }
+      .mui-badge {
+        position: relative;
+        display: inline-flex;
+      }
+      .mui-badge-content {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 4px;
+        font-size: 12px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      pre {
+        direction: ltr;
+        text-align: left;
+      }
+      /* Navigation Arrows */
+.slide-arrow {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 40;
+  opacity: 0.7;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.slide-arrow:hover {
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.arrow-left {
+  left: 20px;
+}
+
+.arrow-right {
+  right: 20px;
+}
+
+.slide-arrow .material-icons {
+  font-size: 32px;
+  color: white;
+}
+
+/* Dark mode styles */
+.dark .slide-arrow {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.dark .slide-arrow:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+    </style>
+  </head>
+  <body
+    class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 font-sans transition-colors duration-300"
+  >
+    <!-- Theme Toggle Button -->
+    <button
+      id="themeToggle"
+      class="fixed left-6 bottom-6 z-50 w-12 h-12 rounded-full bg-primary-600 dark:bg-secondary-600 flex items-center justify-center text-white shadow-lg hover:opacity-90 transition"
+    >
+      <span id="themeIcon" class="material-icons">dark_mode</span>
+    </button>
+
+    <!-- Navigation Arrows -->
+<button id="prevSlide" class="slide-arrow arrow-left">
+  <span class="material-icons">arrow_back</span>
+</button>
+<button id="nextSlide" class="slide-arrow arrow-right">
+  <span class="material-icons">arrow_forward</span>
+</button>
+    <!-- Floating Navigation
+    <div class="fixed right-6 bottom-6 z-50 flex flex-col space-y-2">
+      <a
+        href="#slide1"
+        class="w-10 h-10 rounded-full bg-primary-600 dark:bg-secondary-600 flex items-center justify-center text-white shadow-lg hover:opacity-90 transition"
+      >
+        <span class="material-icons">home</span>
+      </a>
+      <a
+        href="#slide2"
+        class="w-10 h-10 rounded-full bg-primary-600 dark:bg-secondary-600 flex items-center justify-center text-white shadow-lg hover:opacity-90 transition"
+      >
+        <span class="material-icons">info</span>
+      </a>
+      <a
+        href="#slide3"
+        class="w-10 h-10 rounded-full bg-primary-600 dark:bg-secondary-600 flex items-center justify-center text-white shadow-lg hover:opacity-90 transition"
+      >
+        <span class="material-icons">compare</span>
+      </a>
+      <a
+        href="#slide4"
+        class="w-10 h-10 rounded-full bg-primary-600 dark:bg-secondary-600 flex items-center justify-center text-white shadow-lg hover:opacity-90 transition"
+      >
+        <span class="material-icons">install</span>
+      </a>
+      <a
+        href="#slide5"
+        class="w-10 h-10 rounded-full bg-primary-600 dark:bg-secondary-600 flex items-center justify-center text-white shadow-lg hover:opacity-90 transition"
+      >
+        <span class="material-icons">widgets</span>
+      </a>
+      <a
+        href="#slide6"
+        class="w-10 h-10 rounded-full bg-primary-600 dark:bg-secondary-600 flex items-center justify-center text-white shadow-lg hover:opacity-90 transition"
+      >
+        <span class="material-icons">design_services</span>
+      </a>
+    </div> -->
+    <section
+      id="slide1"
+      class="slide flex items-center justify-center bg-gradient-to-br from-primary-500 to-secondary-600 p-8 min-h-screen"
+    >
+      <div class="slide-content max-w-4xl mx-auto text-center text-white">
+        <!-- الصورة الشخصية -->
+        <div class="mb-10">
+          <img
+            src="https://i.ibb.co/Fbpfy9Y5/ITI2.jpg"
+            alt="Mostafa Hussien Ramadan"
+            class="w-36 h-36 rounded-full mx-auto border-4 border-white shadow-xl transition-transform duration-300 hover:scale-105"
+          />
+        </div>
+
+        <!-- عنوان الدورة -->
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+          دورة Material-UI (MUI) الإصدار السابع
+        </h1>
+
+        <!-- مقدم الدورة -->
+        <h2 class="text-2xl md:text-3xl font-medium text-white/90 mb-2">
+          تقديم: <span class="font-bold">مصطفى حسين رمضان</span>
+        </h2>
+
+        <!-- الوصف -->
+        <p class="text-lg md:text-xl text-white/80 mb-10">
+          مطور واجهات أمامية | Front-End Developer
+        </p>
+
+        <!-- زر البدء -->
+        <div class="flex justify-center">
+          <a
+            href="#slide2"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-white text-primary-600 rounded-full font-semibold shadow-lg hover:bg-gray-100 hover:scale-105 transition-transform duration-300"
+          >
+            <span>ابدأ التعلم</span>
+            <span class="material-icons text-xl">arrow_downward</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- What is MUI -->
+    <section
+      id="slide2"
+      class="slide flex items-center justify-center bg-white dark:bg-gray-800 p-6"
+    >
+      <div class="slide-content max-w-4xl mx-auto">
+        <h2
+          class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400"
+        >
+          ما هي مكتبة MUI؟
+        </h2>
+        <div class="grid md:grid-cols-2 gap-8 items-center">
+          <div class="rtl-dir">
+            <p class="text-lg mb-4 text-gray-700 dark:text-gray-300">
+              MUI (المعروفة سابقًا باسم Material-UI) هي مكتبة React UI framework
+              مبنية على مبادئ
+              <a class="text-lg text-bold">Material Design</a> من جوجل. الإصدار
+              7 هو أحدث إصدار يحوي تحسينات كبيرة.
+            </p>
+
+            <p class="text-lg mb-4 text-gray-700 dark:text-gray-300">
+              Material Design هو نظام تصميم أنشأته شركة Google لتوحيد وتسهيل
+              تصميم واجهات المستخدم عبر الويب والتطبيقات. يرتكز على مبادئ ويهدف
+              لتقديم تجربة استخدام واضحة، متناسقة، وسهلة التفاعل.
+            </p>
+            <ul class="space-y-3 mb-6">
+              <li class="flex items-start">
+                <span class="material-icons text-green-500 mr-2"
+                  >check_circle</span
+                >
+                <span>أكثر من 50 مكون جاهز للاستخدام</span>
+              </li>
+              <li class="flex items-start">
+                <span class="material-icons text-green-500 mr-2"
+                  >check_circle</span
+                >
+                <span>دعم كامل للوضع الداكن والفاتح</span>
+              </li>
+              <li class="flex items-start">
+                <span class="material-icons text-green-500 mr-2"
+                  >check_circle</span
+                >
+                <span>أداء محسّن في الإصدار 7</span>
+              </li>
+              <li class="flex items-start">
+                <span class="material-icons text-green-500 mr-2"
+                  >check_circle</span
+                >
+                <span>سهولة في التخصيص والتوسعة</span>
+              </li>
+
+              <li class="flex items-start">
+                <span class="material-icons text-green-500 mr-2"
+                  >check_circle</span
+                >
+                <a
+                  href="https://mui.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-600 hover:underline font-semibold"
+                >
+                  الموقع الرسمي لـ MUI
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div
+            class="bg-gray-50 dark:bg-gray-700 p-6 rounded-xl border border-gray-200 dark:border-gray-600"
+          >
+            <div class="flex items-center mb-4">
+              <span
+                class="material-icons text-primary-500 dark:text-secondary-400 text-4xl mr-3"
+                >design_services</span
+              >
+              <h3 class="text-xl font-semibold">مميزات الإصدار 7</h3>
+            </div>
+            <div class="space-y-3">
+              <div
+                class="flex items-center p-3 bg-primary-50 dark:bg-primary-900 rounded-lg"
+              >
+                <span
+                  class="material-icons text-primary-400 dark:text-primary-200 mr-2"
+                  >speed</span
+                >
+                <span>تحسينات في الأداء بنسبة 30%</span>
+              </div>
+              <div
+                class="flex items-center p-3 bg-primary-50 dark:bg-primary-900 rounded-lg"
+              >
+                <span
+                  class="material-icons text-primary-400 dark:text-primary-200 mr-2"
+                  >palette</span
+                >
+                <span>نظام ألوان محسّن</span>
+              </div>
+              <div
+                class="flex items-center p-3 bg-primary-50 dark:bg-primary-900 rounded-lg"
+              >
+                <span
+                  class="material-icons text-primary-400 dark:text-primary-200 mr-2"
+                  >dark_mode</span
+                >
+                <span>دعم أفضل للوضع الداكن</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MUI vs Bootstrap -->
+    <section
+      id="slide3"
+      class="slide flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6"
+    >
+      <div class="slide-content max-w-4xl mx-auto">
+        <h2
+          class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400"
+        >
+          مقارنة بين MUI و Bootstrap
+        </h2>
+
+        <div
+          class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-8"
+        >
+          <div class="overflow-x-auto">
+            <table
+              class="min-w-full divide-y divide-gray-200 dark:divide-gray-700"
+            >
+              <thead class="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                  <th
+                    class="px-4 py-3 text-right text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                  >
+                    المعيار
+                  </th>
+                  <th
+                    class="px-4 py-3 text-right text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                  >
+                    MUI
+                  </th>
+                  <th
+                    class="px-4 py-3 text-right text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                  >
+                    Bootstrap
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700"
+              >
+                <tr>
+                  <td
+                    class="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300"
+                  >
+                    النمط التصميمي
+                  </td>
+                  <td
+                    class="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300"
+                  >
+                    Material Design من جوجل
+                  </td>
+                  <td
+                    class="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300"
+                  >
+                    تصميم خاص (أكثر عمومية)
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    class="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300"
+                  >
+                    المكونات
+                  </td>
+                  <td
+                    class="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300"
+                  >
+                    مخصصة لـ React
+                  </td>
+                  <td
+                    class="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300"
+                  >
+                    عامة (تعمل مع أي إطار عمل)
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    class="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300"
+                  >
+                    التخصيص
+                  </td>
+                  <td
+                    class="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300"
+                  >
+                    عن طريق الثيم (Theme) أو الـ Props
+                  </td>
+                  <td
+                    class="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300"
+                  >
+                    عن طريق CSS أو SASS
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    class="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300"
+                  >
+                    سهولة التعلم
+                  </td>
+                  <td
+                    class="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300"
+                  >
+                    متوسطة (تتطلب معرفة React)
+                  </td>
+                  <td
+                    class="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300"
+                  >
+                    سهلة (تعمل بمعرفة HTML/CSS فقط)
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    class="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300"
+                  >
+                    حجم الحزمة
+                  </td>
+                  <td
+                    class="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300"
+                  >
+                    ~300KB (مع الأيقونات)
+                  </td>
+                  <td
+                    class="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300"
+                  >
+                    ~200KB
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <div
+            class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
+          >
+            <h3
+              class="text-xl font-semibold mb-4 text-primary-600 dark:text-secondary-400"
+            >
+              متى تستخدم MUI؟
+            </h3>
+            <ul class="space-y-3">
+              <li class="flex items-start">
+                <span class="material-icons text-green-500 mr-2">check</span>
+                <span>عند تطوير تطبيقات React</span>
+              </li>
+              <li class="flex items-start">
+                <span class="material-icons text-green-500 mr-2">check</span>
+                <span>عند الرغبة في تطبيق Material Design</span>
+              </li>
+              <li class="flex items-start">
+                <span class="material-icons text-green-500 mr-2">check</span>
+                <span>عند الحاجة لواجهة إدارية متكاملة</span>
+              </li>
+            </ul>
+          </div>
+
+          <div
+            class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
+          >
+            <h3
+              class="text-xl font-semibold mb-4 text-primary-600 dark:text-secondary-400"
+            >
+              متى تستخدم Bootstrap؟
+            </h3>
+            <ul class="space-y-3">
+              <li class="flex items-start">
+                <span class="material-icons text-blue-500 mr-2">check</span>
+                <span>عند تطوير مواقع تقليدية (غير SPA)</span>
+              </li>
+              <li class="flex items-start">
+                <span class="material-icons text-blue-500 mr-2">check</span>
+                <span>عند الحاجة لسرعة في التنفيذ</span>
+              </li>
+              <li class="flex items-start">
+                <span class="material-icons text-blue-500 mr-2">check</span>
+                <span>عند العمل مع فريق غير متخصص في React</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide: التثبيت والإعداد لمكتبة MUI -->
+    <section
+      id="slide4"
+      class="slide flex items-center justify-center bg-white dark:bg-gray-900 p-6"
+    >
+      <div class="slide-content max-w-5xl mx-auto">
+        <h2
+          class="text-3xl md:text-4xl font-bold mb-8 text-primary-600 dark:text-secondary-400 text-center"
+        >
+          التثبيت والإعداد في مكتبة MUI
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-10 mb-10">
+          <!-- قسم التثبيت -->
+          <div class="rtl-dir">
+            <h3
+              class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200"
+            >
+              📦 أمر التثبيت الأساسي
+            </h3>
+            <div class="bg-gray-800 rounded-lg p-4 mb-6">
+              <pre class="text-green-400 font-mono text-sm ltr-dir">
+<code>npm install @mui/material @emotion/react @emotion/styled</code>
+          </pre>
+            </div>
+
+            <h3
+              class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200"
+            >
+              🎨 تثبيت الأيقونات
+            </h3>
+            <div class="bg-gray-800 rounded-lg p-4">
+              <pre class="text-green-400 font-mono text-sm ltr-dir">
+<code>npm install @mui/icons-material</code>
+          </pre>
+            </div>
+          </div>
+
+          <!-- شرح الحزم الثلاث -->
+          <div class="grid gap-6">
+            <!-- @mui/material -->
+            <div
+              class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-5 shadow"
+            >
+              <h3
+                class="text-lg font-bold text-primary-600 dark:text-secondary-400 mb-2"
+              >
+                1. @mui/material
+              </h3>
+              <p class="text-gray-700 dark:text-gray-300 mb-3">
+                مكتبة المكونات الجاهزة مثل:
+                <code class="bg-gray-100 dark:bg-gray-700 px-1 rounded"
+                  >Button</code
+                >,
+                <code class="bg-gray-100 dark:bg-gray-700 px-1 rounded"
+                  >AppBar</code
+                >,
+                <code class="bg-gray-100 dark:bg-gray-700 px-1 rounded"
+                  >Card</code
+                >.
+              </p>
+              <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded text-sm">
+                <code>import Button from '@mui/material/Button';</code>
+              </div>
+            </div>
+
+            <!-- @emotion/react -->
+            <div
+              class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-5 shadow"
+            >
+              <h3
+                class="text-lg font-bold text-purple-600 dark:text-purple-400 mb-2"
+              >
+                2. @emotion/react
+              </h3>
+              <p class="text-gray-700 dark:text-gray-300 mb-3">
+                المحرك الأساسي لأنماط <strong>CSS-in-JS</strong> داخل MUI.
+                يستخدم لتطبيق التنسيقات باستخدام خاصية <code>sx</code>.
+              </p>
+              <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded text-sm">
+                <code>&lt;Box sx={{ padding: 2 }} /&gt;</code>
+              </div>
+            </div>
+
+            <!-- @emotion/styled -->
+            <div
+              class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-5 shadow"
+            >
+              <h3
+                class="text-lg font-bold text-pink-600 dark:text-pink-400 mb-2"
+              >
+                3. @emotion/styled
+              </h3>
+              <p class="text-gray-700 dark:text-gray-300 mb-3">
+                تُستخدم لإنشاء مكونات مخصصة بأنماط مرنة باستخدام `styled`.
+              </p>
+              <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded text-sm">
+                <code
+                  >const Box = styled('div')({ backgroundColor: 'red' });</code
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ملاحظة هامة -->
+        <div
+          class="bg-yellow-100 dark:bg-yellow-800 p-4 rounded-lg border-l-4 border-yellow-500 text-yellow-900 dark:text-yellow-100"
+        >
+          ⚠️ <strong>ملاحظة:</strong> مكتبة MUI تعتمد بشكل كامل على Emotion
+          لتطبيق الأنماط منذ الإصدار الخامس.
+        </div>
+      </div>
+    </section>
+
+    <!-- what's component + props -->
+    <section
+      id="component-intro"
+      class="slide flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6 min-h-screen"
+    >
+      <div
+        class="slide-content max-w-4xl mx-auto text-gray-800 dark:text-gray-100"
+      >
+        <!-- العنوان الرئيسي -->
+        <h2
+          class="text-4xl font-bold mb-8 text-center text-blue-700 dark:text-blue-400"
+        >
+          ما هو الـ Component في React؟
+        </h2>
+
+        <!-- تعريف بسيط -->
+        <div class="mb-6">
+          <p class="text-lg leading-relaxed">
+            <span class="font-semibold text-blue-600 dark:text-blue-400"
+              >Component</span
+            >
+            هو وحدة بناء مستقلة في واجهة المستخدم. يُمكنك التفكير فيه كـ "قطعة
+            ليغو" تُستخدم لإنشاء أجزاء مختلفة من التطبيق.
+          </p>
+        </div>
+
+        <!-- فوائد استخدام المكونات -->
+        <div class="mb-8">
+          <h3
+            class="text-2xl font-semibold mb-3 text-green-600 dark:text-green-400"
+          >
+            ✨ لماذا نستخدم الـ Components؟
+          </h3>
+          <ul class="list-disc list-inside space-y-2 text-base">
+            <li>
+              <strong>إعادة الاستخدام:</strong> اكتب الكود مرة وكرر استخدامه
+              بسهولة.
+            </li>
+            <li>
+              <strong>تنظيم المشروع:</strong> يسهل تقسيم التطبيق إلى أجزاء
+              صغيرة.
+            </li>
+            <li>
+              <strong>المرونة:</strong> يمكن تمرير بيانات إليه عبر الـ Props.
+            </li>
+          </ul>
+        </div>
+
+        <!-- مقارنة بين الكود العادي وComponent -->
+        <div class="mb-10 grid md:grid-cols-2 gap-6">
+          <!-- بدون Component -->
+          <div>
+            <h4
+              class="text-xl font-semibold mb-2 text-red-600 dark:text-red-400"
+            >
+              ❌ بدون استخدام Component:
+            </h4>
+            <pre
+              class="bg-gray-800 text-green-100 rounded p-4 text-sm overflow-x-auto"
+            ><code>function App() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;أهلاً بك في موقعي&lt;/h1&gt;
+      &lt;p&gt;هذا نص تعريفي&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+          </div>
+
+          <!-- باستخدام Component و Props -->
+          <div>
+            <h4
+              class="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400"
+            >
+              ✅ باستخدام Component و Props:
+            </h4>
+            <pre
+              class="bg-gray-800 text-blue-100 rounded p-4 text-sm overflow-x-auto"
+            ><code>function Header(props) {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;مرحبًا {props.name} 👋&lt;/h1&gt;
+      &lt;p&gt;هذا نص مخصص لك&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;Header name="Mostafa" /&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+            <p class="text-base mt-2 leading-relaxed">
+              ✅
+              <span class="font-semibold text-blue-600 dark:text-blue-400"
+                >Props</span
+              >
+              تسمح لنا بتمرير معلومات إلى المكون من الخارج، تمامًا كما نفعل مع
+              المكونات الجاهزة في MUI مثل <code>Button</code> و
+              <code>TextField</code>.
+            </p>
+          </div>
+        </div>
+
+        <!-- MUI وماذا تقدم -->
+        <div class="mb-10">
+          <h3
+            class="text-2xl font-semibold mb-3 text-purple-600 dark:text-purple-400"
+          >
+            🔗 كيف ترتبط الفكرة بمكتبة MUI؟
+          </h3>
+          <p class="text-lg leading-relaxed">
+            مكتبة
+            <span class="font-semibold text-purple-600 dark:text-purple-400"
+              >Material UI (MUI)</span
+            >
+            تعتمد على تقديم
+            <span class="font-semibold text-blue-600 dark:text-blue-400"
+              >Components جاهزة</span
+            >
+            مثل الأزرار، الحقول، البطاقات وغيرها، لتساعدك على بناء واجهات جذابة
+            وسريعة بدون الحاجة لكتابة CSS معقد.
+          </p>
+        </div>
+
+        <!-- مثال من MUI -->
+        <div class="mb-6">
+          <h4
+            class="text-xl font-semibold mb-2 text-pink-600 dark:text-pink-400"
+          >
+            🎯 مثال على زر من MUI:
+          </h4>
+          <pre
+            class="bg-gray-800 text-pink-100 rounded p-4 text-sm overflow-x-auto"
+          ><code>import Button from '@mui/material/Button';
+
+function App() {
+  return (
+    &lt;Button variant="contained" color="primary"&gt;
+      اضغط هنا
+    &lt;/Button&gt;
+  );
+}</code></pre>
+
+          <p class="text-base mt-2 leading-relaxed">
+            في هذا المثال، نمرر خصائص (props) إلى زر MUI مثل:
+            <code>variant="contained"</code> و <code>color="primary"</code>. هذه
+            الخصائص هي التي تجعل الزر يظهر بشكل مختلف، تمامًا كما نفعل مع
+            المكونات التي نكتبها نحن.
+          </p>
+        </div>
+
+        <!-- خلاصة -->
+        <div class="mt-8 text-center">
+          <p class="text-lg font-medium">
+            ✅ من خلال تعلم
+            <span class="text-blue-600 dark:text-blue-400 font-semibold"
+              >Components</span
+            >
+            و
+            <span class="text-blue-600 dark:text-blue-400 font-semibold"
+              >Props</span
+            >، ستكون جاهزًا للعمل مع
+            <span class="text-purple-600 dark:text-purple-400 font-semibold"
+              >MUI</span
+            >
+            بكل احترافية وسرعة!
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="mui-button-behind"
+      class="slide flex items-center justify-center bg-white dark:bg-gray-900 py-12 px-6 min-h-screen"
+    >
+      <div
+        class="slide-content max-w-6xl mx-auto text-gray-800 dark:text-gray-100 space-y-10"
+      >
+        <!-- العنوان -->
+        <h2
+          class="text-4xl md:text-5xl font-bold text-center text-blue-700 dark:text-blue-400"
+        >
+          كيف يعمل زر MUI خلف الكواليس؟ 🎯
+        </h2>
+
+        <!-- كود الزر العادي -->
+        <div class="bg-gray-100 dark:bg-gray-800 rounded-xl p-6 shadow-md">
+          <h3
+            class="text-2xl font-semibold text-green-600 dark:text-green-400 mb-4"
+          >
+            🔹 الكود المستخدم:
+          </h3>
+          <pre
+            class="bg-gray-900 text-green-100 rounded-lg p-4 text-sm overflow-x-auto"
+          >
+<code>import Button from '@mui/material/Button';
+
+function App() {
+  return (
+    &lt;Button variant="contained" color="primary"&gt;
+      اضغط هنا
+    &lt;/Button&gt;
+  );
+}</code></pre>
+        </div>
+
+        <!-- خطوات المعالجة -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md">
+          <h3
+            class="text-2xl font-semibold text-purple-600 dark:text-purple-400 mb-4"
+          >
+            🧠 ماذا يحدث خلف الكواليس؟
+          </h3>
+          <ol
+            class="list-decimal list-inside space-y-3 text-lg leading-relaxed"
+          >
+            <li>
+              يتم تمرير <code>variant</code> و <code>color</code> إلى المكون.
+            </li>
+            <li>
+              يقوم الزر بتحليل الـ props وتحديد الشكل:
+              <ul
+                class="list-disc ml-6 text-base text-gray-700 dark:text-gray-300 mt-1 space-y-1"
+              >
+                <li>هل الزر مملوء؟ (contained)</li>
+                <li>ما لونه؟ (primary, secondary...)</li>
+                <li>هل الزر معطل؟</li>
+              </ul>
+            </li>
+            <li>
+              يتم توليد classNames مثل <code>MuiButton-containedPrimary</code>.
+            </li>
+            <li>يستخدم مكون داخلي اسمه <code>ButtonBase</code>.</li>
+            <li>
+              يتم تطبيق التصميم بناءً على إعدادات
+              <code>theme</code> المركزي:
+              <span class="block text-sm text-gray-500 dark:text-gray-400 mt-1">
+                الثيم هو الذي يحدد الألوان، الخطوط، والمسافات الافتراضية.
+              </span>
+            </li>
+            <li>النتيجة النهائية: زر HTML احترافي جاهز للعرض.</li>
+          </ol>
+        </div>
+
+        <!-- مثال في DOM -->
+        <div
+          class="bg-gray-100 dark:bg-gray-800 rounded-xl p-6 shadow-md text-center"
+        >
+          <p class="text-xl font-medium mb-4">
+            🧾 النتيجة النهائية في الـ DOM:
+          </p>
+          <pre
+            class="bg-gray-900 text-yellow-100 rounded-lg p-4 text-sm inline-block overflow-x-auto text-left"
+          >
+<code>&lt;button class="MuiButton-root MuiButton-contained MuiButton-containedPrimary"&gt;
+  اضغط هنا
+&lt;/button&gt;</code></pre>
+        </div>
+
+        <!-- نبذة عن Theme -->
+        <div class="bg-blue-50 dark:bg-blue-900 rounded-xl p-6 shadow-md">
+          <h3
+            class="text-xl font-semibold text-blue-700 dark:text-blue-300 mb-2"
+          >
+            🧩 ما هو الـ Theme في MUI؟
+          </h3>
+          <p class="text-base leading-relaxed mb-3">
+            الثيم هو النظام الذي يتحكم في الألوان، الخطوط، الزوايا، المسافات،
+            وغير ذلك، ويضمن توحيد التصميم في كل المشروع. الزر في MUI يعتمد على
+            الـ <strong>theme</strong> لتحديد لونه الأساسي، حجم الخط، والظل.
+          </p>
+          <p class="text-base">
+            🔗 اقرأ المزيد عن الـ Theme من الصفحة الرسمية:
+            <a
+              href="https://mui.com/material-ui/customization/default-theme/"
+              class="text-blue-600 dark:text-blue-300 underline font-medium"
+              target="_blank"
+            >
+              mui.com/material-ui/customization/theming
+            </a>
+          </p>
+        </div>
+
+        <!-- الخلاصة -->
+        <div class="text-center mt-10">
+          <p class="text-xl font-semibold">
+            ✅ زر MUI هو مكون React ذكي، يتفاعل مع
+            <span class="text-blue-600 dark:text-blue-400">Props</span>، ويُنسّق
+            تلقائيًا باستخدام <code>Theme</code> جاهز واحترافي.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="mui-button-code"
+      class="slide flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-8 min-h-screen"
+    >
+      <div
+        class="slide-content max-w-5xl mx-auto text-gray-800 dark:text-gray-100"
+      >
+        <!-- العنوان -->
+        <h2
+          class="text-4xl font-bold text-center text-blue-700 dark:text-blue-400 mb-10"
+        >
+          كيف كُتب زر MUI في الكود الحقيقي؟ 💻
+        </h2>
+
+        <!-- مقدمة -->
+        <div class="mb-6">
+          <p class="text-lg leading-relaxed">لما تكتب الكود التالي:</p>
+          <pre
+            class="bg-gray-900 text-green-100 rounded p-4 text-sm overflow-x-auto mb-4"
+          >
+<code>&lt;Button variant="contained" color="primary"&gt;
+  اضغط هنا
+&lt;/Button&gt;</code></pre>
+
+          <p class="text-base mt-2">
+            فعليًا إنت بتستخدم مكون React مكتوب بنفسك، ولكن بطريقة احترافية داخل
+            MUI. لنشوف بعض الأجزاء من كود الزر الأصلي الموجود في GitHub.
+          </p>
+        </div>
+
+        <!-- رابط مباشر -->
+        <div class="mb-4 text-center">
+          <a
+            href="https://github.com/mui/material-ui/blob/master/packages/mui-material/src/Button/Button.js"
+            class="text-blue-600 dark:text-blue-400 underline font-medium text-lg"
+            target="_blank"
+            >👀 اضغط هنا لعرض الكود الأصلي على GitHub</a
+          >
+        </div>
+
+        <!-- تحليل مبسط للكود -->
+        <div class="mb-6">
+          <h3
+            class="text-xl font-semibold text-purple-600 dark:text-purple-400 mb-3"
+          >
+            🧠 ماذا يحدث داخل ملف <code>Button.js</code>؟
+          </h3>
+          <ul class="list-disc list-inside space-y-2 text-base leading-relaxed">
+            <li>
+              المكون مكتوب باستخدام <code>React.forwardRef</code> لدعم تمرير
+              المراجع (ref).
+            </li>
+            <li>
+              يستقبل كل الخصائص (props) التي تكتبها، مثل <code>variant</code> و
+              <code>color</code>.
+            </li>
+            <li>
+              يستخدم دالة اسمها <code>useThemeProps</code> لدمج props مع إعدادات
+              الثيم.
+            </li>
+            <li>
+              يتم إنشاء متغير اسمه <code>ownerState</code> يحتوي كل props.
+            </li>
+            <li>
+              يتم تحديد الـ class النهائية باستخدام
+              <code>useUtilityClasses(ownerState)</code>.
+            </li>
+            <li>
+              الزر الحقيقي يتم إنشاؤه باستخدام مكون داخلي اسمه
+              <code>ButtonRoot</code>.
+            </li>
+          </ul>
+        </div>
+
+        <!-- كود مبسط من داخل Button.js -->
+        <div class="mb-6">
+          <h4
+            class="text-lg font-semibold text-green-600 dark:text-green-400 mb-2"
+          >
+            مثال مبسط من داخل الملف:
+          </h4>
+          <pre
+            class="bg-gray-800 text-yellow-100 rounded p-4 text-sm overflow-x-auto"
+          >
+<code>const Button = React.forwardRef(function Button(inProps, ref) {
+  const props = useThemeProps({ props: inProps, name: 'MuiButton' });
+  const {
+    children,
+    variant = 'text',
+    color = 'primary',
+    ...other
+  } = props;
+
+  return (
+    &lt;ButtonRoot className="..." ref={ref} ...&gt;
+      {children}
+    &lt;/ButtonRoot&gt;
+  );
+});</code></pre>
+        </div>
+
+        <!-- الخلاصة -->
+        <div class="text-center mt-10">
+          <p class="text-lg font-semibold">
+            ✅ في النهاية: زر MUI هو مجرد مكون React بيستقبل <code>props</code>،
+            وبيستخدمها في صناعة زر HTML شكله احترافي باستخدام
+            <code>theme</code> و <code>classes</code>.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Component Types -->
+    <section
+      id="slide5"
+      class="slide flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6"
+    >
+      <div class="slide-content max-w-4xl mx-auto">
+        <h2
+          class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400"
+        >
+          أنواع المكونات في MUI
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+          <div
+            class="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 rtl-dir"
+          >
+            <h3
+              class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200"
+            >
+              مكونات التخطيط (Layout)
+            </h3>
+            <ul class="space-y-3">
+              <li
+                class="flex items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg"
+              >
+                <span
+                  class="material-icons text-primary-500 dark:text-primary-400 mr-2"
+                  >view_agenda</span
+                >
+                <div>
+                  <h4 class="font-medium">Container</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    يحدد عرض المحتوى حسب حجم الشاشة
+                  </p>
+                </div>
+              </li>
+              <li
+                class="flex items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg"
+              >
+                <span
+                  class="material-icons text-primary-500 dark:text-primary-400 mr-2"
+                  >grid_on</span
+                >
+                <div>
+                  <h4 class="font-medium">Grid</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    نظام شبكي متجاوب لتوزيع العناصر
+                  </p>
+                </div>
+              </li>
+              <li
+                class="flex items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg"
+              >
+                <span
+                  class="material-icons text-primary-500 dark:text-primary-400 mr-2"
+                  >layers</span
+                >
+                <div>
+                  <h4 class="font-medium">Stack</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    لترتيب العناصر رأسيًا أو أفقيًا
+                  </p>
+                </div>
+              </li>
+              <li
+                class="flex items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg"
+              >
+                <span
+                  class="material-icons text-primary-500 dark:text-primary-400 mr-2"
+                  >crop_square</span
+                >
+                <div>
+                  <h4 class="font-medium">Box</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    حاوية عامة مع خصائص CSS
+                  </p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div
+            class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 rtl-dir"
+          >
+            <h3
+              class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200"
+            >
+              مكونات الإدخال (Input)
+            </h3>
+            <ul class="space-y-3">
+              <li
+                class="flex items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg"
+              >
+                <span
+                  class="material-icons text-primary-500 dark:text-primary-400 mr-2"
+                  >input</span
+                >
+                <div>
+                  <h4 class="font-medium">TextField</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    حقل إدخال نصي مع تنسيق متقدم
+                  </p>
+                </div>
+              </li>
+              <li
+                class="flex items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg"
+              >
+                <span
+                  class="material-icons text-primary-500 dark:text-primary-400 mr-2"
+                  >toggle_on</span
+                >
+                <div>
+                  <h4 class="font-medium">Switch</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    مفتاح تبديل بين حالتين
+                  </p>
+                </div>
+              </li>
+              <li
+                class="flex items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg"
+              >
+                <span
+                  class="material-icons text-primary-500 dark:text-primary-400 mr-2"
+                  >radio_button_checked</span
+                >
+                <div>
+                  <h4 class="font-medium">Radio</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    زر اختيار من مجموعة
+                  </p>
+                </div>
+              </li>
+              <li
+                class="flex items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg"
+              >
+                <span
+                  class="material-icons text-primary-500 dark:text-primary-400 mr-2"
+                  >check_box</span
+                >
+                <div>
+                  <h4 class="font-medium">Checkbox</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    خانة اختيار متعددة
+                  </p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <div
+            class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 rtl-dir"
+          >
+            <h3
+              class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200"
+            >
+              مكونات التنقل
+            </h3>
+            <ul class="space-y-3">
+              <li
+                class="flex items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg"
+              >
+                <span
+                  class="material-icons text-primary-500 dark:text-primary-400 mr-2"
+                  >menu</span
+                >
+                <div>
+                  <h4 class="font-medium">AppBar</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    شريط التطبيق العلوي
+                  </p>
+                </div>
+              </li>
+              <li
+                class="flex items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg"
+              >
+                <span
+                  class="material-icons text-primary-500 dark:text-primary-400 mr-2"
+                  >tab</span
+                >
+                <div>
+                  <h4 class="font-medium">Tabs</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    تنقل بين محتويات مختلفة
+                  </p>
+                </div>
+              </li>
+              <li
+                class="flex items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg"
+              >
+                <span
+                  class="material-icons text-primary-500 dark:text-primary-400 mr-2"
+                  >menu_open</span
+                >
+                <div>
+                  <h4 class="font-medium">Drawer</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    قائمة جانبية قابلة للطي
+                  </p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div
+            class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 rtl-dir"
+          >
+            <h3
+              class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200"
+            >
+              عرض البيانات
+            </h3>
+            <ul class="space-y-3">
+              <li
+                class="flex items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg"
+              >
+                <span
+                  class="material-icons text-primary-500 dark:text-primary-400 mr-2"
+                  >text_fields</span
+                >
+                <div>
+                  <h4 class="font-medium">Typography</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    نصوص بتنسيقات متنوعة
+                  </p>
+                </div>
+              </li>
+              <li
+                class="flex items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg"
+              >
+                <span
+                  class="material-icons text-primary-500 dark:text-primary-400 mr-2"
+                  >image</span
+                >
+                <div>
+                  <h4 class="font-medium">Avatar</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    صورة مستديرة للمستخدمين
+                  </p>
+                </div>
+              </li>
+              <li
+                class="flex items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg"
+              >
+                <span
+                  class="material-icons text-primary-500 dark:text-primary-400 mr-2"
+                  >credit_card</span
+                >
+                <div>
+                  <h4 class="font-medium">Card</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    بطاقة عرض المحتوى
+                  </p>
+                </div>
+              </li>
+              <li
+                class="flex items-center p-2 bg-gray-50 dark:bg-gray-700 rounded-lg"
+              >
+                <span
+                  class="material-icons text-primary-500 dark:text-primary-400 mr-2"
+                  >notifications</span
+                >
+                <div>
+                  <h4 class="font-medium">Badge</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    إشعارات صغيرة على العناصر
+                  </p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Typography -->
+    <section
+      id="slide-typography"
+      class="slide flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6 min-h-screen"
+    >
+      <div class="slide-content max-w-5xl mx-auto">
+        <!-- العنوان -->
+        <h2
+          class="text-3xl md:text-4xl font-bold mb-8 text-primary-600 dark:text-secondary-400 text-center"
+        >
+          مكون Typography في MUI
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-6 mb-10 rtl-dir">
+          <!-- نظرة عامة -->
+          <div
+            class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
+          >
+            <div class="flex items-center mb-4">
+              <span
+                class="material-icons text-primary-500 dark:text-primary-400 text-3xl mr-3"
+              >
+                text_fields
+              </span>
+              <h3
+                class="text-xl font-semibold text-gray-800 dark:text-gray-200"
+              >
+                نظرة عامة
+              </h3>
+            </div>
+            <p
+              class="text-gray-700 dark:text-gray-300 mb-4 text-base leading-relaxed"
+            >
+              مكون <strong>Typography</strong> يُستخدم لعرض النصوص وفق نظام
+              تصميم <strong>Material Design</strong>، ويوفر 13 تنسيقًا جاهزًا
+              مثل العناوين والنصوص العادية.
+            </p>
+
+            <h4 class="font-medium mb-2 text-gray-800 dark:text-gray-100">
+              أهم الخصائص:
+            </h4>
+            <ul
+              class="list-disc pr-5 space-y-1 text-gray-700 dark:text-gray-300 text-sm"
+            >
+              <li>
+                <strong>variant</strong>: تحديد نوع النص (مثل h1, h2, body1...)
+              </li>
+              <li>
+                <strong>align</strong>: محاذاة النص (left, center, right...)
+              </li>
+              <li>
+                <strong>color</strong>: لون النص (primary, secondary, error...)
+              </li>
+              <li><strong>gutterBottom</strong>: إضافة هامش سفلي تلقائي</li>
+            </ul>
+
+            <!-- الملاحظة -->
+            <div
+              class="mt-5 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm rounded-md p-3"
+            >
+              ℹ️ <strong>معلومة:</strong> هناك فرق بين
+              <code>component</code> (المكون نفسه مثل Typography) و
+              <code>component API</code> (الصفحة التي تشرح خصائصه وكيفية
+              استخدامه بالتفصيل).
+            </div>
+
+            <!-- رابط للـ API -->
+            <div class="mt-4 text-sm">
+              📚 اقرأ المزيد عن خصائص Typography من الصفحة الرسمية:
+              <a
+                href="https://mui.com/material-ui/api/typography/"
+                target="_blank"
+                class="text-blue-600 dark:text-blue-400 underline font-medium"
+              >
+                mui.com/material-ui/api/typography
+              </a>
+            </div>
+          </div>
+
+          <!-- مثال كود -->
+          <div
+            class="bg-gray-900 rounded-xl p-5 overflow-x-auto border border-gray-700"
+          >
+            <h3 class="text-xl font-semibold mb-4 text-white">
+              مثال على الاستخدام
+            </h3>
+            <pre
+              class="text-green-400 font-mono text-sm ltr-dir whitespace-pre"
+            >
+<code>import Typography from '@mui/material/Typography';
+
+&lt;Typography variant="h4" component="h1" gutterBottom&gt;
+  عنوان رئيسي
+&lt;/Typography&gt;
+
+&lt;Typography variant="body1" color="text.secondary"&gt;
+  نص عادي مع لون ثانوي
+&lt;/Typography&gt;
+</code>
+        </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- sx -->
+    <!-- sx Slide -->
+    <!-- sx Slide -->
+    <section
+      id="slide4"
+      class="slide bg-white dark:bg-gray-900 p-8 min-h-screen"
+    >
+      <div
+        class="slide-content max-w-5xl mx-auto text-gray-800 dark:text-gray-100 space-y-8"
+      >
+        <!-- العنوان -->
+        <h2
+          class="text-3xl md:text-4xl font-bold text-center text-blue-600 dark:text-blue-400"
+        >
+          ما هي خاصية sx في MUI؟ 🎨
+        </h2>
+
+        <!-- تعريف -->
+        <p class="text-lg leading-relaxed">
+          خاصية <code>sx</code> هي طريقة ذكية تقدمها MUI لتطبيق الستايلات مباشرة
+          داخل JSX باستخدام <strong>JavaScript Object</strong>. وهي جزء من
+          <a
+            href="https://mui.com/system/properties/"
+            target="_blank"
+            class="text-blue-500 underline font-medium"
+          >
+            MUI System
+          </a>
+          الذي يحتوي على خصائص جاهزة مثل:
+          <code>m / p / color / display</code> وغيرها.
+        </p>
+
+        <!-- مميزات sx -->
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+            <h3
+              class="text-xl font-semibold mb-4 text-green-600 dark:text-green-400"
+            >
+              ✅ مميزات استخدام sx:
+            </h3>
+            <ul class="list-disc pl-5 space-y-2 text-base">
+              <li>تكتب CSS كـ JavaScript Object.</li>
+              <li>دعم كامل للـ Theme مثل: <code>'primary.main'</code>.</li>
+              <li>يدعم Pseudo Selectors مثل <code>&:hover</code>.</li>
+              <li>يدعم Responsiveness مباشرة.</li>
+            </ul>
+          </div>
+
+          <!-- مثال كود -->
+          <div
+            class="bg-gray-900 p-5 rounded-lg text-sm text-green-100 font-mono"
+          >
+            <pre>
+&lt;Box
+  sx={{
+    bgcolor: 'primary.main',
+    p: 2,
+    '&:hover': { bgcolor: 'primary.dark' },
+    color: 'white',
+    borderRadius: 2,
+    textAlign: 'center',
+  }}
+&gt;
+  محتوى داخل Box
+&lt;/Box&gt;
+</pre
+            >
+          </div>
+        </div>
+
+        <!-- system properties -->
+        <div
+          class="bg-blue-100 dark:bg-blue-900 p-4 rounded text-blue-900 dark:text-blue-200 text-base"
+        >
+          🧠 <strong>MUI System</strong> يوفر خصائص جاهزة يمكن استخدامها داخل
+          <code>sx</code> مباشرة.
+          <br />
+          مثال: بدل <code>padding: "16px"</code>، نكتب <code>p: 2</code>.
+          <br />
+          🔗 قائمة الخصائص:
+          <a
+            href="https://mui.com/system/properties/"
+            target="_blank"
+            class="underline font-medium"
+          >
+            mui.com/system/properties
+          </a>
+        </div>
+
+        <!-- الفرق بين props و sx -->
+        <div
+          class="bg-yellow-100 dark:bg-yellow-900 text-yellow-900 dark:text-yellow-100 p-5 rounded-md"
+        >
+          <h3 class="font-semibold text-lg mb-2">🤔 props أم sx؟</h3>
+          <ul class="list-disc pl-5 space-y-1 text-base">
+            <li>
+              استخدم <strong>props الجاهزة</strong> إن كانت متوفرة (مثل
+              <code>color="primary"</code>).
+            </li>
+            <li>استخدم <strong>sx</strong> للتخصيص الكامل والمعقد.</li>
+            <li>يمكن الدمج بين الاثنين بحرية.</li>
+          </ul>
+        </div>
+
+        <!-- نبذة عن Emotion -->
+        <div
+          class="bg-gray-100 dark:bg-gray-800 p-4 rounded text-gray-800 dark:text-gray-200 text-base"
+        >
+          ⚙️ <strong>من الذي يشغّل sx؟</strong>
+          <br />
+          مكتبة <code>@emotion/react</code> هي المسؤولة عن تحويل كود
+          <code>sx</code> إلى CSS فعلي داخل الصفحة.
+          <br />
+          عند استخدام MUI، يتم تثبيت Emotion تلقائيًا لأنها
+          <strong>المحرّك الأساسي لكتابة الستايلات</strong> في المكتبة.
+        </div>
+
+        <!-- الخلاصة -->
+        <div class="text-center mt-6">
+          <p class="text-xl font-semibold text-gray-800 dark:text-gray-100">
+            ✅ sx = طريقة MUI السحرية لكتابة CSS مرن + معتمد على Theme + مدعوم
+            من Emotion.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="slide-button"
+      class="slide flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6"
+    >
+      <div class="slide-content max-w-4xl mx-auto">
+        <h2
+          class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400"
+        >
+          مكون Button في MUI
+        </h2>
+        <div class="grid md:grid-cols-2 gap-6 mb-8 rtl-dir">
+          <div
+            class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
+          >
+            <div class="flex items-center mb-4">
+              <span
+                class="material-icons text-primary-500 dark:text-primary-400 text-3xl mr-3"
+                >smart_button</span
+              >
+              <h3
+                class="text-xl font-semibold text-gray-800 dark:text-gray-200"
+              >
+                نظرة عامة
+              </h3>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              أزرار بتصميم Material مع تأثيرات حركية عند التفاعل. تدعم عدة أنماط
+              وأحجام.
+            </p>
+            <h4 class="font-medium mb-2 text-gray-800 dark:text-gray-100">
+              خصائص مهمة:
+            </h4>
+            <ul
+              class="list-disc pr-5 space-y-1 text-gray-700 dark:text-gray-300 text-sm"
+            >
+              <li>
+                <strong>variant</strong>: نمط الزر (text, contained, outlined)
+              </li>
+              <li>
+                <strong>color</strong>: لون الزر (primary, secondary, error,
+                ...)
+              </li>
+              <li><strong>size</strong>: حجم الزر (small, medium, large)</li>
+              <li><strong>startIcon/endIcon</strong>: إضافة أيقونة</li>
+              <li><strong>disabled</strong>: تعطيل الزر</li>
+            </ul>
+            <div class="mt-4 flex flex-wrap gap-3">
+              <button
+                class="px-4 py-2 bg-primary-500 text-white rounded hover:bg-primary-600 transition"
+              >
+                Contained
+              </button>
+              <button
+                class="px-4 py-2 border border-primary-500 text-primary-500 rounded hover:bg-primary-50 transition"
+              >
+                Outlined
+              </button>
+              <button
+                class="px-4 py-2 text-primary-500 rounded hover:bg-primary-50 transition"
+              >
+                Text
+              </button>
+            </div>
+          </div>
+          <div
+            class="bg-gray-800 rounded-xl p-4 overflow-x-auto border border-gray-700"
+          >
+            <h3 class="text-xl font-semibold mb-4 text-white">
+              مثال على الاستخدام
+            </h3>
+            <pre class="text-green-400 font-mono text-sm ltr-dir">
+<code>
+import Button from '@mui/material/Button';
+import SendIcon from '@mui/icons-material/Send';
+
+&lt;Button variant="contained" color="primary"&gt;
+  زر عادي
+&lt;/Button&gt;
+
+&lt;Button variant="outlined" startIcon=&lt;SendIcon /&gt;&gt;
+  زر مع أيقونة
+&lt;/Button&gt;
+</code>
+        </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section
+      id="slide-textfield"
+      class="slide flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6"
+    >
+      <div class="slide-content max-w-4xl mx-auto">
+        <h2
+          class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400"
+        >
+          مكون TextField في MUI
+        </h2>
+        <div class="grid md:grid-cols-2 gap-6 mb-8 rtl-dir">
+          <div
+            class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
+          >
+            <div class="flex items-center mb-4">
+              <span
+                class="material-icons text-primary-500 dark:text-primary-400 text-3xl mr-3"
+                >input</span
+              >
+              <h3
+                class="text-xl font-semibold text-gray-800 dark:text-gray-200"
+              >
+                نظرة عامة
+              </h3>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              حقل إدخال نصي متكامل مع تسمية ونص مساعد ورسائل خطأ وتأثيرات حركية.
+            </p>
+            <h4 class="font-medium mb-2 text-gray-800 dark:text-gray-100">
+              خصائص مهمة:
+            </h4>
+            <ul
+              class="list-disc pr-5 space-y-1 text-gray-700 dark:text-gray-300 text-sm"
+            >
+              <li><strong>label</strong>: تسمية الحقل</li>
+              <li>
+                <strong>variant</strong>: نمط الحقل (standard, filled, outlined)
+              </li>
+              <li><strong>helperText</strong>: نص مساعد أسفل الحقل</li>
+              <li><strong>error</strong>: وضع الخطأ</li>
+              <li><strong>multiline</strong>: حقل متعدد الأسطر</li>
+              <li>
+                <strong>type</strong>: نوع الإدخال (text, password, number, ...)
+              </li>
+            </ul>
+            <div class="mt-4 space-y-4">
+              <div class="relative">
+                <label class="block text-sm font-medium mb-1"
+                  >اسم المستخدم</label
+                >
+                <input
+                  type="text"
+                  class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-800"
+                />
+              </div>
+              <div class="relative">
+                <label class="block text-sm font-medium mb-1"
+                  >كلمة المرور</label
+                >
+                <input
+                  type="password"
+                  class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-800"
+                />
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  يجب أن تحتوي على 8 أحرف على الأقل
+                </p>
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-gray-800 rounded-xl p-4 overflow-x-auto border border-gray-700"
+          >
+            <h3 class="text-xl font-semibold mb-4 text-white">
+              مثال على الاستخدام
+            </h3>
+            <pre class="text-green-400 font-mono text-sm ltr-dir">
+<code>
+import TextField from '@mui/material/TextField';
+
+&lt;TextField
+  label="اسم المستخدم"
+  variant="outlined"
+  fullWidth
+  margin="normal"
+/&gt;
+
+&lt;TextField
+  label="كلمة المرور"
+  type="password"
+  error={true}
+  helperText="كلمة المرور غير صحيحة"
+/&gt;
+</code>
+        </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- MUI Form Example -->
+    <section
+      id="slide-mui-form"
+      class="slide flex items-center justify-center bg-white dark:bg-gray-900 p-8 min-h-screen"
+    >
+      <div
+        class="slide-content max-w-4xl mx-auto text-gray-800 dark:text-gray-100 space-y-8"
+      >
+        <!-- العنوان -->
+        <h2
+          class="text-3xl md:text-4xl font-bold text-center text-blue-700 dark:text-blue-400"
+        >
+          📝 نموذج تسجيل دخول باستخدام MUI
+        </h2>
+
+        <!-- الوصف -->
+        <p class="text-lg text-center">
+          هذا مثال عملي على استخدام مكون <code>TextField</code> و
+          <code>Button</code> من MUI لبناء نموذج بسيط يحتوي على معالجة حالة
+          الأخطاء.
+        </p>
+
+        <!-- المثال الكامل -->
+        <div
+          class="bg-gray-800 p-6 rounded-lg text-sm text-green-100 font-mono overflow-x-auto"
+        >
+          <pre
+            class="bg-gray-900 text-green-100 rounded p-4 text-sm overflow-x-auto"
+          >
+<code>
+import &#123; useState &#125; from 'react';
+import &#123; TextField, Button, Box &#125; from '@mui/material';
+
+function LoginForm() &#123;
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(false);
+
+  const handleSubmit = (e) =&gt; &#123;
+    e.preventDefault();
+    if (password.length &lt; 8) &#123;
+      setError(true);
+    &#125; else &#123;
+      setError(false);
+      alert('تم تسجيل الدخول!');
+    &#125;
+  &#125;;
+
+  return (
+    &lt;Box component="form" onSubmit=&#123;handleSubmit&#125; sx=&#123;&#123; maxWidth: 400, mx: 'auto' &#125;&#125;&gt;
+      &lt;TextField
+        label="اسم المستخدم"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        value=&#123;username&#125;
+        onChange=&#123;(e) =&gt; setUsername(e.target.value)&#125;
+      /&gt;
+
+      &lt;TextField
+        label="كلمة المرور"
+        type="password"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+        error=&#123;error&#125;
+        helperText=&#123;error ? "كلمة المرور يجب أن تكون 8 أحرف على الأقل" : ""&#125;
+        value=&#123;password&#125;
+        onChange=&#123;(e) =&gt; setPassword(e.target.value)&#125;
+      /&gt;
+
+      &lt;Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        fullWidth
+        sx=&#123;&#123; mt: 2 &#125;&#125;
+      &gt;
+        تسجيل الدخول
+      &lt;/Button&gt;
+    &lt;/Box&gt;
+  );
+&#125;
+
+export default LoginForm;
+</code>
+</pre>
+        </div>
+
+        <!-- الخلاصة -->
+        <div class="text-center mt-6">
+          <p class="text-lg font-semibold">
+            ✅ باستخدام مكونات MUI، يمكنك بناء نماذج مرنة وسهلة التحكم في المظهر
+            والسلوك في وقت قصير جدًا.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="slide-card"
+      class="slide flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6"
+    >
+      <div class="slide-content max-w-4xl mx-auto">
+        <h2
+          class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400"
+        >
+          مكون Card في MUI
+        </h2>
+        <div class="grid md:grid-cols-2 gap-6 mb-8 rtl-dir">
+          <div
+            class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
+          >
+            <div class="flex items-center mb-4">
+              <span
+                class="material-icons text-primary-500 dark:text-primary-400 text-3xl mr-3"
+                >credit_card</span
+              >
+              <h3
+                class="text-xl font-semibold text-gray-800 dark:text-gray-200"
+              >
+                نظرة عامة
+              </h3>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              بطاقة لعرض المحتوى بشكل منظم مع إمكانية إضافة صورة وعنوان ومحتوى
+              وأزرار.
+            </p>
+            <h4 class="font-medium mb-2 text-gray-800 dark:text-gray-100">
+              خصائص مهمة:
+            </h4>
+            <ul
+              class="list-disc pr-5 space-y-1 text-gray-700 dark:text-gray-300 text-sm"
+            >
+              <li>CardHeader: عنوان البطاقة مع أيقونة</li>
+              <li>CardMedia: صورة أو فيديو</li>
+              <li>CardContent: المحتوى الرئيسي</li>
+              <li>CardActions: أزرار وأفعال</li>
+              <li>elevation: مستوى الظل (0-24)</li>
+            </ul>
+
+            <div class="mt-4 max-w-sm">
+              <div
+                class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-200 dark:border-gray-700"
+              >
+                <img
+                  src="https://mui.com/static/images/cards/contemplative-reptile.jpg"
+                  alt="Card Image"
+                  class="w-full h-40 object-cover"
+                />
+                <div class="p-4">
+                  <h4 class="font-bold text-lg mb-2">عنوان البطاقة</h4>
+                  <p class="text-gray-700 dark:text-gray-300 text-sm">
+                    هذا مثال لمحتوى البطاقة يمكن أن يحتوي على نص وصور.
+                  </p>
+                </div>
+                <div
+                  class="px-4 py-2 bg-gray-50 dark:bg-gray-700 flex justify-end"
+                >
+                  <button
+                    class="text-primary-500 dark:text-primary-400 text-sm font-medium"
+                  >
+                    مشاركة
+                  </button>
+                  <button
+                    class="text-primary-500 dark:text-primary-400 text-sm font-medium mr-3"
+                  >
+                    عرض
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-gray-800 rounded-xl p-4 overflow-x-auto border border-gray-700"
+          >
+            <h3 class="text-xl font-semibold mb-4 text-white">
+              مثال على الاستخدام
+            </h3>
+            <pre class="text-green-400 font-mono text-sm ltr-dir">
+          <code>
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import CardMedia from '@mui/material/CardMedia';
+import CardContent from '@mui/material/CardContent';
+import CardActions from '@mui/material/CardActions';
+
+&lt;Card sx={{ maxWidth: 345 }}&gt;
+  &lt;CardHeader title="عنوان البطاقة" /&gt;
+  &lt;CardMedia component="img" height="140" image="/image.jpg" /&gt;
+  &lt;CardContent&gt;
+    &lt;Typography variant="body2"&gt;
+      محتوى البطاقة هنا...
+    &lt;/Typography&gt;
+  &lt;/CardContent&gt;
+  &lt;CardActions&gt;
+    &lt;Button size="small"&gt;مشاركة&lt;/Button&gt;
+  &lt;/CardActions&gt;
+&lt;/Card&gt;
+          </code>
+        </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="slide-icon"
+      class="slide flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6"
+    >
+      <div class="slide-content max-w-4xl mx-auto">
+        <h2
+          class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400"
+        >
+          مكون Icon في MUI
+        </h2>
+        <div class="grid md:grid-cols-2 gap-6 mb-8 rtl-dir">
+          <div
+            class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
+          >
+            <div class="flex items-center mb-4">
+              <span
+                class="material-icons text-primary-500 dark:text-primary-400 text-3xl mr-3"
+                >star</span
+              >
+              <h3
+                class="text-xl font-semibold text-gray-800 dark:text-gray-200"
+              >
+                نظرة عامة
+              </h3>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              الأيقونات هي عناصر مرئية صغيرة تمثل إجراءات أو محتوى. في MUI،
+              تستخدم مكتبة Material Icons الشهيرة.
+            </p>
+            <h4 class="font-medium mb-2 text-gray-800 dark:text-gray-100">
+              خصائص مهمة:
+            </h4>
+            <ul
+              class="list-disc pr-5 space-y-1 text-gray-700 dark:text-gray-300 text-sm"
+            >
+              <li>color: لون الأيقونة (primary, secondary, action, etc.)</li>
+              <li>fontSize: حجم الأيقونة (small, medium, large, inherit)</li>
+              <li>يمكن استخدام أيقونات مخصصة</li>
+              <li>دعم كامل للوضع الداكن</li>
+            </ul>
+            <div
+              class="mt-4 p-4 bg-white dark:bg-gray-700 rounded-lg flex flex-wrap gap-4"
+            >
+              <span class="material-icons text-primary-500 text-3xl"
+                >favorite</span
+              >
+              <span class="material-icons text-secondary-500 text-3xl"
+                >home</span
+              >
+              <span class="material-icons text-green-500 text-3xl"
+                >check_circle</span
+              >
+              <span class="material-icons text-yellow-500 text-3xl"
+                >warning</span
+              >
+            </div>
+          </div>
+          <div
+            class="bg-gray-800 rounded-xl p-4 overflow-x-auto border border-gray-700"
+          >
+            <h3 class="text-xl font-semibold mb-4 text-white">
+              مثال على الاستخدام
+            </h3>
+            <pre class="text-green-400 font-mono text-sm ltr-dir">
+          <code>
+import Icon from '@mui/material/Icon';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+
+// أيقونة نصية
+&lt;Icon&gt;star&lt;/Icon&gt;
+
+// أيقونة كمكون
+&lt;FavoriteIcon color="primary" fontSize="large" /&gt;
+          </code>
+        </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="slide-iconbutton"
+      class="slide flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6"
+    >
+      <div class="slide-content max-w-4xl mx-auto">
+        <h2
+          class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400"
+        >
+          مكون IconButton في MUI
+        </h2>
+        <div class="grid md:grid-cols-2 gap-6 mb-8 rtl-dir">
+          <div
+            class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
+          >
+            <div class="flex items-center mb-4">
+              <span
+                class="material-icons text-primary-500 dark:text-primary-400 text-3xl mr-3"
+                >touch_app</span
+              >
+              <h3
+                class="text-xl font-semibold text-gray-800 dark:text-gray-200"
+              >
+                نظرة عامة
+              </h3>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              زر أيقونة مع تأثيرات حركية عند التفاعل. مثالي للأزرار التي تحتوي
+              على أيقونة فقط.
+            </p>
+            <h4 class="font-medium mb-2 text-gray-800 dark:text-gray-100">
+              خصائص مهمة:
+            </h4>
+            <ul
+              class="list-disc pr-5 space-y-1 text-gray-700 dark:text-gray-300 text-sm"
+            >
+              <li>color: لون الأيقونة (default, primary, secondary)</li>
+              <li>size: حجم الزر (small, medium, large)</li>
+              <li>disabled: تعطيل الزر</li>
+              <li>edge: تحديد الجانب الذي يجب أن يكون له هامش (start, end)</li>
+
+              <div
+                class="mt-4 p-4 bg-white dark:bg-gray-700 rounded-lg flex flex-wrap gap-4"
+              >
+                <button
+                  class="w-12 h-12 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500"
+                >
+                  <span class="material-icons text-gray-600 dark:text-gray-300"
+                    >favorite</span
+                  >
+                </button>
+                <button
+                  class="w-12 h-12 rounded-full flex items-center justify-center bg-primary-100 hover:bg-primary-200"
+                >
+                  <span class="material-icons text-primary-600">share</span>
+                </button>
+                <button
+                  class="w-12 h-12 rounded-full flex items-center justify-center bg-secondary-100 hover:bg-secondary-200"
+                >
+                  <span class="material-icons text-secondary-600"
+                    >settings</span
+                  >
+                </button>
+              </div>
+            </ul>
+          </div>
+          <div
+            class="bg-gray-800 rounded-xl p-4 overflow-x-auto border border-gray-700"
+          >
+            <h3 class="text-xl font-semibold mb-4 text-white">
+              مثال على الاستخدام
+            </h3>
+            <pre class="text-green-400 font-mono text-sm ltr-dir">
+          <code>
+import IconButton from '@mui/material/IconButton';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+
+&lt;IconButton color="primary"&gt;
+  &lt;FavoriteIcon /&gt;
+&lt;/IconButton&gt;
+
+&lt;IconButton color="secondary" size="large"&gt;
+  &lt;SettingsIcon /&gt;
+&lt;/IconButton&gt;
+          </code>
+        </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="slide-appbar"
+      class="slide flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6"
+    >
+      <div class="slide-content max-w-4xl mx-auto">
+        <h2
+          class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400"
+        >
+          مكون AppBar في MUI
+        </h2>
+        <div class="grid md:grid-cols-2 gap-6 mb-8 rtl-dir">
+          <div
+            class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
+          >
+            <div class="flex items-center mb-4">
+              <span
+                class="material-icons text-primary-500 dark:text-primary-400 text-3xl mr-3"
+                >web_asset</span
+              >
+              <h3
+                class="text-xl font-semibold text-gray-800 dark:text-gray-200"
+              >
+                نظرة عامة
+              </h3>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              شريط التطبيق العلوي الذي يحتوي عادةً على عنوان وأزرار تنقل
+              وإجراءات أخرى.
+            </p>
+            <h4 class="font-medium mb-2 text-gray-800 dark:text-gray-100">
+              خصائص مهمة:
+            </h4>
+            <ul
+              class="list-disc pr-5 space-y-1 text-gray-700 dark:text-gray-300 text-sm"
+            >
+              <li>position: موضع الشريط (fixed, absolute, sticky, static)</li>
+              <li>color: لون الخلفية (default, primary, secondary, inherit)</li>
+              <li>elevation: مستوى الظل (0-24)</li>
+              <li>enableColorOnDark: تمكين الألوان في الوضع الداكن</li>
+            </ul>
+
+            <div
+              class="mt-4 p-4 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600"
+            >
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <button
+                    class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-600"
+                  >
+                    <span class="material-icons">menu</span>
+                  </button>
+                  <span class="font-bold">اسم التطبيق</span>
+                </div>
+                <div class="flex gap-2">
+                  <button
+                    class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-600"
+                  >
+                    <span class="material-icons">search</span>
+                  </button>
+                  <button
+                    class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-600"
+                  >
+                    <span class="material-icons">more_vert</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-gray-800 rounded-xl p-4 overflow-x-auto border border-gray-700"
+          >
+            <h3 class="text-xl font-semibold mb-4 text-white">
+              مثال على الاستخدام
+            </h3>
+            <pre class="text-green-400 font-mono text-sm ltr-dir">
+          <code>
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+
+&lt;AppBar position="static"&gt;
+  &lt;Toolbar&gt;
+    &lt;IconButton edge="start"&gt;
+      &lt;MenuIcon /&gt;
+    &lt;/IconButton&gt;
+    &lt;Typography variant="h6"&gt;
+      اسم التطبيق
+    &lt;/Typography&gt;
+    &lt;div style={{ flexGrow: 1 }} /&gt;
+    &lt;IconButton color="inherit"&gt;
+      &lt;SearchIcon /&gt;
+    &lt;/IconButton&gt;
+  &lt;/Toolbar&gt;
+&lt;/AppBar&gt;
+          </code>
+        </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="slide-toolbar"
+      class="slide flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6"
+    >
+      <div class="slide-content max-w-4xl mx-auto">
+        <h2
+          class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400"
+        >
+          مكون Toolbar في MUI
+        </h2>
+        <div class="grid md:grid-cols-2 gap-6 mb-8 rtl-dir">
+          <div
+            class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
+          >
+            <div class="flex items-center mb-4">
+              <span
+                class="material-icons text-primary-500 dark:text-primary-400 text-3xl mr-3"
+                >space_bar</span
+              >
+              <h3
+                class="text-xl font-semibold text-gray-800 dark:text-gray-200"
+              >
+                نظرة عامة
+              </h3>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              حاوية لمجموعة من عناصر التحكم في AppBar. يوفر محاذاة وتنسيقًا
+              مناسبًا للعناصر.
+            </p>
+            <h4 class="font-medium mb-2 text-gray-800 dark:text-gray-100">
+              خصائص مهمة:
+            </h4>
+            <ul
+              class="list-disc pr-5 space-y-1 text-gray-700 dark:text-gray-300 text-sm"
+            >
+              <li>variant: نوع التنسيق (regular, dense)</li>
+              <li>disableGutters: إزالة الهوامش الجانبية</li>
+              <li>يستخدم عادة داخل AppBar</li>
+              <li>يدعم اتجاه RTL تلقائيًا</li>
+            </ul>
+          </div>
+          <div
+            class="bg-gray-800 rounded-xl p-4 overflow-x-auto border border-gray-700"
+          >
+            <h3 class="text-xl font-semibold mb-4 text-white">
+              مثال على الاستخدام
+            </h3>
+            <pre class="text-green-400 font-mono text-sm ltr-dir">
+          <code>
+import Toolbar from '@mui/material/Toolbar';
+
+&lt;Toolbar&gt;
+  &lt;IconButton edge="start"&gt;
+    &lt;MenuIcon /&gt;
+  &lt;/IconButton&gt;
+  &lt;Typography variant="h6"&gt;
+    العنوان
+  &lt;/Typography&gt;
+  &lt;div style={{ flexGrow: 1 }} /&gt;
+  &lt;IconButton&gt;
+    &lt;SearchIcon /&gt;
+  &lt;/IconButton&gt;
+&lt;/Toolbar&gt;
+          </code>
+        </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="slide-badge"
+      class="slide flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6"
+    >
+      <div class="slide-content max-w-4xl mx-auto">
+        <h2
+          class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400"
+        >
+          مكون Badge في MUI
+        </h2>
+        <div class="grid md:grid-cols-2 gap-6 mb-8 rtl-dir">
+          <div
+            class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
+          >
+            <div class="flex items-center mb-4">
+              <span
+                class="material-icons text-primary-500 dark:text-primary-400 text-3xl mr-3"
+                >notifications</span
+              >
+              <h3
+                class="text-xl font-semibold text-gray-800 dark:text-gray-200"
+              >
+                نظرة عامة
+              </h3>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              إشعار صغير يظهر على الزاوية العلوية لمكون آخر (عادةً أيقونة)
+              للإشارة إلى عدد جديد.
+            </p>
+            <h4 class="font-medium mb-2 text-gray-800 dark:text-gray-100">
+              خصائص مهمة:
+            </h4>
+            <ul
+              class="list-disc pr-5 space-y-1 text-gray-700 dark:text-gray-300 text-sm"
+            >
+              <li>badgeContent: المحتوى داخل البادج (عدد أو نص)</li>
+              <li>color: لون البادج (default, primary, secondary, error)</li>
+              <li>max: الحد الأقصى للقيمة المعروضة</li>
+              <li>invisible: إخفاء البادج</li>
+              <li>variant: نوع البادج (standard, dot)</li>
+            </ul>
+            <div
+              class="mt-4 p-4 bg-white dark:bg-gray-700 rounded-lg flex flex-wrap gap-6"
+            >
+              <div class="mui-badge">
+                <span
+                  class="material-icons text-3xl text-gray-600 dark:text-gray-300"
+                  >mail</span
+                >
+                <span class="mui-badge-content bg-primary-500 text-white"
+                  >4</span
+                >
+              </div>
+              <div class="mui-badge">
+                <span
+                  class="material-icons text-3xl text-gray-600 dark:text-gray-300"
+                  >shopping_cart</span
+                >
+                <span class="mui-badge-content bg-secondary-500 text-white"
+                  >12</span
+                >
+              </div>
+              <div class="mui-badge">
+                <span
+                  class="material-icons text-3xl text-gray-600 dark:text-gray-300"
+                  >notifications</span
+                >
+                <span class="mui-badge-content bg-red-500 text-white">99+</span>
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-gray-800 rounded-xl p-4 overflow-x-auto border border-gray-700"
+          >
+            <h3 class="text-xl font-semibold mb-4 text-white">
+              مثال على الاستخدام
+            </h3>
+            <pre class="text-green-400 font-mono text-sm ltr-dir">
+          <code>
+import Badge from '@mui/material/Badge';
+import MailIcon from '@mui/icons-material/Mail';
+
+&lt;Badge badgeContent={4} color="primary"&gt;
+  &lt;MailIcon /&gt;
+&lt;/Badge&gt;
+
+&lt;Badge badgeContent={99} color="secondary" max={99}&gt;
+  &lt;NotificationsIcon /&gt;
+&lt;/Badge&gt;
+          </code>
+        </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="slide-avatar"
+      class="slide flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6"
+    >
+      <div class="slide-content max-w-4xl mx-auto">
+        <h2
+          class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400"
+        >
+          مكون Avatar في MUI
+        </h2>
+        <div class="grid md:grid-cols-2 gap-6 mb-8 rtl-dir">
+          <div
+            class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
+          >
+            <div class="flex items-center mb-4">
+              <span
+                class="material-icons text-primary-500 dark:text-primary-400 text-3xl mr-3"
+                >account_circle</span
+              >
+              <h3
+                class="text-xl font-semibold text-gray-800 dark:text-gray-200"
+              >
+                نظرة عامة
+              </h3>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              صورة مستديرة تمثل المستخدم. يمكن أن تحتوي على صورة أو أحرف أو
+              أيقونة.
+            </p>
+            <h4 class="font-medium mb-2 text-gray-800 dark:text-gray-100">
+              خصائص مهمة:
+            </h4>
+            <ul
+              class="list-disc pr-5 space-y-1 text-gray-700 dark:text-gray-300 text-sm"
+            >
+              <li>src: مصدر صورة المستخدم</li>
+              <li>alt: نص بديل للصورة</li>
+              <li>children: أحرف أو أيقونة بديلة</li>
+              <li>sizes: حجم الصورة (small, medium, large)</li>
+              <li>variant: شكل الصورة (circular, rounded, square)</li>
+            </ul>
+
+            <div
+              class="mt-4 p-4 bg-white dark:bg-gray-700 rounded-lg flex flex-wrap gap-6"
+            >
+              <div
+                class="w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-bold text-xl"
+              >
+                م ح
+              </div>
+              <div
+                class="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center"
+              >
+                <span class="material-icons text-gray-600 text-3xl"
+                  >person</span
+                >
+              </div>
+              <div
+                class="w-16 h-16 rounded-full bg-gray-300 border-2 border-dashed"
+              ></div>
+            </div>
+          </div>
+          <div
+            class="bg-gray-800 rounded-xl p-4 overflow-x-auto border border-gray-700"
+          >
+            <h3 class="text-xl font-semibold mb-4 text-white">
+              مثال على الاستخدام
+            </h3>
+            <pre class="text-green-400 font-mono text-sm ltr-dir">
+          <code>
+import Avatar from '@mui/material/Avatar';
+
+// صورة المستخدم
+&lt;Avatar alt="John Doe" src="/path/to/image.jpg" /&gt;
+
+// أحرف بديلة
+&lt;Avatar&gt;JD&lt;/Avatar&gt;
+
+// أيقونة بديلة
+&lt;Avatar&gt;&lt;PersonIcon /&gt;&lt;/Avatar&gt;
+          </code>
+        </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="slide-menu"
+      class="slide flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6"
+    >
+      <div class="slide-content max-w-4xl mx-auto">
+        <h2
+          class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400"
+        >
+          مكون Menu في MUI
+        </h2>
+        <div class="grid md:grid-cols-2 gap-6 mb-8 rtl-dir">
+          <div
+            class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
+          >
+            <div class="flex items-center mb-4">
+              <span
+                class="material-icons text-primary-500 dark:text-primary-400 text-3xl mr-3"
+                >menu</span
+              >
+              <h3
+                class="text-xl font-semibold text-gray-800 dark:text-gray-200"
+              >
+                نظرة عامة
+              </h3>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              قائمة منبثقة تحتوي على قائمة من الخيارات. يتم تنشيطها عادةً عند
+              النقر على زر.
+            </p>
+            <h4 class="font-medium mb-2 text-gray-800 dark:text-gray-100">
+              خصائص مهمة:
+            </h4>
+            <ul
+              class="list-disc pr-5 space-y-1 text-gray-700 dark:text-gray-300 text-sm"
+            >
+              <li>anchorEl: العنصر الذي يتم تثبيت القائمة به</li>
+              <li>open: حالة فتح/إغلاق القائمة</li>
+              <li>onClose: دالة عند إغلاق القائمة</li>
+              <li>anchorOrigin: نقطة تثبيت القائمة</li>
+              <li>transformOrigin: نقطة تحويل القائمة</li>
+            </ul>
+
+            <div
+              class="mt-4 p-4 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600"
+            >
+              <div class="relative">
+                <button
+                  class="px-4 py-2 bg-gray-100 dark:bg-gray-600 rounded-lg font-medium"
+                >
+                  فتح القائمة
+                </button>
+                <div
+                  class="absolute top-full mt-1 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden z-10"
+                >
+                  <div class="py-1">
+                    <div
+                      class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                    >
+                      الخيار الأول
+                    </div>
+                    <div
+                      class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                    >
+                      الخيار الثاني
+                    </div>
+                    <div
+                      class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                    >
+                      الخيار الثالث
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-gray-800 rounded-xl p-4 overflow-x-auto border border-gray-700"
+          >
+            <h3 class="text-xl font-semibold mb-4 text-white">
+              مثال على الاستخدام
+            </h3>
+            <pre class="text-green-400 font-mono text-sm ltr-dir">
+          <code>
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+
+const [anchorEl, setAnchorEl] = useState(null);
+
+const handleClick = (event) => {
+  setAnchorEl(event.currentTarget);
+};
+
+const handleClose = () => {
+  setAnchorEl(null);
+};
+
+&lt;Button onClick={handleClick}&gt;فتح القائمة&lt;/Button&gt;
+&lt;Menu
+  anchorEl={anchorEl}
+  open={Boolean(anchorEl)}
+  onClose={handleClose}
+&gt;
+  &lt;MenuItem onClick={handleClose}&gt;الخيار الأول&lt;/MenuItem&gt;
+  &lt;MenuItem onClick={handleClose}&gt;الخيار الثاني&lt;/MenuItem&gt;
+&lt;/Menu&gt;
+          </code>
+        </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="slide-container"
+      class="slide flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6"
+    >
+      <div class="slide-content max-w-4xl mx-auto">
+        <h2
+          class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400"
+        >
+          مكون Container في MUI
+        </h2>
+        <div class="grid md:grid-cols-2 gap-6 mb-8 rtl-dir">
+          <div
+            class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
+          >
+            <div class="flex items-center mb-4">
+              <span
+                class="material-icons text-primary-500 dark:text-primary-400 text-3xl mr-3"
+                >view_compact</span
+              >
+              <h3
+                class="text-xl font-semibold text-gray-800 dark:text-gray-200"
+              >
+                نظرة عامة
+              </h3>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              حاوية مركزية تحدد العرض الأقصى للمحتوى حسب حجم الشاشة. يساعد في
+              تنسيق المحتوى على أجهزة مختلفة.
+            </p>
+            <h4 class="font-medium mb-2 text-gray-800 dark:text-gray-100">
+              خصائص مهمة:
+            </h4>
+            <ul
+              class="list-disc pr-5 space-y-1 text-gray-700 dark:text-gray-300 text-sm"
+            >
+              <li>maxWidth: العرض الأقصى (xs, sm, md, lg, xl, false)</li>
+              <li>fixed: حاوية بعرض ثابت على الشاشات الكبيرة</li>
+              <li>disableGutters: إزالة الهوامش الجانبية</li>
+              <li>يدعم جميع أحجام الشاشات بشكل متجاوب</li>
+            </ul>
+          </div>
+          <div
+            class="bg-gray-800 rounded-xl p-4 overflow-x-auto border border-gray-700"
+          >
+            <h3 class="text-xl font-semibold mb-4 text-white">
+              مثال على الاستخدام
+            </h3>
+            <pre class="text-green-400 font-mono text-sm ltr-dir">
+          <code>
+import Container from '@mui/material/Container';
+
+&lt;Container maxWidth="md"&gt;
+  &lt;!-- محتوى التطبيق هنا --&gt;
+&lt;/Container&gt;
+
+&lt;Container fixed&gt;
+  &lt;!-- محتوى بعرض ثابت --&gt;
+&lt;/Container&gt;
+          </code>
+        </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="slide-box"
+      class="slide flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6"
+    >
+      <div class="slide-content max-w-4xl mx-auto">
+        <h2
+          class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400"
+        >
+          مكون Box في MUI
+        </h2>
+        <div class="grid md:grid-cols-2 gap-6 mb-8 rtl-dir">
+          <div
+            class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
+          >
+            <div class="flex items-center mb-4">
+              <span
+                class="material-icons text-primary-500 dark:text-primary-400 text-3xl mr-3"
+                >crop_square</span
+              >
+              <h3
+                class="text-xl font-semibold text-gray-800 dark:text-gray-200"
+              >
+                نظرة عامة
+              </h3>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              حاوية عامة مع دعم لخصائص CSS عبر نظام MUI. يعادل div مع خصائص
+              إضافية وأداة قوية للتصميم.
+            </p>
+            <h4 class="font-medium mb-2 text-gray-800 dark:text-gray-100">
+              خصائص مهمة:
+            </h4>
+            <ul
+              class="list-disc pr-5 space-y-1 text-gray-700 dark:text-gray-300 text-sm"
+            >
+              <li>sx: خاصية لكتابة أنماط مخصصة باستخدام نظام MUI</li>
+              <li>component: نوع العنصر المستخدم (div, span, section, etc.)</li>
+              <li>يدعم جميع خصائص نظام التصميم في MUI</li>
+              <li>مرن للغاية وقابل للتخصيص</li>
+            </ul>
+
+            <div
+              class="mt-4 p-4 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600"
+            >
+              <div
+                class="w-full p-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-center rounded-lg shadow-md"
+              >
+                هذا مثال لمربع باستخدام Box
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-gray-800 rounded-xl p-4 overflow-x-auto border border-gray-700"
+          >
+            <h3 class="text-xl font-semibold mb-4 text-white">
+              مثال على الاستخدام
+            </h3>
+            <pre class="text-green-400 font-mono text-sm ltr-dir">
+          <code>
+import Box from '@mui/material/Box';
+
+&lt;Box 
+  sx={{
+    width: 300,
+    p: 2,
+    bgcolor: 'primary.main',
+    color: 'white',
+    borderRadius: 1,
+    boxShadow: 3,
+  }}
+&gt;
+  محتوى داخل Box
+&lt;/Box&gt;
+          </code>
+        </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="slide-grid"
+      class="slide flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6"
+    >
+      <div class="slide-content max-w-4xl mx-auto">
+        <h2
+          class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400"
+        >
+          مكون Grid في MUI
+        </h2>
+
+        <h3 class="text-lg text-gray-600 dark:text-gray-400 mb-4">
+          <br />
+          زور الموقع الرسمي لمزيد من المعلومات:
+          <a
+            href="https://mui.com/material-ui/react-grid/"
+            class="text-blue-500 hover:underline"
+            >Grid Documentation</a
+          >
+        </h3>
+        <div class="grid md:grid-cols-2 gap-6 mb-8 rtl-dir">
+          <div
+            class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
+          >
+            <div class="flex items-center mb-4">
+              <span
+                class="material-icons text-primary-500 dark:text-primary-400 text-3xl mr-3"
+                >grid_on</span
+              >
+              <h3
+                class="text-xl font-semibold text-gray-800 dark:text-gray-200"
+              >
+                نظرة عامة
+              </h3>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              نظام شبكي متجاوب يعتمد على CSS Flexbox. يقسم الصف إلى 12 عمودًا
+              ويوفر تخطيطًا مرنًا.
+            </p>
+            <h4 class="font-medium mb-2 text-gray-800 dark:text-gray-100">
+              خصائص مهمة:
+            </h4>
+            <ul
+              class="list-disc pr-5 space-y-1 text-gray-700 dark:text-gray-300 text-sm"
+            >
+              <li>container: تعريف حاوية الشبكة</li>
+              <li>item: تعريف عنصر داخل الشبكة</li>
+              <li>xs/sm/md/lg/xl: حجم العنصر على أحجام شاشات مختلفة</li>
+              <li>spacing: المسافة بين العناصر</li>
+              <li>
+                direction: اتجاه العناصر (row, row-reverse, column,
+                column-reverse)
+              </li>
+            </ul>
+
+            <div class="mt-4 text-gray-800 dark:text-gray-200">
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-blue-100 p-4 rounded text-center">1</div>
+                <div class="bg-blue-100 p-4 rounded text-center">2</div>
+                <div class="bg-blue-100 p-4 rounded text-center">3</div>
+                <div class="bg-blue-100 p-4 rounded text-center">4</div>
+              </div>
+            </div>
+
+            <div class="mt-4 text-gray-600 dark:text-gray-400">
+              ملاحظه مهمه ابحث ماهو ال grid legacy في الاصدارات القديمه
+              <br />
+              <a
+                target="_blank
+          "
+                href="https://mui.com/material-ui/react-grid-legacy/"
+                class="text-blue-500 hover:underline"
+                >Grid Legacy Documentation</a
+              >
+            </div>
+          </div>
+          <div
+            class="bg-gray-800 rounded-xl p-4 overflow-x-auto border border-gray-700"
+          >
+            <h3 class="text-xl font-semibold mb-4 text-white">
+              مثال على الاستخدام
+            </h3>
+            <pre class="text-green-400 font-mono text-sm ltr-dir">
+      <code>
+&lt;Grid container spacing={2}&gt;
+  &lt;Grid size={{ xs: 6, md: 8 }}&gt;
+
+  ملاحظه ال Item هنا هو عنصر مخصص
+  يعني هو مش حاجه built-in في MUI
+  مجرد عنصر مخصص انظر المثال  
+  بالاسفل 
+
+    &lt;Item&gt;xs=6 md=8&lt;/Item&gt;
+  &lt;/Grid&gt;
+  &lt;Grid size={{ xs: 6, md: 4 }}&gt;
+    &lt;Item&gt;xs=6 md=4&lt;/Item&gt;
+  &lt;/Grid&gt;
+  &lt;Grid size={{ xs: 6, md: 4 }}&gt;
+    &lt;Item&gt;xs=6 md=4&lt;/Item&gt;
+  &lt;/Grid&gt;
+  &lt;Grid size={{ xs: 6, md: 8 }}&gt;
+    &lt;Item&gt;xs=6 md=8&lt;/Item&gt;
+  &lt;/Grid&gt;
+&lt;/Grid&gt;
+
+
+
+المثال ماهو ال Item
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'center',
+  color: (theme.vars ?? theme).palette.text.secondary,
+  ...theme.applyStyles('dark', {
+    backgroundColor: '#1A2027',
+  }),
+}));
+  </code>
+        </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="slide-stack"
+      class="slide flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6"
+    >
+      <div class="slide-content max-w-4xl mx-auto">
+        <h2
+          class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400"
+        >
+          مكون Stack في MUI
+        </h2>
+        <div class="grid md:grid-cols-2 gap-6 mb-8 rtl-dir">
+          <div
+            class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
+          >
+            <div class="flex items-center mb-4">
+              <span
+                class="material-icons text-primary-500 dark:text-primary-400 text-3xl mr-3"
+                >layers</span
+              >
+              <h3
+                class="text-xl font-semibold text-gray-800 dark:text-gray-200"
+              >
+                نظرة عامة
+              </h3>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              حاوية لترتيب العناصر رأسيًا أو أفقيًا مع تباعد متسق بينها. بديل
+              بسيط لـ Grid في بعض الحالات.
+            </p>
+            <h4 class="font-medium mb-2 text-gray-800 dark:text-gray-100">
+              خصائص مهمة:
+            </h4>
+            <ul
+              class="list-disc pr-5 space-y-1 text-gray-700 dark:text-gray-300 text-sm"
+            >
+              <li>direction: اتجاه العناصر (row, column)</li>
+              <li>spacing: المسافة بين العناصر (0-10)</li>
+              <li>divider: إضافة فاصل بين العناصر</li>
+              <li>justifyContent: محاذاة العناصر على المحور الرئيسي</li>
+              <li>alignItems: محاذاة العناصر على المحور المتعامد</li>
+            </ul>
+
+            <!-- Stack row: أزرار في صف -->
+            <div class="mt-4">
+              <div class="flex flex-row gap-2">
+                <button class="bg-blue-600 text-white px-4 py-2 rounded">
+                  زر 1
+                </button>
+                <button
+                  class="border border-blue-600 text-blue-600 px-4 py-2 rounded"
+                >
+                  زر 2
+                </button>
+              </div>
+            </div>
+
+            <!-- Stack column: عناصر رأسية -->
+            <div class="mt-6">
+              <div class="flex flex-col gap-3">
+                <div class="dark:bg-blue-400 bg-green-100 p-3 rounded">
+                  عنصر 1
+                </div>
+                <div class="dark:bg-blue-400 bg-green-100 p-3 rounded">
+                  عنصر 2
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-gray-800 rounded-xl p-4 overflow-x-auto border border-gray-700"
+          >
+            <h3 class="text-xl font-semibold mb-4 text-white">
+              مثال على الاستخدام
+            </h3>
+            <pre class="text-green-400 font-mono text-sm ltr-dir">
+          <code>
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+
+&lt;Stack direction="row" spacing={2}&gt;
+  &lt;Button variant="contained"&gt;زر 1&lt;/Button&gt;
+  &lt;Button variant="outlined"&gt;زر 2&lt;/Button&gt;
+&lt;/Stack&gt;
+
+&lt;Stack direction="column" spacing={3}&gt;
+  &lt;div&gt;عنصر 1&lt;/div&gt;
+  &lt;div&gt;عنصر 2&lt;/div&gt;
+&lt;/Stack&gt;
+          </code>
+        </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="slide-theme"
+      class="slide flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6"
+    >
+      <div class="slide-content max-w-4xl mx-auto">
+        <h2
+          class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400"
+        >
+          الثيم في MUI
+        </h2>
+        <div class="grid md:grid-cols-2 gap-6 mb-8 rtl-dir">
+          <div
+            class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
+          >
+            <div class="flex items-center mb-4">
+              <span
+                class="material-icons text-primary-500 dark:text-primary-400 text-3xl mr-3"
+                >palette</span
+              >
+              <h3
+                class="text-xl font-semibold text-gray-800 dark:text-gray-200"
+              >
+                الثيم الافتراضي
+              </h3>
+            </div>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              يوفر نظامًا متكاملًا للألوان، الطباعة، المسافات، والتكبير/التصغير.
+            </p>
+            <h4 class="font-medium mb-2 text-gray-800 dark:text-gray-100">
+              ميزات الثيم الافتراضي:
+            </h4>
+            <ul
+              class="list-disc pr-5 space-y-1 text-gray-700 dark:text-gray-300 text-sm"
+            >
+              <li>ألوان Material Design الأساسية</li>
+              <li>أنماط Typography محددة مسبقًا</li>
+              <li>مسافات (Spacing) بقيمة 8px كأساس</li>
+              <li>تكبير/تصغير (Breakpoints) متجاوب</li>
+              <li>ظلال (Shadows) محددة مسبقًا</li>
+            </ul>
+          </div>
+          <div
+            class="bg-gray-800 rounded-xl p-4 overflow-x-auto border border-gray-700"
+          >
+            <h3 class="text-xl font-semibold mb-4 text-white">تخصيص الثيم</h3>
+            <pre class="text-green-400 font-mono text-sm ltr-dir">
+          <code>
+import { createTheme } from '@mui/material/styles';
+
+const customTheme = createTheme({
+  palette: {
+    primary: { main: '#4a148c' },
+    secondary: { main: '#ff6f00' },
+  },
+  typography: {
+    fontFamily: 'Tajawal, Arial',
+    h1: { fontSize: '3rem', fontWeight: 700 },
+  },
+  direction: 'rtl', // للدعم العربي
+});
+
+// استخدام الثيم المخصص
+&lt;ThemeProvider theme={customTheme}&gt;
+  &lt;App /&gt;
+&lt;/ThemeProvider&gt;
+          </code>
+        </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final Slide -->
+    <section
+      class="slide flex items-center justify-center bg-gradient-to-br from-primary-600 to-secondary-700 p-6"
+    >
+      <div class="slide-content max-w-2xl mx-auto text-center text-white">
+        <h2 class="text-3xl md:text-4xl font-bold mb-6">شكرًا لك!</h2>
+        <p class="text-xl mb-8">
+          نأمل أن يكون هذا الشرح قد ساعدك في فهم أساسيات MUI الإصدار 7
+        </p>
+        <div class="flex justify-center space-x-4 rtl:space-x-reverse">
+          <a
+            href="#slide1"
+            class="px-6 py-3 bg-white text-primary-600 rounded-lg font-medium shadow-md hover:bg-gray-100 transition flex items-center"
+          >
+            <span class="material-icons mr-2">home</span>
+            العودة للبداية
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      // Theme toggle functionality
+      const themeToggle = document.getElementById("themeToggle");
+      const themeIcon = document.getElementById("themeIcon");
+
+      themeToggle.addEventListener("click", () => {
+        document.documentElement.classList.toggle("dark");
+
+        if (document.documentElement.classList.contains("dark")) {
+          themeIcon.textContent = "light_mode";
+          localStorage.setItem("theme", "dark");
+        } else {
+          themeIcon.textContent = "dark_mode";
+          localStorage.setItem("theme", "light");
+        }
+      });
+
+      // Check for saved theme preference
+      if (
+        localStorage.getItem("theme") === "dark" ||
+        (!localStorage.getItem("theme") &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches)
+      ) {
+        document.documentElement.classList.add("dark");
+        themeIcon.textContent = "light_mode";
+      } else {
+        document.documentElement.classList.remove("dark");
+        themeIcon.textContent = "dark_mode";
+      }
+
+      // Navigation arrows functionality
+const prevArrow = document.getElementById('prevSlide');
+const nextArrow = document.getElementById('nextSlide');
+const slides = document.querySelectorAll('.slide');
+
+let currentSlide = 0;
+
+function goToSlide(index) {
+  if (index < 0) index = 0;
+  if (index >= slides.length) index = slides.length - 1;
+  
+  slides[index].scrollIntoView({ behavior: 'smooth', block: 'start' });
+  currentSlide = index;
+}
+
+prevArrow.addEventListener('click', () => {
+  goToSlide(currentSlide - 1);
+});
+
+nextArrow.addEventListener('click', () => {
+  goToSlide(currentSlide + 1);
+});
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowLeft') {
+    goToSlide(currentSlide - 1);
+  } else if (e.key === 'ArrowRight') {
+    goToSlide(currentSlide + 1);
+  }
+});
+
+// Update current slide on scroll
+window.addEventListener('scroll', () => {
+  const scrollPosition = window.scrollY || window.pageYOffset;
+  
+  slides.forEach((slide, index) => {
+    const slideTop = slide.offsetTop;
+    const slideHeight = slide.offsetHeight;
+    
+    if (scrollPosition >= slideTop && scrollPosition < slideTop + slideHeight) {
+      currentSlide = index;
+    }
+  });
+});
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1934 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Layout - Day 2 | دورة تطوير الويب</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #02569b;
+            --primary-teal: #13b9fd;
+            --primary-dark: #042b59;
+            --primary-light: #e6f7ff;
+            --text-primary: #e2e8f0;
+            --text-secondary: #a0aec0;
+            --bg-light: #1a202c;
+            --bg-card: #2d3748;
+            --border-color: #4a5568;
+            --success: #38a169;
+            --warning: #dd6b20;
+            --danger: #e53e3e;
+            --progress-color: var(--primary-teal);
+            --slider-bg: #2d3748;
+        }
+
+        .light-mode {
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --bg-light: #f7fafc;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --slider-bg: #edf2f7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Tajawal", sans-serif;
+            line-height: 1.8;
+            color: var(--text-primary);
+            background-color: var(--bg-light);
+            direction: rtl;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        #slides-container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .slide {
+            min-width: 100%;
+            height: 100%;
+            padding: 30px 20px;
+            overflow-y: auto;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--bg-light);
+            z-index: 1;
+            transition: all 0.5s ease-in-out;
+            opacity: 0;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-teal) var(--bg-light);
+        }
+
+        .slide.active {
+            z-index: 2;
+            opacity: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-teal));
+            color: white;
+            padding: 30px 20px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-right: 4px solid var(--primary-teal);
+        }
+
+        .card-title {
+            color: var(--primary-teal);
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-right: 15px;
+        }
+
+        .card-title::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            bottom: -8px;
+            width: 50px;
+            height: 3px;
+            background-color: var(--primary-teal);
+            border-radius: 3px;
+        }
+
+        /* Layout Visualization */
+        .layout-visual {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .layout-box {
+            border: 2px dashed var(--primary-teal);
+            padding: 15px;
+            border-radius: 8px;
+            position: relative;
+            min-height: 150px;
+            min-width: 200px;
+            flex: 1;
+        }
+
+        .layout-box-title {
+            position: absolute;
+            top: -12px;
+            right: 10px;
+            background: var(--primary-dark);
+            padding: 0 10px;
+            color: var(--primary-teal);
+            font-weight: bold;
+        }
+
+        .flex-container {
+            display: flex;
+            border: 2px solid var(--primary-teal);
+            padding: 10px;
+            border-radius: 8px;
+            min-height: 150px;
+            background: rgba(30, 41, 59, 0.5);
+        }
+
+        .flex-item {
+            background: rgba(19, 185, 253, 0.3);
+            border: 1px solid var(--primary-teal);
+            padding: 15px;
+            margin: 5px;
+            border-radius: 4px;
+            text-align: center;
+            flex: 1;
+        }
+
+        .position-demo {
+            position: relative;
+            height: 300px;
+            border: 2px solid var(--primary-teal);
+            border-radius: 8px;
+            margin: 20px 0;
+            background: rgba(30, 41, 59, 0.5);
+        }
+
+        .position-box {
+            width: 80px;
+            height: 80px;
+            background: rgba(19, 185, 253, 0.5);
+            border: 1px solid var(--primary-teal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+
+        .axis-visual {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 30px 0;
+        }
+
+        .axis-line {
+            width: 300px;
+            height: 4px;
+            background: var(--primary-teal);
+            position: relative;
+            margin: 30px 0;
+        }
+
+        .axis-label {
+            position: absolute;
+            background: var(--primary-dark);
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        .axis-arrow {
+            position: absolute;
+            font-size: 24px;
+            color: var(--primary-teal);
+        }
+
+        /* Animation Demo */
+        .animation-demo {
+            width: 100px;
+            height: 100px;
+            background: var(--primary-teal);
+            border-radius: 8px;
+            margin: 30px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .code-block {
+            background-color: var(--primary-dark);
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: "Courier New", monospace;
+            overflow-x: auto;
+            margin: 20px 0;
+            direction: ltr;
+            text-align: left;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .code-keyword {
+            color: #f687b3;
+        }
+
+        .code-type {
+            color: #68d391;
+        }
+
+        .code-string {
+            color: #f6ad55;
+        }
+
+        .code-comment {
+            color: #a0aec0;
+            font-style: italic;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 15px;
+            text-align: right;
+            border: 1px solid var(--border-color);
+        }
+
+        .comparison-table th {
+            background-color: var(--primary-blue);
+            color: white;
+            font-weight: 500;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background-color: rgba(2, 86, 155, 0.1);
+        }
+
+        .comparison-table tr:hover {
+            background-color: rgba(19, 185, 253, 0.1);
+        }
+
+        /* Notes & Tips */
+        .note {
+            background-color: rgba(49, 130, 206, 0.1);
+            border-right: 4px solid #3182ce;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+
+        .note-title {
+            color: #3182ce;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .tip {
+            background-color: rgba(229, 62, 62, 0.1);
+            border-right: 4px solid var(--danger);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+
+        .tip-title {
+            color: var(--danger);
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .example-box {
+            background: rgba(30, 41, 59, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 3px solid var(--primary-teal);
+        }
+
+        .property-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .property-list li {
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .property-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* Slide Navigation */
+        .slide-nav {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background-color: var(--primary-teal);
+            transform: translateY(-3px);
+        }
+
+        .progress-container {
+            position: fixed;
+            top: 0px;
+            left: 20px;
+            right: 20px;
+            height: 6px;
+            background-color: var(--slider-bg);
+            border-radius: 3px;
+            overflow: hidden;
+            z-index: 100;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--progress-color);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--primary-blue);
+            color: white;
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 0.9rem;
+            z-index: 100;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate {
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        @keyframes slideAnimation {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(100px); }
+            100% { transform: translateX(0); }
+        }
+
+        .animated-box {
+            width: 100px;
+            height: 100px;
+            background: var(--primary-teal);
+            border-radius: 8px;
+            animation: slideAnimation 3s infinite;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .lecture-title {
+                font-size: 2rem;
+            }
+            .card {
+                padding: 20px;
+            }
+            .slide-nav {
+                bottom: 10px;
+            }
+            .nav-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#e6f7ff',
+                            100: '#bae7ff',
+                            200: '#91d5ff',
+                            300: '#69c0ff',
+                            400: '#40a9ff',
+                            500: '#1890ff',
+                            600: '#096dd9',
+                            700: '#0050b3',
+                            800: '#003a8c',
+                            900: '#002766',
+                        },
+                        'primary-blue': '#02569b',
+                        'primary-teal': '#13b9fd',
+                        'primary-dark': '#042b59',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-900 text-gray-100">
+    <button class="theme-toggle" id="theme-toggle">🌙</button>
+    <div class="slide-counter" id="slide-counter">1 / 12</div>
+
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div id="slides-container" class="relative w-full h-screen overflow-hidden">
+        <!-- Slide 1: المقدمة -->
+        <div class="slide active">
+            <header class="bg-gradient-to-br from-primary-blue to-primary-teal text-white py-16 px-4 rounded-b-3xl shadow-xl">
+                <div class="max-w-4xl mx-auto text-center">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4 animate">تخطيط CSS - اليوم الثاني</h1>
+                    <p class="text-xl opacity-90 mb-8 animate delay-1">الخصائص المرتبطة بالتخطيط والمرونة والحركة</p>
+
+                    <div class="flex flex-col md:flex-row items-center justify-center gap-6 mt-10 animate delay-2">
+                        <img src="https://i.ibb.co/Fbpfy9Y5/ITI2.jpg" alt="المحاضر مصطفى حسين"
+                            class="w-24 h-24 rounded-full border-4 border-white shadow-lg">
+                        <div>
+                            <p class="text-2xl font-bold">مصطفى حسين</p>
+                            <p class="mb-3">مطور ومحاضر ويب</p>
+                            <div class="flex gap-3 justify-center">
+                                <a href="#"
+                                    class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-full flex items-center gap-2 transition-all">
+                                    <i class="fab fa-github"></i> GitHub
+                                </a>
+                                <a href="#"
+                                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full flex items-center gap-2 transition-all">
+                                    <i class="fab fa-linkedin"></i> LinkedIn
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="max-w-4xl mx-auto py-8 px-4">
+                <section class="bg-bg-card rounded-2xl p-8 shadow-xl mb-10">
+                    <h2 class="text-3xl font-bold text-primary-teal mb-6 flex items-center gap-3">
+                        <i class="fas fa-list"></i> محتوى اليوم
+                    </h2>
+                    <ul class="feature-list space-y-4 text-lg leading-relaxed">
+                        <li class="pl-2">خصائص العرض في CSS (block, inline, inline-block)</li>
+                        <li class="pl-2">تحديد المواقع (static, relative, absolute, fixed, sticky)</li>
+                        <li class="pl-2">z-index وترتيب الطبقات</li>
+                        <li class="pl-2">التحريك والانتقالات في CSS</li>
+                        <li class="pl-2">أساسيات Flexbox</li>
+                        <li class="pl-2">خصائص Flexbox (flex-direction, justify-content, align-items)</li>
+                        <li class="pl-2">أمثلة عملية على Flexbox</li>
+                        <li class="pl-2">مهمة عملية نهائية</li>
+                    </ul>
+                </section>
+
+                <div class="bg-blue-900/20 border-r-4 border-blue-500 rounded-xl p-6">
+                    <h3 class="text-xl font-bold text-blue-400 flex items-center gap-2 mb-3">
+                        <i class="fas fa-lightbulb"></i> نصيحة البداية
+                    </h3>
+                    <p>فهم تخطيط CSS هو أساس تصميم الويب الحديث. اليوم سوف نتعلم كيفية التحكم في تحديد المواقع وإنشاء تخطيطات مرنة!</p>
+                </div>
+            </main>
+        </div>
+
+        <!-- Slide 2: Display Property -->
+        <div class="slide">
+            <main class="max-w-4xl mx-auto py-8 px-4">
+                <div class="bg-bg-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-primary-teal mb-6 border-b border-gray-700 pb-3">
+                        <i class="fas fa-border-all"></i> خصائص العرض في CSS
+                    </h2>
+
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-4">الفرق بين block, inline, inline-block</h3>
+                        
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>النوع</th>
+                                    <th>السلوك</th>
+                                    <th>أمثلة</th>
+                                    <th>يقبل width/height</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>block</strong></td>
+                                    <td>يأخذ العرض الكامل ويبدأ سطر جديد</td>
+                                    <td>div, p, h1-h6, section</td>
+                                    <td><i class="fas fa-check text-green-500"></i></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>inline</strong></td>
+                                    <td>يتدفق مع النص ولا يبدأ سطر جديد</td>
+                                    <td>span, a, strong, em</td>
+                                    <td><i class="fas fa-times text-red-500"></i></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>inline-block</strong></td>
+                                    <td>يجمع بين الاثنين (يتدفق مع النص ويقبل أبعاد)</td>
+                                    <td>button, input, select</td>
+                                    <td><i class="fas fa-check text-green-500"></i></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="layout-box">
+                            <div class="layout-box-title">Block</div>
+                            <div style="background: rgba(19, 185, 253, 0.3); padding: 15px; margin: 5px 0; border-radius: 4px;">العنصر 1</div>
+                            <div style="background: rgba(19, 185, 253, 0.3); padding: 15px; margin: 5px 0; border-radius: 4px;">العنصر 2</div>
+                            <p class="mt-3">يأخذ العرض الكامل ويبدأ سطر جديد</p>
+                        </div>
+                        
+                        <div class="layout-box">
+                            <div class="layout-box-title">Inline</div>
+                            <div style="background: rgba(19, 185, 253, 0.3); padding: 5px 10px; margin: 0 3px; display: inline-block; border-radius: 4px;">عنصر</div>
+                            <div style="background: rgba(19, 185, 253, 0.3); padding: 5px 10px; margin: 0 3px; display: inline-block; border-radius: 4px;">مضمن</div>
+                            <p class="mt-3">يتدفق مع النص ولا يبدأ سطر جديد</p>
+                        </div>
+                        
+                        <div class="layout-box">
+                            <div class="layout-box-title">Inline-block</div>
+                            <div style="background: rgba(19, 185, 253, 0.3); padding: 10px; margin: 0 5px; display: inline-block; border-radius: 4px; width: 80px;">عنصر</div>
+                            <div style="background: rgba(19, 185, 253, 0.3); padding: 10px; margin: 0 5px; display: inline-block; border-radius: 4px; width: 80px;">مدمج</div>
+                            <p class="mt-3">يجمع بين خصائص الـ block والـ inline</p>
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <span class="code-comment">/* أمثلة على خصائص العرض */</span><br>
+                        .block-element {<br>
+                        &nbsp;&nbsp;display: block; <span class="code-comment">/* افتراضي لـ div, p, h1-h6 */</span><br>
+                        }<br><br>
+                        
+                        .inline-element {<br>
+                        &nbsp;&nbsp;display: inline; <span class="code-comment">/* افتراضي لـ span, a, strong */</span><br>
+                        }<br><br>
+                        
+                        .inline-block-element {<br>
+                        &nbsp;&nbsp;display: inline-block; <span class="code-comment">/* مزيج من الاثنين */</span><br>
+                        }
+                    </div>
+
+                    <div class="tip">
+                        <h3 class="tip-title"><i class="fas fa-exclamation-circle"></i> أفضل ممارسة</h3>
+                        <p>استخدم <code>display: inline-block</code> عندما تحتاج إلى عناصر تتدفق مع النص ولكنها تقبل خصائص الأبعاد (width/height).</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Slide 6: Flexbox Fundamentals -->
+        <div class="slide">
+            <main class="max-w-4xl mx-auto py-8 px-4">
+                <div class="bg-bg-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-primary-teal mb-6 border-b border-gray-700 pb-3">
+                        <i class="fas fa-th-large"></i> أساسيات Flexbox
+                    </h2>
+
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-4">ما هو Flexbox ولماذا نستخدمه؟</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-semibold mb-2">قبل Flexbox</h4>
+                                <div style="overflow: hidden; background: rgba(30, 41, 59, 0.5); padding: 15px; border-radius: 8px;">
+                                    <div style="float: left; width: 30%; background: rgba(229, 62, 62, 0.3); padding: 10px; margin: 5px;">عنصر 1</div>
+                                    <div style="float: left; width: 30%; background: rgba(229, 62, 62, 0.3); padding: 10px; margin: 5px;">عنصر 2</div>
+                                    <div style="float: left; width: 30%; background: rgba(229, 62, 62, 0.3); padding: 10px; margin: 5px;">عنصر 3</div>
+                                    <div style="clear: both;"></div>
+                                </div>
+                                <p class="mt-3">استخدام float يتطلب حلول إصلاح (clearfix) وكان معقدًا</p>
+                            </div>
+                            
+                            <div>
+                                <h4 class="font-semibold mb-2">بعد Flexbox</h4>
+                                <div style="display: flex; gap: 10px; background: rgba(30, 41, 59, 0.5); padding: 15px; border-radius: 8px;">
+                                    <div style="flex: 1; background: rgba(56, 161, 105, 0.3); padding: 10px;">عنصر 1</div>
+                                    <div style="flex: 1; background: rgba(56, 161, 105, 0.3); padding: 10px;">عنصر 2</div>
+                                    <div style="flex: 1; background: rgba(56, 161, 105, 0.3); padding: 10px;">عنصر 3</div>
+                                </div>
+                                <p class="mt-3">بسيط، مرن، وسريع الاستجابة بشكل افتراضي</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="axis-visual">
+                        <h4 class="text-xl font-semibold mb-4">محاور Flexbox</h4>
+                        
+                        <div class="flex-container" style="flex-direction: row;">
+                            <div class="flex-item">1</div>
+                            <div class="flex-item">2</div>
+                            <div class="flex-item">3</div>
+                        </div>
+                        
+                        <div class="axis-line">
+                            <div class="axis-label" style="top: -30px; left: 50%; transform: translateX(-50%);">المحور الرئيسي (Main Axis)</div>
+                            <div class="axis-arrow" style="right: 10px; top: -20px;">→</div>
+                        </div>
+                        
+                        <div class="axis-line" style="width: 4px; height: 100px;">
+                            <div class="axis-label" style="top: 50%; left: -100px; transform: translateY(-50%);">المحور المتقاطع (Cross Axis)</div>
+                            <div class="axis-arrow" style="bottom: -30px; left: -10px; transform: rotate(90deg);">→</div>
+                        </div>
+                        
+                        <div class="mt-6 text-center">
+                            <p><strong>المحور الرئيسي:</strong> يحدده <code>flex-direction</code> (row أو column)</p>
+                            <p><strong>المحور المتقاطع:</strong> عمودي على المحور الرئيسي</p>
+                        </div>
+
+
+                        <div class="w-full mt-4 overflow-hidden h-90 rounded-lg bg-blue-400 ">
+                            <img class="w-full h-full" src="https://kwmt27.net/images/2018/06/building-layouts-in-flutter/main-cross-axis.png" alt="d">
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Slide 7: Flexbox Container Properties -->
+        <div class="slide">
+            <main class="max-w-4xl mx-auto py-8 px-4">
+            <div class="bg-bg-card rounded-2xl p-8 shadow-xl"></div>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-primary-teal mb-8 border-b-2 border-primary-teal pb-4 flex items-center gap-3">
+            <i class="fas fa-box-open text-2xl md:text-3xl"></i>
+            خصائص حاوية Flexbox (شرح مفصل)
+            </h2>
+
+            <div class="mb-10 text-lg md:text-xl leading-relaxed">
+            <h3 class="text-2xl md:text-2xl font-bold mb-6 text-primary-blue flex items-center gap-2">
+                <i class="fas fa-cube"></i>
+                الخصائص التي تطبق على العنصر الأب (الحاوية)
+            </h3>
+            <!-- flex-direction -->
+            <div class="example-box mb-8 text-base md:text-lg">
+                <h4 class="font-bold mb-3 text-primary-blue text-xl flex items-center gap-2">
+                <i class="fas fa-arrows-alt-h"></i>
+                flex-direction
+                </h4>
+                <p class="mb-3">
+                تحدد اتجاه المحور الرئيسي للعناصر داخل الحاوية.<br>
+                <strong>القيم:</strong>
+                <code>row</code> (أفقي افتراضي)،
+                <code>row-reverse</code> (أفقي معكوس)،
+                <code>column</code> (عمودي)،
+                <code>column-reverse</code> (عمودي معكوس)
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                <span class="block font-bold mb-1">row (افتراضي):</span>
+                <div style="display: flex; flex-direction: row; gap: 8px; background: #0e2237; padding: 10px; border-radius: 6px;">
+                <div style="background:#13b9fd; color:#fff; padding:10px 18px; border-radius:4px; font-size:1.1em;">1</div>
+                <div style="background:#02569b; color:#fff; padding:10px 18px; border-radius:4px; font-size:1.1em;">2</div>
+                <div style="background:#13b9fd; color:#fff; padding:10px 18px; border-radius:4px; font-size:1.1em;">3</div>
+                </div>
+                </div>
+                <div>
+                <span class="block font-bold mb-1">column:</span>
+                <div style="display: flex; flex-direction: column; gap: 8px; background: #0e2237; padding: 10px; border-radius: 6px; height: 110px; justify-content: center;">
+                <div style="background:#13b9fd; color:#fff; padding:10px 18px; border-radius:4px; font-size:1.1em;">1</div>
+                <div style="background:#02569b; color:#fff; padding:10px 18px; border-radius:4px; font-size:1.1em;">2</div>
+                <div style="background:#13b9fd; color:#fff; padding:10px 18px; border-radius:4px; font-size:1.1em;">3</div>
+                </div>
+                </div>
+                </div>
+                <div class="code-block mt-4 text-base">
+                .container {<br>
+                &nbsp;&nbsp;display: flex;<br>
+                &nbsp;&nbsp;flex-direction: row;<br>
+                }
+                </div>
+            </div>
+            <!-- justify-content -->
+            <div class="example-box mb-8 text-base md:text-lg">
+                <h4 class="font-bold mb-3 text-primary-blue text-xl flex items-center gap-2">
+                <i class="fas fa-align-center"></i>
+                justify-content
+                </h4>
+                <p class="mb-3">
+                تتحكم في توزيع العناصر على المحور الرئيسي (أفقي أو عمودي حسب flex-direction).
+                </p>
+                <div class="flex-container mb-2" style="justify-content: space-between;">
+                <div class="flex-item">flex-start</div>
+                <div class="flex-item">center</div>
+                <div class="flex-item">flex-end</div>
+                <div class="flex-item">space-between</div>
+                <div class="flex-item">space-around</div>
+                </div>
+                <div class="code-block mt-4 text-base">
+                .container {<br>
+                &nbsp;&nbsp;justify-content: center; <span class="code-comment">/* flex-start | flex-end | center | space-between | space-around | space-evenly */</span><br>
+                }
+                </div>
+                <ul class="property-list mt-3 text-base">
+                <li><b>flex-start</b>: العناصر تبدأ من بداية الحاوية</li>
+                <li><b>flex-end</b>: العناصر تصطف في نهاية الحاوية</li>
+                <li><b>center</b>: العناصر في المنتصف</li>
+                <li><b>space-between</b>: توزيع العناصر مع ترك مسافة متساوية بينها فقط</li>
+                <li><b>space-around</b>: توزيع العناصر مع ترك مسافة متساوية حول كل عنصر</li>
+                <li><b>space-evenly</b>: توزيع العناصر بمسافات متساوية تمامًا</li>
+                </ul>
+            </div>
+            <!-- align-items -->
+            <div class="example-box mb-8 text-base md:text-lg">
+                <h4 class="font-bold mb-3 text-primary-blue text-xl flex items-center gap-2">
+                <i class="fas fa-arrows-alt-v"></i>
+                align-items
+                </h4>
+                <p class="mb-3">
+                تتحكم في محاذاة العناصر على المحور المتقاطع (العمودي إذا كان flex-direction: row).
+                </p>
+                <div class="flex-container mb-2" style="align-items: flex-start; height: 120px;">
+                <div class="flex-item" style="height: 40px;">flex-start</div>
+                <div class="flex-item" style="height: 70px;">center</div>
+                <div class="flex-item" style="height: 100px;">flex-end</div>
+                </div>
+                <div class="code-block mt-4 text-base">
+                .container {<br>
+                &nbsp;&nbsp;align-items: center; <span class="code-comment">/* flex-start | flex-end | center | baseline | stretch */</span><br>
+                }
+                </div>
+                <ul class="property-list mt-3 text-base">
+                <li><b>flex-start</b>: العناصر تصطف في أعلى الحاوية</li>
+                <li><b>flex-end</b>: العناصر تصطف في أسفل الحاوية</li>
+                <li><b>center</b>: العناصر في منتصف الحاوية</li>
+                <li><b>baseline</b>: العناصر تصطف حسب خط الأساس للنص</li>
+                <li><b>stretch</b>: العناصر تتمدد لملء الحاوية (افتراضي)</li>
+                </ul>
+            </div>
+            <!-- flex-wrap -->
+            <div class="example-box mb-8 text-base md:text-lg">
+                <h4 class="font-bold mb-3 text-primary-blue text-xl flex items-center gap-2">
+                <i class="fas fa-retweet"></i>
+                flex-wrap
+                </h4>
+                <p class="mb-3">
+                تحدد ما إذا كانت العناصر ستنتقل لسطر جديد إذا لم تتسع الحاوية.
+                </p>
+                <div class="flex-container mb-2" style="flex-wrap: wrap; gap: 10px;">
+                <div class="flex-item" style="width: 120px;">Item 1</div>
+                <div class="flex-item" style="width: 120px;">Item 2</div>
+                <div class="flex-item" style="width: 120px;">Item 3</div>
+                <div class="flex-item" style="width: 120px;">Item 4</div>
+                <div class="flex-item" style="width: 120px;">Item 5</div>
+                </div>
+                <div class="code-block mt-4 text-base">
+                .container {<br>
+                &nbsp;&nbsp;flex-wrap: wrap; <span class="code-comment">/* nowrap | wrap | wrap-reverse */</span><br>
+                }
+                </div>
+                <ul class="property-list mt-3 text-base">
+                <li><b>nowrap</b>: كل العناصر في سطر واحد (افتراضي)</li>
+                <li><b>wrap</b>: تنتقل العناصر لسطر جديد عند الحاجة</li>
+                <li><b>wrap-reverse</b>: مثل wrap لكن بالعكس</li>
+                </ul>
+            </div>
+            <!-- align-content -->
+            <div class="example-box mb-8 text-base md:text-lg">
+                <h4 class="font-bold mb-3 text-primary-blue text-xl flex items-center gap-2">
+                <i class="fas fa-grip-lines"></i>
+                align-content
+                </h4>
+                <p class="mb-3">
+                تتحكم في توزيع الأسطر (rows) عند وجود أكثر من سطر (مع flex-wrap).
+                </p>
+                <div class="flex-container mb-2" style="flex-wrap: wrap; align-content: space-between; height: 180px;">
+                <div class="flex-item" style="width: 100px;">1</div>
+                <div class="flex-item" style="width: 100px;">2</div>
+                <div class="flex-item" style="width: 100px;">3</div>
+                <div class="flex-item" style="width: 100px;">4</div>
+                <div class="flex-item" style="width: 100px;">5</div>
+                <div class="flex-item" style="width: 100px;">6</div>
+                </div>
+                <div class="code-block mt-4 text-base">
+                .container {<br>
+                &nbsp;&nbsp;align-content: space-between; <span class="code-comment">/* flex-start | flex-end | center | space-between | space-around | stretch */</span><br>
+                }
+                </div>
+            </div>
+            <!-- gap -->
+            <div class="example-box mb-8 text-base md:text-lg">
+                <h4 class="font-bold mb-3 text-primary-blue text-xl flex items-center gap-2">
+                <i class="fas fa-grip-horizontal"></i>
+                gap
+                </h4>
+                <p class="mb-3">
+                تضيف مسافة بين العناصر (بدون الحاجة لـ margin).
+                </p>
+                <div class="flex-container mb-2" style="gap: 20px;">
+                <div class="flex-item">1</div>
+                <div class="flex-item">2</div>
+                <div class="flex-item">3</div>
+                </div>
+                <div class="code-block mt-4 text-base">
+                .container {<br>
+                &nbsp;&nbsp;gap: 20px;<br>
+                }
+                </div>
+            </div>
+            </div>
+
+            <div class="note mt-8 text-lg">
+            <h3 class="note-title flex items-center gap-2 text-xl">
+                <i class="fas fa-info-circle"></i>
+                مصدر خارجي لشرح Flexbox
+            </h3>
+            <p>
+                لمزيد من الشرح والأمثلة التفاعلية، يمكنك زيارة:
+                <a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/" target="_blank" class="text-blue-400 underline hover:text-blue-300 font-bold">
+                CSS-Tricks: A Complete Guide to Flexbox
+                </a>
+            </p>
+            </div>
+            </div>
+            </main>
+        </div>
+
+        <!-- Slide 8: Flexbox Item Properties -->
+        <div class="slide">
+            <main class="max-w-4xl mx-auto py-8 px-4">
+            <div class="bg-bg-card rounded-2xl p-6 shadow-xl">
+                <h2 class="text-2xl md:text-3xl font-bold text-primary-teal mb-6 border-b border-gray-700 pb-3 flex items-center gap-2">
+                <i class="fas fa-box"></i>
+                خصائص عناصر Flexbox (شرح مفصل)
+                </h2>
+
+                <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-6 text-primary-blue flex items-center gap-2">
+                    <i class="fas fa-cube"></i>
+                    الخصائص التي تطبق على العناصر الفرعية (Flex Items)
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- flex-grow -->
+                    <div class="example-box">
+                    <h4 class="font-bold text-primary-teal mb-2 text-lg flex items-center gap-2">
+                        <span class="w-6 h-6 flex items-center justify-center bg-primary-teal/20 rounded-full text-primary-teal"><i class="fas fa-arrow-right"></i></span>
+                        flex-grow
+                    </h4>
+                    <div class="flex-container mb-3">
+                        <div class="flex-item font-bold" style="flex-grow: 1;">1</div>
+                        <div class="flex-item font-bold" style="flex-grow: 2;">2 (flex-grow: 2)</div>
+                        <div class="flex-item font-bold" style="flex-grow: 1;">1</div>
+                    </div>
+                    <p class="text-base leading-relaxed text-text-secondary">
+                        <span class="font-bold text-primary-blue">flex-grow</span>
+                        يحدد مدى قدرة العنصر على النمو لملء المساحة الفارغة داخل الحاوية.<br>
+                        <span class="underline">كيف يعمل؟</span>
+                        إذا كان هناك مساحة متبقية بعد توزيع الأحجام الأساسية (flex-basis)، يتم توزيعها حسب قيمة flex-grow لكل عنصر.<br>
+                        <span class="font-bold">مثال:</span>
+                        إذا كان لدينا 3 عناصر بقيم (1, 2, 1) فالعنصر الثاني سيأخذ ضعف المساحة الإضافية مقارنة بالعنصر الأول أو الثالث.<br>
+                        <span class="text-blue-400 font-semibold">القيمة الافتراضية: 0 (لا ينمو)</span>
+                    </p>
+                    </div>
+                    <!-- flex-shrink -->
+                    <div class="example-box">
+                    <h4 class="font-bold text-primary-teal mb-2 text-lg flex items-center gap-2">
+                        <span class="w-6 h-6 flex items-center justify-center bg-primary-teal/20 rounded-full text-primary-teal"><i class="fas fa-compress-alt"></i></span>
+                        flex-shrink
+                    </h4>
+                    <div class="flex-container mb-3">
+                        <div class="flex-item font-bold" style="flex-shrink: 1;">1 (flex-shrink: 1)</div>
+                        <div class="flex-item font-bold" style="flex-shrink: 0; min-width: 150px;">0 (لا يتقلص)</div>
+                        <div class="flex-item font-bold" style="flex-shrink: 1;">1 (flex-shrink: 1)</div>
+                    </div>
+                    <p class="text-base leading-relaxed text-text-secondary">
+                        <span class="font-bold text-primary-blue">flex-shrink</span>
+                        يحدد مدى سماح العنصر بالتقلص عندما لا توجد مساحة كافية في الحاوية.<br>
+                        <span class="underline">كيف يعمل؟</span>
+                        إذا كانت العناصر أكبر من الحاوية، يتم تقليصها حسب قيمة flex-shrink.<br>
+                        <span class="font-bold">مثال:</span>
+                        عنصر بقيمة 0 لن يتقلص أبدًا، بينما عنصر بقيمة 1 أو أكثر سيتقلص حسب النسبة.<br>
+                        <span class="text-blue-400 font-semibold">القيمة الافتراضية: 1 (يتقلص)</span>
+                    </p>
+                    </div>
+                    <!-- flex-basis -->
+                    <div class="example-box">
+                    <h4 class="font-bold text-primary-teal mb-2 text-lg flex items-center gap-2">
+                        <span class="w-6 h-6 flex items-center justify-center bg-primary-teal/20 rounded-full text-primary-teal"><i class="fas fa-ruler-horizontal"></i></span>
+                        flex-basis
+                    </h4>
+                    <div class="flex-container mb-3">
+                        <div class="flex-item font-bold" style="flex-basis: 100px;">100px</div>
+                        <div class="flex-item font-bold" style="flex-basis: 150px;">150px</div>
+                        <div class="flex-item font-bold" style="flex-basis: 200px;">200px</div>
+                    </div>
+                    <p class="text-base leading-relaxed text-text-secondary">
+                        <span class="font-bold text-primary-blue">flex-basis</span>
+                        يحدد الحجم الأساسي (الابتدائي) للعنصر قبل توزيع المساحة الزائدة أو الناقصة.<br>
+                        <span class="underline">كيف يعمل؟</span>
+                        هو مثل <code>width</code> أو <code>height</code> (حسب اتجاه flex)، لكنه يأخذ الأولوية إذا تم تحديده مع flex.<br>
+                        <span class="font-bold">مثال:</span>
+                        إذا كان flex-basis: 150px، سيبدأ العنصر بهذا الحجم ثم ينمو أو يتقلص حسب flex-grow و flex-shrink.<br>
+                        <span class="text-blue-400 font-semibold">القيمة الافتراضية: auto (بحسب المحتوى أو width/height)</span>
+                    </p>
+                    </div>
+                    <!-- align-self -->
+                    <div class="example-box">
+                    <h4 class="font-bold text-primary-teal mb-2 text-lg flex items-center gap-2">
+                        <span class="w-6 h-6 flex items-center justify-center bg-primary-teal/20 rounded-full text-primary-teal"><i class="fas fa-align-center"></i></span>
+                        align-self
+                    </h4>
+                    <div class="flex-container mb-3" style="height: 150px; align-items: flex-start;">
+                        <div class="flex-item font-bold">افتراضي</div>
+                        <div class="flex-item font-bold" style="align-self: center;">align-self: center</div>
+                        <div class="flex-item font-bold" style="align-self: flex-end;">align-self: flex-end</div>
+                    </div>
+                    <p class="text-base leading-relaxed text-text-secondary">
+                        <span class="font-bold text-primary-blue">align-self</span>
+                        يسمح لك بتغيير محاذاة عنصر معين على المحور المتقاطع (Cross Axis)، بغض النظر عن قيمة <code>align-items</code> في الحاوية.<br>
+                        <span class="""underline">كيف يعمل؟</span>
+                        إذا أردت أن يكون عنصر واحد فقط في المنتصف أو في الأسفل، استخدم align-self عليه فقط.<br>
+                        <span class="""font-bold">القيم:</span>
+                        auto (افتراضي)، flex-start، flex-end، center، baseline، stretch.<br>
+                        <span class="text-blue-400 font-semibold">مفيد لتخصيص محاذاة عنصر واحد فقط</span>
+                    </p>
+                    </div>
+                </div>
+                </div>
+
+                <div class="code-block text-base">
+                <span class="code-comment">/* أمثلة على خصائص العناصر */</span><br>
+                .item {<br>
+                &nbsp;&nbsp;flex: 1 1 auto; <span class="code-comment">/* اختصار لـ flex-grow, flex-shrink, flex-basis */</span><br>
+                }<br><br>
+                .special-item {<br>
+                &nbsp;&nbsp;flex-grow: 2; <span class="code-comment">/* ينمو ضعف العناصر الأخرى */</span><br>
+                &nbsp;&nbsp;flex-shrink: 0; <span class="code-comment">/* لا يتقلص أبداً */</span><br>
+                &nbsp;&nbsp;flex-basis: 200px; <span class="code-comment">/* يبدأ من 200px */</span><br>
+                &nbsp;&nbsp;align-self: center; <span class="code-comment">/* محاذاة في المنتصف رأسياً */</span><br>
+                }
+                </div>
+
+                <div class="note mt-8">
+                <h3 class="note-title text-lg flex items-center gap-2">
+                    <i class="fas fa-lightbulb"></i>
+                    ملخص سريع
+                </h3>
+                <ul class="feature-list text-base leading-relaxed mt-2">
+                    <li><b>flex-grow:</b> يتحكم في النمو عند وجود مساحة إضافية.</li>
+                    <li><b>flex-shrink:</b> يتحكم في التقلص عند ضيق المساحة.</li>
+                    <li><b>flex-basis:</b> يحدد الحجم الابتدائي للعنصر.</li>
+                    <li><b>align-self:</b> يخصص المحاذاة لعنصر واحد فقط.</li>
+                    <li><b>flex:</b> اختصار للخصائص الثلاثة معًا: <code>flex: grow shrink basis;</code></li>
+                </ul>
+                </div>
+            </div>
+            </main>
+        </div>
+
+        <!-- Slide 9: Real-world Flexbox Examples -->
+        <div class="slide">
+            <main class="max-w-4xl mx-auto py-8 px-4">
+                <div class="bg-bg-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-primary-teal mb-6 border-b border-gray-700 pb-3">
+                        <i class="fas fa-laptop-code"></i> أمثلة عملية على Flexbox
+                    </h2>
+
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-4">شريط التنقل (Navbar)</h3>
+                        
+                        <div class="flex-container" style="justify-content: space-between; padding: 15px; background: rgba(30, 64, 175, 0.3);">
+                            <div style="font-weight: bold;">الشعار</div>
+                            <div style="display: flex; gap: 20px;">
+                                <div>الرئيسية</div>
+                                <div>من نحن</div>
+                                <div>الخدمات</div>
+                                <div>اتصل بنا</div>
+                            </div>
+                        </div>
+                        
+                        <div class="code-block mt-4">
+                            .navbar {<br>
+                            &nbsp;&nbsp;display: flex;<br>
+                            &nbsp;&nbsp;justify-content: space-between;<br>
+                            &nbsp;&nbsp;align-items: center;<br>
+                            &nbsp;&nbsp;padding: 1rem;<br>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-4">بطاقات المنتجات</h3>
+                        
+                        <div class="flex-container" style="flex-wrap: wrap; gap: 20px; justify-content: center;">
+                            <div style="flex: 0 0 250px; background: rgba(56, 161, 105, 0.3); padding: 20px; border-radius: 8px;">
+                                <h4 class="font-semibold mb-2">بطاقة المنتج 1</h4>
+                                <p>وصف المنتج هنا...</p>
+                            </div>
+                            <div style="flex: 0 0 250px; background: rgba(56, 161, 105, 0.3); padding: 20px; border-radius: 8px;">
+                                <h4 class="font-semibold mb-2">بطاقة المنتج 2</h4>
+                                <p>وصف المنتج هنا...</p>
+                            </div>
+                            <div style="flex: 0 0 250px; background: rgba(56, 161, 105, 0.3); padding: 20px; border-radius: 8px;">
+                                <h4 class="font-semibold mb-2">بطاقة المنتج 3</h4>
+                                <p>وصف المنتج هنا...</p>
+                            </div>
+                        </div>
+                        
+                        <div class="code-block mt-4">
+                            .card-grid {<br>
+                            &nbsp;&nbsp;display: flex;<br>
+                            &nbsp;&nbsp;flex-wrap: wrap;<br>
+                            &nbsp;&nbsp;gap: 20px;<br>
+                            &nbsp;&nbsp;justify-content: center;<br>
+                            }<br><br>
+                            
+                            .card {<br>
+                            &nbsp;&nbsp;flex: 0 0 250px; <span class="code-comment">/* لا ينمو، لا يتقلص، عرض أساسي 250px */</span><br>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-4">تذييل الصفحة (Footer)</h3>
+                        
+                        <div class="flex-container" style="justify-content: space-around; padding: 30px; background: rgba(55, 65, 81, 0.3);">
+                            <div>
+                                <h4 class="font-semibold mb-2">الشركة</h4>
+                                <div>من نحن</div>
+                                <div>وظائف</div>
+                                <div>اتصل بنا</div>
+                            </div>
+                            
+                            <div>
+                                <h4 class="font-semibold mb-2">موارد</h4>
+                                <div>مدونة</div>
+                                <div>وثائق</div>
+                                <div>دعم</div>
+                            </div>
+                            
+                            <div>
+                                <h4 class="font-semibold mb-2">قانوني</h4>
+                                <div>خصوصية</div>
+                                <div>شروط</div>
+                                <div>كوكيز</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+
+
+        <div class="slide ">
+        <main class="max-w-4xl mx-auto py-8 px-4">
+          <div class="bg-bg-card rounded-2xl p-6 shadow-xl">
+            <h2 class="text-2xl font-bold text-primary-teal mb-6 border-b border-gray-700 pb-3">
+              <i class="fas fa-mobile-alt"></i> التصميم المتجاوب
+            </h2>
+
+            <div class="mb-8">
+              <h3 class="text-xl font-semibold mb-4">الوحدات المرنة في CSS</h3>
+
+              <div class="unit-comparison">
+                <div class="unit-box">
+                  <h4 class="font-semibold mb-2">وحدات القياس النسبية</h4>
+                  <ul class="property-list">
+                    <li><strong>%</strong>: نسبة مئوية من حجم العنصر الأب</li>
+                    <li>
+                      <strong>em</strong>: نسبة إلى حجم خط العنصر الحالي (تتأثر
+                      بالوراثة)
+                    </li>
+                    <li>
+                      <strong>rem</strong>: نسبة إلى حجم خط العنصر الجذر (html)
+                      - الأفضل للاستخدام
+                    </li>
+                    <li>
+                      <strong>vw</strong>: 1% من عرض نافذة العرض (viewport
+                      width)
+                    </li>
+                    <li>
+                      <strong>vh</strong>: 1% من ارتفاع نافذة العرض (viewport
+                      height)
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="unit-box em-box" style="font-size: 1em">
+                  <p>
+                    هذا عنصر باستخدام <strong>em</strong> (1em = 16px افتراضيًا)
+                  </p>
+                  <div style="font-size: 1.5em">
+                    هذا العنصر الداخلي (1.5em = 24px)
+                  </div>
+                </div>
+
+                <div class="unit-box rem-box">
+                  <p>
+                    هذا عنصر باستخدام <strong>rem</strong> (1rem = 16px
+                    افتراضيًا)
+                  </p>
+                  <div style="font-size: 1.5rem">
+                    هذا العنصر الداخلي (1.5rem = 24px)
+                  </div>
+                </div>
+              </div>
+
+              <div class="code-block mt-4">
+                /* في عنصر الجذر (root) */
+                <br>:root { <br>&nbsp;&nbsp;--font-size-root: 16px; /* تحديد
+                حجم الخط الأساسي */ <br>}
+                <br>
+                <br>body { <br>&nbsp;&nbsp;font-size: var(--font-size-root);
+                /* استخدام rem يعتمد على هذا الحجم */ <br>}
+              </div>
+            </div>
+
+            <div class="mb-8">
+              <h3 class="text-xl font-semibold mb-4">
+                نقاط التوقف (Breakpoints) وأحجام الشاشات
+              </h3>
+
+              <table class="breakpoints-table">
+                <thead>
+                  <tr>
+                    <th>نوع الجهاز</th>
+                    <th>عرض الشاشة</th>
+                    <th>نقطة التوقف الشائعة</th>
+                    <th>مثال استعلام</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>هواتف صغيرة</td>
+                    <td>أقل من 576px</td>
+                    <td>لا يحتاج نقطة توقف</td>
+                    <td>-</td>
+                  </tr>
+                  <tr>
+                    <td>هواتف كبيرة</td>
+                    <td>576px - 767px</td>
+                    <td>576px</td>
+                    <td>@media (min-width: 576px)</td>
+                  </tr>
+                  <tr>
+                    <td>أجهزة لوحية</td>
+                    <td>768px - 991px</td>
+                    <td>768px</td>
+                    <td>@media (min-width: 768px)</td>
+                  </tr>
+                  <tr>
+                    <td>أجهزة كمبيوتر صغيرة</td>
+                    <td>992px - 1199px</td>
+                    <td>992px</td>
+                    <td>@media (min-width: 992px)</td>
+                  </tr>
+                  <tr>
+                    <td>أجهزة كمبيوتر كبيرة</td>
+                    <td>1200px فأكثر</td>
+                    <td>1200px</td>
+                    <td>@media (min-width: 1200px)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="mb-8">
+              <h3 class="text-xl font-semibold mb-4">
+                استعلامات الوسائط (Media Queries)
+              </h3>
+
+              <p class="mb-4">
+                استعلامات الوسائط تسمح لك بتطبيق أنماط CSS مختلفة بناءً على
+                خصائص الجهاز (مثل عرض الشاشة).
+              </p>
+
+              <div class="responsive-nav">
+                <div class="font-bold text-xl mb-4 md:mb-0">الشعار</div>
+                <div class="nav-links">
+                  <a href="#" class="px-3 py-1 bg-primary-blue/20 rounded hover:bg-primary-blue/40">الرئيسية</a>
+                  <a href="#" class="px-3 py-1 bg-primary-blue/20 rounded hover:bg-primary-blue/40">من نحن</a>
+                  <a href="#" class="px-3 py-1 bg-primary-blue/20 rounded hover:bg-primary-blue/40">الخدمات</a>
+                  <a href="#" class="px-3 py-1 bg-primary-blue/20 rounded hover:bg-primary-blue/40">اتصل بنا</a>
+                </div>
+              </div>
+
+              <div class="code-block mt-4">
+                /* شريط تنقل متجاوب */
+                <br>.navbar { <br>&nbsp;&nbsp;display: flex;
+                <br>&nbsp;&nbsp;flex-direction: column; <br>}
+                <br>
+                <br>.nav-links { <br>&nbsp;&nbsp;display: flex;
+                <br>&nbsp;&nbsp;flex-direction: column; <br>&nbsp;&nbsp;gap:
+                10px; <br>}
+                <br>
+                <br>/* نقطة توقف للأجهزة اللوحية */ <br>@media (min-width:
+                768px) { <br>&nbsp;&nbsp;.navbar {
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;flex-direction: row;
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;justify-content: space-between;
+                <br>&nbsp;&nbsp;} <br>&nbsp;&nbsp;
+                <br>&nbsp;&nbsp;.nav-links {
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;flex-direction: row;
+                <br>&nbsp;&nbsp;} <br>}
+                <br>
+                <br>/* نقطة توقف لأجهزة الكمبيوتر */ <br>@media (min-width:
+                992px) { <br>&nbsp;&nbsp;.navbar {
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;padding: 20px; <br>&nbsp;&nbsp;}
+                <br>}
+              </div>
+            </div>
+
+            <div class="tip">
+              <h3 class="tip-title">
+                <i class="fas fa-exclamation-circle"></i> أفضل ممارسة
+              </h3>
+              <p>
+                استخدم منهجية Mobile First في التصميم، حيث تبدأ بتصميم النسخة
+                المخصصة للهواتف أولاً ثم تستخدم استعلامات min-width لإضافة أنماط
+                للشاشات الأكبر.
+              </p>
+            </div>
+          </div>
+        </main>
+      </div>
+        <!-- Slide 5: CSS Animations & Transitions -->
+        <div class="slide">
+            <main class="max-w-4xl mx-auto py-8 px-4">
+            <div class="bg-bg-card rounded-2xl p-6 shadow-xl">
+            <h2 class="text-2xl font-bold text-primary-teal mb-6 border-b border-gray-700 pb-3">
+            <i class="fas fa-film"></i> التحريك والانتقالات في CSS
+            </h2>
+
+            <div class="mb-8">
+            <h3 class="text-xl font-semibold mb-4">الفرق بين الانتقالات (Transitions) والتحريك (Animations)</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="example-box">
+                <h4 class="font-semibold mb-2"><i class="fas fa-exchange-alt"></i> الانتقالات (Transitions)</h4>
+                <p>تتحكم في كيفية الانتقال بين حالتين (مثل hover)</p>
+                <div class="animation-demo" id="transition-demo">
+                جربني
+                </div>
+                <div class="code-block mt-3">
+                .element {<br>
+                &nbsp;&nbsp;transition: all 0.3s ease;<br>
+                }<br><br>
+                
+                .element:hover {<br>
+                &nbsp;&nbsp;transform: scale(1.2);<br>
+                &nbsp;&nbsp;background: #13b9fd;<br>
+                }
+                </div>
+                </div>
+                
+                <div class="example-box">
+                <h4 class="font-semibold mb-2"><i class="fas fa-play-circle"></i> التحريك (Animations)</h4>
+                <p>تسمح بتحريك متعدد الخطوات باستخدام @keyframes</p>
+                <div class="animated-box">
+                متحرك
+                </div>
+                <div class="code-block mt-3">
+                @keyframes slideAnimation {<br>
+                &nbsp;&nbsp;0% { transform: translateX(0); }<br>
+                &nbsp;&nbsp;50% { transform: translateX(100px); }<br>
+                &nbsp;&nbsp;100% { transform: translateX(0); }<br>
+                }<br><br>
+                
+                .element {<br>
+                &nbsp;&nbsp;animation: slideAnimation 3s infinite;<br>
+                }
+                </div>
+                </div>
+            </div>
+            </div>
+            
+            <div class="mb-8">
+            <h3 class="text-xl font-semibold mb-4">خصائص التحريك (Animation Properties)</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                <ul class="property-list">
+                <li><strong>animation-name</strong>: اسم الـ keyframe</li>
+                <li><strong>animation-duration</strong>: مدة التحريك (مثال: 2s)</li>
+                <li><strong>animation-timing-function</strong>: سرعة التحريك (ease, linear, etc.)</li>
+                <li><strong>animation-delay</strong>: تأخير قبل بدء التحريك</li>
+                </ul>
+                </div>
+                
+                <div>
+                <ul class="property-list">
+                <li><strong>animation-iteration-count</strong>: عدد المرات (infinite, 3, etc.)</li>
+                <li><strong>animation-direction</strong>: اتجاه التحريك (normal, reverse, alternate)</li>
+                <li><strong>animation-fill-mode</strong>: حالة العنصر بعد الانتهاء</li>
+                <li><strong>animation-play-state</strong>: التحكم بتشغيل/إيقاف التحريك</li>
+                </ul>
+                </div>
+            </div>
+            </div>
+
+            <div class="mb-8">
+            <h3 class="text-xl font-semibold mb-4">الخاصية المختصرة <code>animation</code></h3>
+            <div class="code-block">
+                <span class="code-comment">/* الصيغة المختصرة: */</span><br>
+                animation: <span class="code-type">name duration timing-function delay iteration-count direction fill-mode play-state</span>;<br><br>
+                <span class="code-comment">/* مثال عملي: */</span><br>
+                .element {<br>
+                &nbsp;&nbsp;animation: slideAnimation 3s ease-in-out 0.5s infinite alternate both running;<br>
+                }
+            </div>
+            <ul class="property-list mt-4">
+                <li><strong>name</strong>: اسم الـ keyframes (إجباري)</li>
+                <li><strong>duration</strong>: مدة التحريك (إجباري)</li>
+                <li><strong>timing-function</strong>: (اختياري)</li>
+                <li><strong>delay</strong>: (اختياري)</li>
+                <li><strong>iteration-count</strong>: (اختياري)</li>
+                <li><strong>direction</strong>: (اختياري)</li>
+                <li><strong>fill-mode</strong>: (اختياري)</li>
+                <li><strong>play-state</strong>: (اختياري)</li>
+            </ul>
+            </div>
+
+            <div class="note">
+            <h3 class="note-title"><i class="fas fa-lightbulb"></i> نصيحة أداء</h3>
+            <p>لتحريك أكثر سلاسة، استخدم خصائص مثل <code>transform</code> و <code>opacity</code> بدلاً من الخصائص التي تتطلب إعادة حساب التخطيط مثل <code>width</code> أو <code>margin</code>.</p>
+            </div>
+
+            <!-- مصادر مذاكرة التحريك والانتقالات -->
+            <div class="bg-gradient-to-r from-primary-dark to-primary-blue rounded-xl p-6 mt-8">
+                <h3 class="text-xl font-semibold mb-4 text-primary-teal flex items-center gap-2">
+                <i class="fas fa-book-open"></i> مصادر لمذاكرة التحريك والانتقالات
+                </h3>
+                <ul class="list-disc pr-6 space-y-2 text-base">
+                <li>
+                    <a href="https://developer.mozilla.org/ar/docs/Web/CSS/CSS_Animations/Using_CSS_animations" target="_blank" class="text-blue-300 hover:underline">
+                    دليل CSS Animations على MDN (بالعربية)
+                    </a>
+                </li>
+                <li>
+                    <a href="https://css-tricks.com/almanac/properties/a/animation/" target="_blank" class="text-blue-300 hover:underline">
+                    CSS-Tricks: شرح animation
+                    </a>
+                </li>
+                <li>
+                    <a href="https://web.dev/learn/css/animations/" target="_blank" class="text-blue-300 hover:underline">
+                    web.dev: تعلم CSS Animations
+                    </a>
+                </li>
+                <li>
+                    <a href="https://animista.net/" target="_blank" class="text-blue-300 hover:underline">
+                    Animista: مولد حركات CSS جاهزة
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.smashingmagazine.com/2021/05/css-animations-transition-performance/" target="_blank" class="text-blue-300 hover:underline">
+                    Smashing Magazine: نصائح أداء التحريك في CSS
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.youtube.com/watch?v=YszONjKpgg4" target="_blank" class="text-blue-300 hover:underline">
+                    فيديو: CSS Animation Tutorial (إنجليزي)
+                    </a>
+                </li>
+                </ul>
+            </div>
+            </div>
+            </main>
+        </div>
+
+        <!-- Slide 3: Positioning Techniques -->
+        <div class="slide">
+            <main class="max-w-4xl mx-auto py-8 px-4">
+                <div class="bg-bg-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-primary-teal mb-6 border-b border-gray-700 pb-3">
+                        <i class="fas fa-arrows-alt"></i> تحديد المواقع في CSS
+                    </h2>
+
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-4">أنواع تحديد المواقع واستخداماتها</h3>
+                        
+                        <div class="position-demo">
+                            <div class="position-box" style="position: static; top: 20px; left: 20px;">Static</div>
+                            <div class="position-box" style="position: relative; top: 20px; left: 20px; background: rgba(56, 161, 105, 0.5);">Relative</div>
+                            <div class="position-box" style="position: absolute; top: 50px; left: 50px; background: rgba(229, 62, 62, 0.5);">Absolute</div>
+                            <div class="position-box" style="position: fixed; bottom: 20px; right: 20px; background: rgba(147, 51, 234, 0.5);">Fixed</div>
+                            <div class="position-box" style="position: sticky; top: 20px; left: 150px; background: rgba(245, 158, 11, 0.5);">Sticky</div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                            <div class="example-box">
+                                <h4 class="font-semibold mb-2"><i class="fas fa-map-marker"></i> Static (ثابت)</h4>
+                                <p>الوضع الافتراضي - يتبع التدفق الطبيعي للصفحة</p>
+                                <div class="code-block mt-3">
+                                    .element {<br>
+                                    &nbsp;&nbsp;position: static; <span class="code-comment">/* الافتراضي */</span><br>
+                                    }
+                                </div>
+                            </div>
+                            
+                            <div class="example-box">
+                                <h4 class="font-semibold mb-2"><i class="fas fa-arrows-alt"></i> Relative (نسبي)</h4>
+                                <p>يُحرّك بالنسبة لموقعه الأصلي - لا يؤثر على العناصر الأخرى</p>
+                                <div class="code-block mt-3">
+                                    .element {<br>
+                                    &nbsp;&nbsp;position: relative;<br>
+                                    &nbsp;&nbsp;top: 20px;<br>
+                                    &nbsp;&nbsp;left: 30px;<br>
+                                    }
+                                </div>
+                            </div>
+                            
+                            <div class="example-box">
+                                <h4 class="font-semibold mb-2"><i class="fas fa-bullseye"></i> Absolute (مطلق)</h4>
+                                <p>يُحدّد بالنسبة لأقرب عنصر أب له موضع محدد (غير static)</p>
+                                <div class="code-block mt-3">
+                                    .parent {<br>
+                                    &nbsp;&nbsp;position: relative; <span class="code-comment">/* نقطة مرجعية */</span><br>
+                                    }<br>
+                                    .child {<br>
+                                    &nbsp;&nbsp;position: absolute;<br>
+                                    &nbsp;&nbsp;top: 0;<br>
+                                    &nbsp;&nbsp;right: 0;<br>
+                                    }
+                                </div>
+                            </div>
+                            
+                            <div class="example-box">
+                                <h4 class="font-semibold mb-2"><i class="fas fa-thumbtack"></i> Fixed (ثابت على الشاشة)</h4>
+                                <p>ثابت بالنسبة لشاشة العرض - يبقى في مكانه عند التمرير</p>
+                                <p class="mt-2"><strong>استخدام شائع:</strong> شريط تنقل ثابت في أعلى الصفحة</p>
+                                <div class="code-block mt-3">
+                                    .navbar {<br>
+                                    &nbsp;&nbsp;position: fixed;<br>
+                                    &nbsp;&nbsp;top: 0;<br>
+                                    &nbsp;&nbsp;left: 0;<br>
+                                    &nbsp;&nbsp;width: 100%;<br>
+                                    &nbsp;&nbsp;z-index: 1000;<br>
+                                    }
+                                </div>
+                            </div>
+                            
+                            <div class="example-box">
+                                <h4 class="font-semibold mb-2"><i class="fas fa-paperclip"></i> Sticky (لاصق)</h4>
+                                <p>يتصرف كـ relative حتى يصل إلى نقطة محددة، ثم يثبت كـ fixed</p>
+                                <p class="mt-2"><strong>استخدام شائع:</strong> عناوين الأقسام في القوائم الطويلة</p>
+                                <div class="code-block mt-3">
+                                    .section-title {<br>
+                                    &nbsp;&nbsp;position: sticky;<br>
+                                    &nbsp;&nbsp;top: 20px; <span class="code-comment">/* عندما يصل إلى 20px من الأعلى يثبت */</span><br>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Slide 4: z-index and Stacking Context -->
+        <div class="slide">
+            <main class="max-w-4xl mx-auto py-8 px-4">
+                <div class="bg-bg-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-primary-teal mb-6 border-b border-gray-700 pb-3">
+                        <i class="fas fa-layer-group"></i> z-index وترتيب الطبقات
+                    </h2>
+
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-4">كيفية التحكم في ترتيب العناصر المتداخلة</h3>
+                        
+                        <div class="position-demo" style="height: 250px;">
+                            <div class="position-box" style="position: absolute; top: 30px; left: 30px; z-index: 1; background: rgba(19, 185, 253, 0.7); width: 120px; height: 120px;">
+                                z-index: 1
+                            </div>
+                            
+                            <div class="position-box" style="position: absolute; top: 50px; left: 50px; z-index: 2; background: rgba(56, 161, 105, 0.7); width: 120px; height: 120px;">
+                                z-index: 2
+                            </div>
+                            
+                            <div class="position-box" style="position: absolute; top: 70px; left: 70px; z-index: 3; background: rgba(229, 62, 62, 0.7); width: 120px; height: 120px;">
+                                z-index: 3
+                            </div>
+                        </div>
+                        
+                        <div class="code-block mt-6">
+                            <span class="code-comment">&lt;!-- مثال HTML --&gt;</span><br>
+                            &lt;div class="container"&gt;<br>
+                            &nbsp;&nbsp;&lt;div class="box box1"&gt;الطبقة 1&lt;/div&gt;<br>
+                            &nbsp;&nbsp;&lt;div class="box box2"&gt;الطبقة 2&lt;/div&gt;<br>
+                            &nbsp;&nbsp;&lt;div class="box box3"&gt;الطبقة 3&lt;/div&gt;<br>
+                            &lt;/div&gt;<br><br>
+                            
+                            <span class="code-comment">/* مثال CSS */</span><br>
+                            .container {<br>
+                            &nbsp;&nbsp;position: relative;<br>
+                            &nbsp;&nbsp;height: 200px;<br>
+                            }<br><br>
+                            
+                            .box {<br>
+                            &nbsp;&nbsp;position: absolute;<br>
+                            &nbsp;&nbsp;width: 120px;<br>
+                            &nbsp;&nbsp;height: 120px;<br>
+                            }<br><br>
+                            
+                            .box1 {<br>
+                            &nbsp;&nbsp;top: 30px;<br>
+                            &nbsp;&nbsp;left: 30px;<br>
+                            &nbsp;&nbsp;z-index: 1;<br>
+                            &nbsp;&nbsp;background: rgba(19, 185, 253, 0.7);<br>
+                            }<br><br>
+                            
+                            .box2 {<br>
+                            &nbsp;&nbsp;top: 50px;<br>
+                            &nbsp;&nbsp;left: 50px;<br>
+                            &nbsp;&nbsp;z-index: 2;<br>
+                            &nbsp;&nbsp;background: rgba(56, 161, 105, 0.7);<br>
+                            }<br><br>
+                            
+                            .box3 {<br>
+                            &nbsp;&nbsp;top: 70px;<br>
+                            &nbsp;&nbsp;left: 70px;<br>
+                            &nbsp;&nbsp;z-index: 3;<br>
+                            &nbsp;&nbsp;background: rgba(229, 62, 62, 0.7);<br>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold mb-2">ما هو z-index؟</h4>
+                            <p>يحدد ترتيب العناصر المتداخلة على المحور Z (عمق الصفحة). كلما زاد الرقم، كلما ظهر العنصر أقرب إلى المستخدم.</p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-semibold mb-2">سياق الترتيب (Stacking Context)</h4>
+                            <p>يتم إنشاؤه عندما يتم تحديد موضع لعنصر واستخدام z-index. العناصر الفرعية تكون ضمن هذا السياق.</p>
+                        </div>
+                    </div>
+
+                    <div class="tip mt-6">
+                        <h3 class="tip-title"><i class="fas fa-exclamation-circle"></i> خطأ شائع</h3>
+                        <p>z-index يعمل فقط على العناصر التي تم تحديد موقعها (relative, absolute, fixed, sticky). ليس له تأثير على العناصر الافتراضية (static).</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+      
+        <!-- Slide 10: Final Practical Task -->
+        <div class="slide">
+            <main class="max-w-4xl mx-auto py-8 px-4">
+            <div class="bg-bg-card rounded-2xl p-6 shadow-xl">
+                <h2 class="text-2xl font-bold text-primary-teal mb-6 border-b border-gray-700 pb-3">
+                <i class="fas fa-tasks"></i> المهمة العملية النهائية
+                </h2>
+
+                <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">بناء تخطيط متكامل</h3>
+                <p>أنشئ تخطيط صفحة سريع الاستجابة يتضمن:</p>
+                
+                <div class="flex flex-col border-2 border-primary-teal rounded-lg overflow-hidden my-6">
+                    <div class="bg-primary-blue/30 p-4 text-center">رأس الصفحة (Header)</div>
+                    <div class="bg-primary-teal/30 p-3">شريط التنقل (Navbar)</div>
+                    <div class="flex flex-col md:flex-row">
+                    <div class="bg-green-600/30 p-4 flex-1">المحتوى الرئيسي (Main Content)</div>
+                    <div class="bg-yellow-600/30 p-4 w-full md:w-1/4">الشريط الجانبي (Sidebar)</div>
+                    </div>
+                    <div class="bg-red-600/30 p-4 text-center">تذييل الصفحة (Footer)</div>
+                </div>
+                </div>
+                
+                <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">المتطلبات</h3>
+                <ul class="feature-list">
+                    <li>استخدم Flexbox لهيكل التخطيط الرئيسي</li>
+                    <li>يجب أن يكون الرأس أعلى الصفحة بعرض كامل</li>
+                    <li>شريط التنقل أسفل الرأس مباشرة</li>
+                    <li>منطقة المحتوى الرئيسي مع شريط جانبي</li>
+                    <li>تذييل الصفحة في الأسفل</li>
+                    <li>تصميم سريع الاستجابة - ينتقل الشريط الجانبي أسفل المحتوى على الهواتف</li>
+                    <li>طبّق تباعدًا مناسبًا بين الأقسام</li>
+                </ul>
+                </div>
+
+                <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">مهمة إضافية 2: لعبة Flex Froggy</h3>
+                <ul class="feature-list">
+                    <li>ادخل على <a href="https://flexboxfroggy.com/#ar" target="_blank" class="text-blue-400 underline font-bold">لعبة Flex Froggy</a> وحاول حل أكبر عدد ممكن من المراحل.</li>
+                    <li>التسليم: التقط صورة (screenshot) لآخر مرحلة وصلت إليها وارفعها مع الحل.</li>
+                </ul>
+                </div>
+
+                <div class="bg-green-900/20 border-r-4 border-green-500 rounded-xl p-6">
+                <h3 class="text-xl font-bold text-green-400 flex items-center gap-2 mb-3">
+                    <i class="fas fa-lightbulb"></i> نصائح التنفيذ
+                </h3>
+                <ul class="feature-list">
+                    <li>استخدم <code>display: flex</code> لمنطقة المحتوى</li>
+                    <li>استخدم <code>flex-wrap: wrap</code> للاستجابة</li>
+                    <li>استخدم <code>flex-direction: column</code> للهواتف</li>
+                    <li>اضبط <code>flex: 3</code> للمحتوى الرئيسي و <code>flex: 1</code> للشريط الجانبي</li>
+                    <li>أضف استعلامات الوسائط (media queries) للتكيف مع الشاشات الصغيرة</li>
+                </ul>
+                </div>
+                
+                <div class="mt-6 text-center">
+                <a href="#" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg inline-block">
+                    <i class="fas fa-download mr-2"></i> تنزيل ملفات البداية
+                </a>
+                </div>
+            </div>
+            </main>
+        </div>
+
+        <!-- Slide 11: Additional Resources -->
+        <div class="slide">
+            <main class="max-w-4xl mx-auto py-8 px-4">
+                <div class="bg-bg-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-primary-teal mb-6 border-b border-gray-700 pb-3">
+                        <i class="fas fa-book"></i> موارد إضافية
+                    </h2>
+
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-4">استمر في تعلمك</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-gray-800 rounded-xl p-5">
+                                <h4 class="font-semibold mb-3 text-blue-400 flex items-center gap-2">
+                                    <i class="fas fa-file-alt"></i> وثائق رسمية
+                                </h4>
+                                <ul class="space-y-2">
+                                    <li><a href="https://developer.mozilla.org/ar/docs/Web/CSS/CSS_Flexible_Box_Layout" class="text-blue-300 hover:underline" target="_blank">دليل Flexbox على MDN</a></li>
+                                    <li><a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/" class="text-blue-300 hover:underline" target="_blank">CSS Tricks: دليل Flexbox الشامل</a></li>
+                                    <li><a href="https://web.dev/learn/css/flexbox/" class="text-blue-300 hover:underline" target="_blank">دورة Flexbox على Web.dev</a></li>
+                                </ul>
+                            </div>
+                            
+                            <div class="bg-gray-800 rounded-xl p-5">
+                                <h4 class="font-semibold mb-3 text-green-400 flex items-center gap-2">
+                                    <i class="fas fa-gamepad"></i> تعلم تفاعلي
+                                </h4>
+                                <ul class="space-y-2">
+                                    <li><a href="https://flexboxfroggy.com/#ar" class="text-green-300 hover:underline" target="_blank">لعبة Flexbox Froggy</a></li>
+                                    <li><a href="http://www.flexboxdefense.com/" class="text-green-300 hover:underline" target="_blank">لعبة Flexbox Defense</a></li>
+                                    <li><a href="https://mastery.games/flexboxzombies/" class="text-green-300 hover:underline" target="_blank">Flexbox Zombies</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-primary-dark to-primary-blue rounded-xl p-6">
+                        <h3 class="text-xl font-semibold mb-4">ملخصات سريعة</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-white/10 p-4 rounded-lg">
+                                <span>خصائص العرض والمواقع</span>
+                                <p class="mt-2">مرجع سريع</p>
+                            </div>
+                            <div class="bg-white/10 p-4 rounded-lg">
+                                <span>خصائص Flexbox</span>
+                                <p class="mt-2">خصائص الحاوية والعناصر</p>
+                            </div>
+                            <div class="bg-white/10 p-4 rounded-lg">
+                                <span>توقيت التحريك</span>
+                                <p class="mt-2">وظائف التوقيت والتسريع</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Slide 12: Conclusion -->
+        <div class="slide">
+            <main class="max-w-4xl mx-auto py-8 px-4">
+                <div class="bg-bg-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-primary-teal mb-6 border-b border-gray-700 pb-3">
+                        <i class="fas fa-graduation-cap"></i> الخاتمة والخطوات التالية
+                    </h2>
+
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-4">أبرز النقاط</h3>
+                        <ul class="feature-list">
+                            <li>خصائص العرض تتحكم في تدفق العناصر (block, inline, inline-block)</li>
+                            <li>تحديد المواقع يسمح بوضع العناصر بدقة (relative, absolute, fixed, sticky)</li>
+                            <li>z-index يتحكم في ترتيب العناصر المتداخلة</li>
+                            <li>Flexbox يوفر إمكانيات تخطيط قوية</li>
+                            <li>التحريك يجعل الواجهات حيوية (transitions, keyframes)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-4">ما التالي؟</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-gray-800 rounded-xl p-5 text-center">
+                                <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-mobile-alt text-2xl"></i>
+                                </div>
+                                <h4 class="font-semibold mb-2">تصميم سريع الاستجابة</h4>
+                                <p>استعلامات الوسائط، الوحدات المرنة</p>
+                            </div>
+                            
+                            <div class="bg-gray-800 rounded-xl p-5 text-center">
+                                <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-th-large text-2xl"></i>
+                                </div>
+                                <h4 class="font-semibold mb-2">CSS Grid</h4>
+                                <p>نظام تخطيط ثنائي الأبعاد</p>
+                            </div>
+                            
+                            <div class="bg-gray-800 rounded-xl p-5 text-center">
+                                <div class="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-star text-2xl"></i>
+                                </div>
+                                <h4 class="font-semibold mb-2">CSS متقدم</h4>
+                                <p>متغيرات، مزج الألوان، مرشحات</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-900/20 border-r-4 border-blue-500 rounded-xl p-6">
+                        <h3 class="text-xl font-bold text-blue-400 flex items-center gap-2 mb-3">
+                            <i class="fas fa-quote-left"></i> فكرة أخيرة
+                        </h3>
+                        <p>إتقان تخطيط CSS ضروري لإنشاء مواقع حديثة وسريعة الاستجابة. تدرب على هذه التقنيات بانتظام لبناء تخطيطات بديهية بسهولة!</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div class="slide-nav">
+        <button class="nav-btn" id="prev-btn">→</button>
+        <button class="nav-btn" id="next-btn">←</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const progressBar = document.getElementById('progress-bar');
+            const slideCounter = document.getElementById('slide-counter');
+            const themeToggle = document.getElementById('theme-toggle');
+            let currentSlide = 0;
+
+            // Initialize first slide
+            updateSlideCounter();
+            updateProgressBar();
+
+            // Navigation functions
+            function goToSlide(index) {
+                if (index < 0 || index >= slides.length) return;
+
+                slides[currentSlide].classList.remove('active');
+                slides[index].classList.add('active');
+
+                currentSlide = index;
+
+                updateSlideCounter();
+                updateProgressBar();
+            }
+
+            function nextSlide() {
+                if (currentSlide < slides.length - 1) {
+                    goToSlide(currentSlide + 1);
+                }
+            }
+
+            function prevSlide() {
+                if (currentSlide > 0) {
+                    goToSlide(currentSlide - 1);
+                }
+            }
+
+            function updateSlideCounter() {
+                slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
+            }
+
+            function updateProgressBar() {
+                const progress = ((currentSlide + 1) / slides.length) * 100;
+                progressBar.style.width = `${progress}%`;
+            }
+
+            // Theme toggle
+            function toggleTheme() {
+                document.body.classList.toggle('light-mode');
+                const isDarkMode = !document.body.classList.contains('light-mode');
+                themeToggle.textContent = isDarkMode ? '🌙' : '☀️';
+                localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+            }
+
+            // Keyboard navigation
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    nextSlide();
+                } else if (e.key === 'ArrowLeft') {
+                    prevSlide();
+                }
+            });
+
+            // Load saved theme
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                themeToggle.textContent = '☀️';
+            }
+
+            // Event listeners
+            nextBtn.addEventListener('click', nextSlide);
+            prevBtn.addEventListener('click', prevSlide);
+            themeToggle.addEventListener('click', toggleTheme);
+
+            // Add hover effect for transition demo
+            const transitionDemo = document.getElementById('transition-demo');
+            if (transitionDemo) {
+                transitionDemo.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.2)';
+                    this.style.background = '#13b9fd';
+                });
+                transitionDemo.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                    this.style.background = '';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

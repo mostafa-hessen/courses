@@ -1,0 +1,2406 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دورة JavaScript المتقدم | ITI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #02569b;
+            --primary-teal: #13b9fd;
+            --primary-dark: #042b59;
+            --primary-light: #e6f7ff;
+            --text-primary: #e2e8f0;
+            --text-secondary: #a0aec0;
+            --bg-light: #1a202c;
+            --bg-card: #2d3748;
+            --border-color: #4a5568;
+            --success: #38a169;
+            --warning: #dd6b20;
+            --danger: #e53e3e;
+            --progress-color: var(--primary-teal);
+            --slider-bg: #2d3748;
+        }
+
+        .light-mode {
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --bg-light: #f7fafc;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --slider-bg: #edf2f7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Tajawal", sans-serif;
+            line-height: 1.8;
+            color: var(--text-primary);
+            background-color: var(--bg-light);
+            direction: rtl;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        #slides-container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .slide {
+            min-width: 100%;
+            height: 100%;
+            padding: 30px 20px;
+            overflow-y: auto;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--bg-light);
+            z-index: 1;
+            transition: all 0.5s ease-in-out;
+            opacity: 0;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-teal) var(--bg-light);
+        }
+
+        .slide.active {
+            z-index: 2;
+            opacity: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-teal));
+            color: white;
+            padding: 30px 20px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-right: 4px solid var(--primary-teal);
+        }
+
+        .card-title {
+            color: var(--primary-teal);
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-right: 15px;
+        }
+
+        .card-title::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            bottom: -8px;
+            width: 50px;
+            height: 3px;
+            background-color: var(--primary-teal);
+            border-radius: 3px;
+        }
+
+        /* Layout Visualization */
+        .layout-visual {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .layout-box {
+            border: 2px dashed var(--primary-teal);
+            padding: 15px;
+            border-radius: 8px;
+            position: relative;
+            min-height: 150px;
+            min-width: 200px;
+            flex: 1;
+        }
+
+        .layout-box-title {
+            position: absolute;
+            top: -12px;
+            right: 10px;
+            background: var(--primary-dark);
+            padding: 0 10px;
+            color: var(--primary-teal);
+            font-weight: bold;
+        }
+
+        .flex-container {
+            display: flex;
+            border: 2px solid var(--primary-teal);
+            padding: 10px;
+            border-radius: 8px;
+            min-height: 150px;
+            background: rgba(30, 41, 59, 0.5);
+        }
+
+        .flex-item {
+            background: rgba(19, 185, 253, 0.3);
+            border: 1px solid var(--primary-teal);
+            padding: 15px;
+            margin: 5px;
+            border-radius: 4px;
+            text-align: center;
+            flex: 1;
+        }
+
+        .position-demo {
+            position: relative;
+            height: 300px;
+            border: 2px solid var(--primary-teal);
+            border-radius: 8px;
+            margin: 20px 0;
+            background: rgba(30, 41, 59, 0.5);
+        }
+
+        .position-box {
+            width: 80px;
+            height: 80px;
+            background: rgba(19, 185, 253, 0.5);
+            border: 1px solid var(--primary-teal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+
+        .axis-visual {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 30px 0;
+        }
+
+        .axis-line {
+            width: 300px;
+            height: 4px;
+            background: var(--primary-teal);
+            position: relative;
+            margin: 30px 0;
+        }
+
+        .axis-label {
+            position: absolute;
+            background: var(--primary-dark);
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        .axis-arrow {
+            position: absolute;
+            font-size: 24px;
+            color: var(--primary-teal);
+        }
+
+        /* Animation Demo */
+        .animation-demo {
+            width: 100px;
+            height: 100px;
+            background: var(--primary-teal);
+            border-radius: 8px;
+            margin: 30px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .code-block {
+            background-color: var(--primary-dark);
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: "Courier New", monospace;
+            overflow-x: auto;
+            margin: 20px 0;
+            direction: ltr;
+            text-align: left;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .code-keyword {
+            color: #f687b3;
+        }
+
+        .code-type {
+            color: #68d391;
+        }
+
+        .code-string {
+            color: #f6ad55;
+        }
+
+        .code-comment {
+            color: #a0aec0;
+            font-style: italic;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 15px;
+            text-align: right;
+            border: 1px solid var(--border-color);
+        }
+
+        .comparison-table th {
+            background-color: var(--primary-blue);
+            color: white;
+            font-weight: 500;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background-color: rgba(2, 86, 155, 0.1);
+        }
+
+        .comparison-table tr:hover {
+            background-color: rgba(19, 185, 253, 0.1);
+        }
+
+        /* Notes & Tips */
+        .note {
+            background-color: rgba(49, 130, 206, 0.1);
+            border-right: 4px solid #3182ce;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+
+        .note-title {
+            color: #3182ce;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .tip {
+            background-color: rgba(229, 62, 62, 0.1);
+            border-right: 4px solid var(--danger);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+
+        .tip-title {
+            color: var(--danger);
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .example-box {
+            background: rgba(30, 41, 59, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 3px solid var(--primary-teal);
+        }
+
+        .property-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .property-list li {
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .property-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* Slide Navigation */
+        .slide-nav {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background-color: var(--primary-teal);
+            transform: translateY(-3px);
+        }
+
+        .progress-container {
+            position: fixed;
+            top: 0px;
+            left: 20px;
+            right: 20px;
+            height: 6px;
+            background-color: var(--slider-bg);
+            border-radius: 3px;
+            overflow: hidden;
+            z-index: 100;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--progress-color);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--primary-blue);
+            color: white;
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 0.9rem;
+            z-index: 100;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate {
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        @keyframes slideAnimation {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(100px); }
+            100% { transform: translateX(0); }
+        }
+
+        .animated-box {
+            width: 100px;
+            height: 100px;
+            background: var(--primary-teal);
+            border-radius: 8px;
+            animation: slideAnimation 3s infinite;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        /* Custom Styles */
+        .lecture-img {
+            max-width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            margin: 20px 0;
+            border: 2px solid var(--primary-teal);
+        }
+        
+        .interactive-btn {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-teal));
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin: 10px 5px;
+        }
+        
+        .interactive-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .visual-container {
+            position: relative;
+            height: 300px;
+            border: 2px solid var(--primary-teal);
+            border-radius: 8px;
+            margin: 20px 0;
+            background: rgba(30, 41, 59, 0.5);
+            overflow: hidden;
+        }
+        
+        .visual-element {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: rgba(19, 185, 253, 0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .runtime-visual {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .runtime-part {
+            background: rgba(30, 41, 59, 0.7);
+            border: 2px solid var(--primary-teal);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .runtime-part h4 {
+            color: var(--primary-teal);
+            margin-bottom: 15px;
+        }
+        
+        /* Color Flipper */
+        .color-box {
+            width: 150px;
+            height: 150px;
+            border-radius: 8px;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: background-color 0.3s ease;
+        }
+        
+        /* Shopping Cart */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .product-card {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .product-img {
+            width: 100%;
+            height: 120px;
+            background-color: #ddd;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* Login Form */
+        .login-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--bg-card);
+            border-radius: 12px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-light);
+            color: var(--text-primary);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 80px;
+            left: 30px;
+            background: var(--primary-teal);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 99;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .back-to-top.show {
+            opacity: 1;
+        }
+        
+        /* Countdown */
+        .countdown {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+            background: var(--primary-dark);
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        /* Flight Booking */
+        .booking-form {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .booking-form input, .booking-form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-light);
+            color: var(--text-primary);
+        }
+        
+        /* To-Do List */
+        .todo-container {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .todo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .todo-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .lecture-title {
+                font-size: 2rem;
+            }
+            .card {
+                padding: 20px;
+            }
+            .slide-nav {
+                bottom: 10px;
+            }
+            .nav-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            .runtime-visual {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#e6f7ff',
+                            100: '#bae7ff',
+                            200: '#91d5ff',
+                            300: '#69c0ff',
+                            400: '#40a9ff',
+                            500: '#1890ff',
+                            600: '#096dd9',
+                            700: '#0050b3',
+                            800: '#003a8c',
+                            900: '#002766',
+                        },
+                              'primary-blue': '#02569b',
+                'primary-teal': '#13b9fd',
+                'primary-dark': '#042b59',
+                'text-primary': '#e2e8f0',
+                'text-secondary': '#a0aec0',
+                'bg-light': '#1a202c',
+                'bg-card': '#2d3748',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-900 text-gray-100">
+    <button class="theme-toggle" id="theme-toggle">🌙</button>
+    <div class="slide-counter" id="slide-counter">1 / 12</div>
+    <div class="back-to-top" id="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div id="slides-container" class="relative w-full h-screen overflow-hidden">
+      <!-- Slide 1: المقدمة -->
+        <div class="slide active">
+            <header class="bg-gradient-to-br from-primary-blue to-primary-teal text-white py-16 px-4 rounded-b-3xl shadow-xl">
+                <div class="max-w-4xl mx-auto text-center">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4 animate">دورة JavaScript المتقدم</h1>
+                    <p class="text-xl opacity-90 mb-8 animate delay-1">مفاهيم متقدمة في JavaScript لبناء تطبيقات ويب حديثة</p>
+
+                    <div class="flex flex-col md:flex-row items-center justify-center gap-6 mt-10 animate delay-2">
+                        <img src="https://i.ibb.co/Fbpfy9Y5/ITI2.jpg" alt="المحاضر مصطفى حسين"
+                            class="w-24 h-24 rounded-full border-4 border-white shadow-lg">
+                        <div>
+                            <p class="text-2xl font-bold">مصطفى حسين</p>
+                            <p class="mb-3">مطور ومحاضر ويب</p>
+                            <div class="flex gap-3 justify-center">
+                                <a href="#"
+                                    class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-full flex items-center gap-2 transition-all">
+                                    <i class="fab fa-github"></i> GitHub
+                                </a>
+                                <a href="#"
+                                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full flex items-center gap-2 transition-all">
+                                    <i class="fab fa-linkedin"></i> LinkedIn
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="max-w-4xl mx-auto py-8 px-4">
+                <section class="bg-bg-card rounded-2xl p-8 shadow-xl mb-10">
+                    <h2 class="text-3xl font-bold text-primary-teal mb-6 flex items-center gap-3">
+                        <i class="fas fa-list"></i> محتوى الدورة
+                    </h2>
+                    <ul class="feature-list space-y-4 text-lg leading-relaxed">
+                        <li class="pl-2">JavaScript BOM (نموذج كائن المتصفح)</li>
+                        <li class="pl-2">Web Storage API (LocalStorage & SessionStorage)</li>
+                        <li class="pl-2">JSON في JavaScript</li>
+                        <li class="pl-2">البرمجة غير المتزامنة (Asynchronous Programming)</li>
+                        <!-- <li class="pl-2">Callback Functions و Callback Hell</li>
+                        <li class="pl-2">Promises و async/await</li>
+                        <li class="pl-2">كيف يعمل JavaScript خلف الكواليس</li>
+                        <li class="pl-2">الموديولات (Modules) في JavaScript</li>
+                        <li class="pl-2">مشروع تطبيقي شامل</li> -->
+                    </ul>
+                </section>
+
+                <div class="bg-blue-900/20 border-r-4 border-blue-500 rounded-xl p-6">
+                    <h3 class="text-xl font-bold text-blue-400 flex items-center gap-2 mb-3">
+                        <i class="fas fa-lightbulb"></i> نصيحة البداية
+                    </h3>
+                    <p>فهم JavaScript المتقدم هو أساس تطوير التطبيقات الحديثة. هذه الدورة ستعزز مهاراتك في JavaScript وتفتح لك آفاقًا جديدة في تطوير الويب!</p>
+                </div>
+            </main>
+        </div>
+
+        <!-- Slide 2: المحتوى التعليمي -->
+        <div class="slide">
+            <main class="max-w-4xl mx-auto py-8 px-4">
+                <div class="bg-bg-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-primary-teal mb-6 border-b border-gray-700 pb-3">
+                        <i class="fas fa-book-open"></i> المحتوى التعليمي للدورة
+                    </h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- الجزء الأول -->
+                        <div class="card">
+                            <h3 class="text-xl font-bold text-primary-teal mb-4">🧱 الجزء الأول: BOM + LocalStorage + JSON</h3>
+                            <ul class="property-list">
+                                <li>تعريف BOM (Browser Object Model)</li>
+                                <li>الكائن window وأهم وظائفه</li>
+                                <li>نوافذ التنبيه: alert(), confirm(), prompt()</li>
+                                <li>المؤقتات: setTimeout(), setInterval()</li>
+                                <li>الكائن location و history</li>
+                                <li>فتح وإغلاق النوافذ</li>
+                                <li>التمرير والتركيز والطباعة</li>
+                                <li>Web Storage API: localStorage و sessionStorage</li>
+                                <li>JSON في JavaScript: JSON.stringify() و JSON.parse()</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- الجزء الثاني -->
+                        <div class="card">
+                            <h3 class="text-xl font-bold text-primary-teal mb-4">🔄 الجزء الثاني: البرمجة غير المتزامنة + الموديولات</h3>
+                            <ul class="property-list">
+                                <li>الفرق بين البرمجة المتزامنة والغير متزامنة</li>
+                                <li>Callback Functions و مشكلة Callback Hell</li>
+                                <li>Promises: .then(), .catch(), .finally()</li>
+                                <li>async/await مع try/catch</li>
+                                <li>كيف يعمل JavaScript خلف الكواليس</li>
+                                <li>JavaScript Runtime: V8, Callstack, Event Loop, Heap</li>
+                                <li>الموديولات (Modules) في JavaScript</li>
+                                <li>تصدير واستيراد الموديولات</li>
+                                <li>مشروع تطبيقي شامل</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-primary-dark to-primary-blue rounded-xl p-6 mt-6">
+                        <h3 class="text-xl font-semibold mb-4 text-primary-teal flex items-center gap-2">
+                            <i class="fas fa-video"></i> موارد تعليمية إضافية
+                        </h3>
+                        <ul class="list-disc pr-6 space-y-2 text-base">
+                            <li>
+                                <a href="https://developer.mozilla.org/ar/docs/Web/API/Window" target="_blank" class="text-blue-300 hover:underline">
+                                وثائق MDN عن Window API
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://javascript.info/async" target="_blank" class="text-blue-300 hover:underline">
+                                البرمجة غير المتزامنة في JavaScript
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.youtube.com/watch?v=8aGhZQkoFbQ" target="_blank" class="text-blue-300 hover:underline">
+                                فيديو: شرح Event Loop في JavaScript
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="note mt-6">
+                        <h3 class="note-title"><i class="fas fa-lightbulb"></i> نصائح للدراسة</h3>
+                        <p>استخدم أدوات المطور في المتصفح (F12) لتجربة الأمثلة مباشرة. كلما طبقت الكود بنفسك، كلما زاد فهمك للمفاهيم.</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- <i class="fas fa-window-restore"></i> JavaScript BOM (نموذج كائن المتصفح) -->
+<div class="slide ">
+            <main class="max-w-4xl mx-auto py-8 px-4">
+                <div class="bg-bg-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-primary-teal mb-6 border-b border-gray-700 pb-3">
+                        <i class="fas fa-window-restore"></i> JavaScript BOM (نموذج كائن المتصفح)
+                    </h2>
+
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-4">ما هو BOM؟</h3>
+                        <p>BOM (Browser Object Model) هو واجهة تسمح لـ JavaScript بالتفاعل مع المتصفح. يتكون من عدة كائنات أهمها <code>window</code> الذي يمثل نافذة المتصفح.</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="example-box">
+                            <h4 class="font-semibold mb-2"><i class="fas fa-exclamation-triangle"></i> نوافذ التنبيه</h4>
+                            <div class="flex flex-wrap gap-3 mt-4">
+                                <button class="interactive-btn" onclick="alert('هذا تنبيه!')">alert()</button>
+                                <button class="interactive-btn" onclick="confirm('هل تريد المتابعة؟')">confirm()</button>
+                                <button class="interactive-btn" onclick="prompt('ما هو اسمك؟', '')">prompt()</button>
+                            </div>
+                            <div class="code-block mt-4">
+                                // عرض تنبيه بسيط<br>
+                                alert('مرحباً بك!');<br><br>
+                                
+                                // طلب تأكيد من المستخدم<br>
+                                const confirmed = confirm('هل أنت متأكد؟');<br><br>
+                                
+                                // طلب إدخال من المستخدم<br>
+                                const name = prompt('ما هو اسمك؟', '');
+                            </div>
+                        </div>
+                        
+                        <div class="example-box">
+                            <h4 class="font-semibold mb-2"><i class="fas fa-clock"></i> المؤقتات</h4>
+                            <div class="flex flex-wrap gap-3 mt-4">
+                                <button class="interactive-btn" id="setTimeoutBtn">setTimeout()</button>
+                                <button class="interactive-btn" id="setIntervalBtn">setInterval()</button>
+                                <button class="interactive-btn" id="clearIntervalBtn">clearInterval()</button>
+                            </div>
+                            <div class="code-block mt-4">
+                                // تنفيذ كود بعد تأخير<br>
+                                setTimeout(() =&gt; {<br>
+                                &nbsp;&nbsp;console.log('تم التنفيذ بعد 3 ثواني');<br>
+                                }, 3000);<br><br>
+                                
+                                // تنفيذ كود بشكل متكرر<br>
+                                const intervalId = setInterval(() =&gt; {<br>
+                                &nbsp;&nbsp;console.log('يتم التنفيذ كل ثانيتين');<br>
+                                }, 2000);<br><br>
+                                
+                                // إيقاف التنفيذ المتكرر<br>
+                                clearInterval(intervalId);
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8">
+                        <h3 class="text-xl font-semibold mb-4">كائنات أخرى في BOM</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-gray-800 p-4 rounded-lg">
+                                <h4 class="font-semibold text-primary-teal">location</h4>
+                                <p>للوصول إلى معلومات عنوان URL</p>
+                                <div class="code-block mt-2">
+                                    console.log(location.href);<br>
+                                    location.reload(); // إعادة تحميل الصفحة<br>
+                                    location.href = 'https://example.com'; // الانتقال لصفحة جديدة
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-800 p-4 rounded-lg">
+                                <h4 class="font-semibold text-primary-teal">history</h4>
+                                <p>للتحكم في سجل التصفح</p>
+                                <div class="code-block mt-2">
+                                    history.back(); // العودة للصفحة السابقة<br>
+                                    history.forward(); // التقدم للصفحة التالية<br>
+                                    history.go(-2); // العودة صفحتين للخلف
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-800 p-4 rounded-lg">
+                                <h4 class="font-semibold text-primary-teal">navigator</h4>
+                                <p>للحصول على معلومات عن المتصفح</p>
+                                <div class="code-block mt-2">
+                                    console.log(navigator.userAgent);<br>
+                                    console.log(navigator.platform);<br>
+                                    console.log(navigator.language);
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tip mt-8">
+                        <h3 class="tip-title"><i class="fas fa-exclamation-circle"></i> تحذير</h3>
+                        <p>استخدام نوافذ التنبيه بشكل مفرط قد يزعج المستخدمين ويؤثر على تجربة المستخدم. استخدمها فقط عند الضرورة القصوى.</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <!-- Slide 3: JavaScript BOM advaced example - تم التعديل -->
+        <div class="slide">
+            <main class="max-w-4xl mx-auto py-8 px-4">
+                <div class="bg-bg-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-primary-teal mb-6 border-b border-gray-700 pb-3">
+                        <i class="fas fa-window-restore"></i> JavaScript BOM (نموذج كائن المتصفح) - أمثلة عملية متقدمة
+                    </h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- مثال 1: العداد التنازلي -->
+                        <div class="example-box">
+                            <h3 class="text-xl font-semibold mb-4"><i class="fas fa-clock"></i> العداد التنازلي</h3>
+                            <div class="countdown" id="countdown">10</div>
+                            <button class="interactive-btn w-full" id="startCountdown">بدء العد التنازلي</button>
+                            <div class="code-block mt-4">
+                                // بدء العداد التنازلي<br>
+                                function startCountdown() {<br>
+                                &nbsp;&nbsp;let timeLeft = 10;<br>
+                                &nbsp;&nbsp;const countdownElement = document.getElementById('countdown');<br>
+                                &nbsp;&nbsp;countdownElement.textContent = timeLeft;<br><br>
+                                
+                                &nbsp;&nbsp;const timer = setInterval(() => {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;timeLeft--;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;countdownElement.textContent = timeLeft;<br><br>
+                                
+                                &nbsp;&nbsp;&nbsp;&nbsp;if (timeLeft <= 0) {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;clearInterval(timer);<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;countdownElement.textContent = 'انتهى الوقت!';<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                                &nbsp;&nbsp;}, 1000);<br>
+                                }
+                            </div>
+                        </div>
+                        
+                        <!-- مثال 2: زر العودة للأعلى -->
+                        <div class="example-box">
+                            <h3 class="text-xl font-semibold mb-4"><i class="fas fa-arrow-up"></i> زر العودة للأعلى</h3>
+                            <p>قم بالتمرير لأسفل لرؤية الزر يظهر</p>
+                            <div style="height: 800px; position: relative;">
+                                <div style="position: absolute; bottom: 0; width: 100%; text-align: center; padding: 20px;">
+                                    <p>هنا نهاية المحتوى</p>
+                                </div>
+                            </div>
+                            <div class="code-block mt-4">
+                                // إظهار/إخفاء زر العودة للأعلى<br>
+                                window.addEventListener('scroll', () => {<br>
+                                &nbsp;&nbsp;const backButton = document.getElementById('back-to-top');<br>
+                                &nbsp;&nbsp;if (window.pageYOffset > 300) {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;backButton.classList.add('show');<br>
+                                &nbsp;&nbsp;} else {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;backButton.classList.remove('show');<br>
+                                &nbsp;&nbsp;}<br>
+                                });<br><br>
+                                
+                                // العودة للأعلى عند النقر<br>
+                                document.getElementById('back-to-top').addEventListener('click', () => {<br>
+                                &nbsp;&nbsp;window.scrollTo({ top: 0, behavior: 'smooth' });<br>
+                                });
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        <!-- مثال 3: إعادة التوجيه بعد وقت -->
+                        <div class="example-box">
+                            <h3 class="text-xl font-semibold mb-4"><i class="fas fa-directions"></i> إعادة التوجيه بعد وقت</h3>
+                            <div class="p-4 bg-gray-800 rounded-lg">
+                                <p>سيتم توجيهك إلى صفحة أخبار التقنية بعد: <span id="redirect-timer">20</span> ثانية</p>
+                                <button class="interactive-btn mt-3" id="cancel-redirect">إلغاء التوجيه</button>
+                            </div>
+                            <div class="code-block mt-4">
+                                // إعادة التوجيه بعد 20 ثانية<br>
+                                let redirectTimer = 20;<br>
+                                const redirectInterval = setInterval(() => {<br>
+                                &nbsp;&nbsp;redirectTimer--;<br>
+                                &nbsp;&nbsp;document.getElementById('redirect-timer').textContent = redirectTimer;<br><br>
+                                
+                                &nbsp;&nbsp;if (redirectTimer <= 0) {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;clearInterval(redirectInterval);<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;window.location.href = 'https://example.com/news';<br>
+                                &nbsp;&nbsp;}<br>
+                                }, 1000);<br><br>
+                                
+                                // إلغاء التوجيه<br>
+                                document.getElementById('cancel-redirect').addEventListener('click', () => {<br>
+                                &nbsp;&nbsp;clearInterval(redirectInterval);<br>
+                                &nbsp;&nbsp;document.getElementById('redirect-timer').textContent = 'تم الإلغاء';<br>
+                                });
+                            </div>
+                        </div>
+                        
+                        <!-- مثال 4: تحديد الموقع الجغرافي -->
+                        <div class="example-box">
+                            <h3 class="text-xl font-semibold mb-4"><i class="fas fa-map-marker-alt"></i> تحديد الموقع الجغرافي</h3>
+                            <button class="interactive-btn w-full" id="get-location">الحصول على موقعي</button>
+                            <div id="location-result" class="mt-4 p-4 bg-gray-800 rounded-lg"></div>
+                            <div class="code-block mt-4">
+                                // الحصول على الموقع الجغرافي<br>
+                                document.getElementById('get-location').addEventListener('click', () => {<br>
+                                &nbsp;&nbsp;if (navigator.geolocation) {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;navigator.geolocation.getCurrentPosition(<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;position => {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const latitude = position.coords.latitude;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const longitude = position.coords.longitude;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// عرض النتائج<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error => {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.error('خطأ في الحصول على الموقع:', error);<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;);<br>
+                                &nbsp;&nbsp;} else {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;alert('المتصفح لا يدخدم تحديد الموقع الجغرافي');<br>
+                                &nbsp;&nbsp;}<br>
+                                });
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- : Web Storage API -->
+<div class="slide ">
+            <main class="max-w-4xl mx-auto py-8 px-4">
+                <div class="bg-bg-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-primary-teal mb-6 border-b border-gray-700 pb-3">
+                        <i class="fas fa-database"></i> Web Storage API
+                    </h2>
+
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-4">التخزين المحلي في المتصفح</h3>
+                        <p>توفر Web Storage API طريقتين لتخزين البيانات في متصفح المستخدم:</p>
+                        
+                        <table class="comparison-table mt-4">
+                            <thead>
+                                <tr>
+                                    <th>النوع</th>
+                                    <th>المدة</th>
+                                    <th>السعة</th>
+                                    <th>نطاق الوصول</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>localStorage</strong></td>
+                                    <td>دائمة (حتى يتم حذفها)</td>
+                                    <td>~5-10MB</td>
+                                    <td>نفس المصدر (origin)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>sessionStorage</strong></td>
+                                    <td>لجلسة التصفح فقط</td>
+                                    <td>~5-10MB</td>
+                                    <td>نفس التبويب</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="example-box">
+                            <h4 class="font-semibold mb-2">الوظائف الأساسية</h4>
+                            <div class="code-block">
+                                // تخزين قيمة<br>
+                                localStorage.setItem('username', 'Ali');<br><br>
+                                
+                                // استرجاع قيمة<br>
+                                const username = localStorage.getItem('username');<br><br>
+                                
+                                // إزالة قيمة<br>
+                                localStorage.removeItem('username');<br><br>
+                                
+                                // مسح جميع القيم<br>
+                                localStorage.clear();<br><br>
+                                
+                                // تخزين كائن<br>
+                                const user = { name: 'Ali', age: 30 };<br>
+                                localStorage.setItem('user', JSON.stringify(user));<br><br>
+                                
+                                // استرجاع كائن<br>
+                                const storedUser = JSON.parse(localStorage.getItem('user'));
+                            </div>
+                        </div>
+                        
+                        <div class="example-box">
+                            <h4 class="font-semibold mb-2">تجربة عملية</h4>
+                            <div class="flex flex-col gap-3 mt-4">
+                                <input type="text" id="storageInput" placeholder="أدخل نصًا للتخزين" class="bg-gray-700 text-white p-3 rounded-lg">
+                                <div class="flex gap-3">
+                                    <button class="interactive-btn" id="saveLocalBtn">حفظ في localStorage</button>
+                                    <button class="interactive-btn" id="saveSessionBtn">حفظ في sessionStorage</button>
+                                </div>
+                                <button class="interactive-btn" id="retrieveBtn">استرجاع القيم</button>
+                                <button class="interactive-btn" id="clearStorageBtn">مسح التخزين</button>
+                                <div id="storageOutput" class="mt-3 p-3 bg-gray-800 rounded-lg min-h-[50px]"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="note mt-8">
+                        <h3 class="note-title"><i class="fas fa-lightbulb"></i> متى نستخدم localStorage؟</h3>
+                        <p>استخدم localStorage لتخزين التفضيلات، بيانات التهيئة، أو أي بيانات تريد استمرارها بين جلسات التصفح. استخدم sessionStorage للبيانات المؤقتة التي تحتاجها فقط خلال الجلسة الحالية.</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Slide 4: Web Storage API  advanced- تم التعديل -->
+        <div class="slide">
+            <main class="max-w-4xl mx-auto py-8 px-4">
+                <div class="bg-bg-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-primary-teal mb-6 border-b border-gray-700 pb-3">
+                        <i class="fas fa-database"></i> Web Storage API - أمثلة عملية لـ Session Storage
+                    </h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- مثال 1: حجز تذاكر الطيران -->
+                        <div class="example-box">
+                            <h3 class="text-xl font-semibold mb-4"><i class="fas fa-plane"></i> حجز تذاكر الطيران</h3>
+                            <div class="booking-form">
+                                <h4 class="mb-4">تفاصيل الرحلة</h4>
+                                <select id="flight-from">
+                                    <option value="">اختر مدينة المغادرة</option>
+                                    <option value="cairo">القاهرة</option>
+                                    <option value="riyadh">الرياض</option>
+                                    <option value="dubai">دبي</option>
+                                </select>
+                                
+                                <select id="flight-to">
+                                    <option value="">اختر مدينة الوصول</option>
+                                    <option value="istanbul">إسطنبول</option>
+                                    <option value="paris">باريس</option>
+                                    <option value="london">لندن</option>
+                                </select>
+                                
+                                <input type="date" id="flight-date">
+                                
+                                <button class="interactive-btn w-full" id="save-booking">حجز الرحلة</button>
+                            </div>
+                            <div class="code-block mt-4">
+                                // حفظ بيانات الحجز في sessionStorage<br>
+                                document.getElementById('save-booking').addEventListener('click', () => {<br>
+                                &nbsp;&nbsp;const bookingData = {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;from: document.getElementById('flight-from').value,<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;to: document.getElementById('flight-to').value,<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;date: document.getElementById('flight-date').value<br>
+                                &nbsp;&nbsp;};<br><br>
+                                
+                                &nbsp;&nbsp;sessionStorage.setItem('flightBooking', JSON.stringify(bookingData));<br>
+                                &nbsp;&nbsp;alert('تم حفظ بيانات الحجز في جلسة التصفح!');<br>
+                                });
+                            </div>
+                        </div>
+                        
+                        <!-- مثال 2: متابعة التسوق -->
+                        <div class="example-box">
+                            <h3 class="text-xl font-semibold mb-4"><i class="fas fa-shopping-cart"></i> متابعة التسوق</h3>
+                            <div class="product-grid">
+                                <div class="product-card">
+                                    <div class="product-img bg-blue-200"><i class="fas fa-laptop"></i></div>
+                                    <h4>لابتوب</h4>
+                                    <p>السعر: 2500 ج.م</p>
+                                    <button class="interactive-btn mt-2 add-to-session" data-id="101">أضف للسلة</button>
+                                </div>
+                                <div class="product-card">
+                                    <div class="product-img bg-green-200"><i class="fas fa-mobile"></i></div>
+                                    <h4>موبايل</h4>
+                                    <p>السعر: 3500 ج.م</p>
+                                    <button class="interactive-btn mt-2 add-to-session" data-id="102">أضف للسلة</button>
+                                </div>
+                            </div>
+                            <div class="mt-4 p-4 bg-gray-800 rounded-lg">
+                                <h4 class="mb-3">المنتجات المختارة</h4>
+                                <div id="session-cart"></div>
+                            </div>
+                            <div class="code-block mt-4">
+                                // إضافة منتج إلى سلة sessionStorage<br>
+                                document.querySelectorAll('.add-to-session').forEach(button => {<br>
+                                &nbsp;&nbsp;button.addEventListener('click', function() {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;const productId = this.dataset.id;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;let cart = JSON.parse(sessionStorage.getItem('shoppingCart')) || [];<br><br>
+                                
+                                &nbsp;&nbsp;&nbsp;&nbsp;if (!cart.includes(productId)) {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cart.push(productId);<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sessionStorage.setItem('shoppingCart', JSON.stringify(cart));<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;updateSessionCartDisplay();<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                                &nbsp;&nbsp;});<br>
+                                });
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- مثال عملي من الواقع -->
+                    <div class="example-box mt-6">
+                        <h3 class="text-xl font-semibold mb-4"><i class="fas fa-graduation-cap"></i> مثال من الواقع: نظام الاختبارات</h3>
+                        <p>في أنظمة الاختبارات الإلكترونية، يتم استخدام sessionStorage لحفظ إجابات الطالب خلال الجلسة، بحيث لا تختفي الإجابات عند تحديث الصفحة، ولكن يتم حذفها عند انتهاء الجلسة.</p>
+                        
+                        <div class="mt-4 p-4 bg-gray-800 rounded-lg">
+                            <h4 class="mb-3">سؤال 1: ما هي عاصمة مصر؟</h4>
+                            <div class="flex flex-col gap-2">
+                                <label><input type="radio" name="q1" value="a"> القاهرة</label>
+                                <label><input type="radio" name="q1" value="b"> الإسكندرية</label>
+                                <label><input type="radio" name="q1" value="c"> الجيزة</label>
+                            </div>
+                            <button class="interactive-btn mt-3" id="save-answer">حفظ الإجابة</button>
+                        </div>
+                        
+                        <div class="code-block mt-4">
+                            // حفظ إجابة الطالب في sessionStorage<br>
+                            document.getElementById('save-answer').addEventListener('click', () => {<br>
+                            &nbsp;&nbsp;const answer = document.querySelector('input[name="q1"]:checked')?.value;<br>
+                            &nbsp;&nbsp;if (answer) {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;sessionStorage.setItem('q1_answer', answer);<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;alert('تم حفظ إجابتك!');<br>
+                            &nbsp;&nbsp;} else {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;alert('الرجاء اختيار إجابة');<br>
+                            &nbsp;&nbsp;}<br>
+                            });
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+     <!-- Slide 5: JSON -->
+        <div class="slide">
+            <main class="max-w-4xl mx-auto py-8 px-4">
+                <div class="bg-bg-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-primary-teal mb-6 border-b border-gray-700 pb-3">
+                        <i class="fas fa-code"></i> JSON في JavaScript
+                    </h2>
+
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-4">ما هو JSON؟</h3>
+                        <p>JSON (JavaScript Object Notation) هو تنسيق خفيف الوزن لتبادل البيانات. وهو مكتوب بنص يمكن قراءته بواسطة الإنسان والآلة.</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                            <div>
+                                <h4 class="font-semibold mb-2">كائن JavaScript</h4>
+                                <div class="code-block">
+                                    const person = {<br>
+                                    &nbsp;&nbsp;name: "أحمد",<br>
+                                    &nbsp;&nbsp;age: 30,<br>
+                                    &nbsp;&nbsp;isStudent: false,<br>
+                                    &nbsp;&nbsp;courses: ["JavaScript", "React"],<br>
+                                    &nbsp;&nbsp;address: {<br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;city: "القاهرة",<br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;country: "مصر"<br>
+                                    &nbsp;&nbsp;}<br>
+                                    };
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h4 class="font-semibold mb-2">JSON المقابل</h4>
+                                <div class="code-block">
+                                    {<br>
+                                    &nbsp;&nbsp;"name": "أحمد",<br>
+                                    &nbsp;&nbsp;"age": 30,<br>
+                                    &nbsp;&nbsp;"isStudent": false,<br>
+                                    &nbsp;&nbsp;"courses": ["JavaScript", "React"],<br>
+                                    &nbsp;&nbsp;"address": {<br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;"city": "القاهرة",<br>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;"country": "مصر"<br>
+                                    &nbsp;&nbsp;}<br>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="example-box">
+                            <h4 class="font-semibold mb-2">JSON.stringify()</h4>
+                            <p>تحويل كائن JavaScript إلى سلسلة JSON</p>
+                            <div class="code-block mt-3">
+                                const user = {<br>
+                                &nbsp;&nbsp;name: "سارة",<br>
+                                &nbsp;&nbsp;email: "sara@example.com"<br>
+                                };<br><br>
+                                
+                                const jsonString = JSON.stringify(user);<br>
+                                console.log(jsonString);<br>
+                                // الناتج: {"name":"سارة","email":"sara@example.com"}
+                            </div>
+                        </div>
+                        
+                        <div class="example-box">
+                            <h4 class="font-semibold mb-2">JSON.parse()</h4>
+                            <p>تحويل سلسلة JSON إلى كائن JavaScript</p>
+                            <div class="code-block mt-3">
+                                const jsonStr = '{"name":"سارة","email":"sara@example.com"}';<br><br>
+                                
+                                const userObj = JSON.parse(jsonStr);<br>
+                                console.log(userObj.name); // "سارة"<br>
+                                console.log(userObj.email); // "sara@example.com"
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="example-box mt-6">
+                        <h4 class="font-semibold mb-2">استخدام JSON مع localStorage</h4>
+                        <div class="code-block">
+                            // تخزين كائن في localStorage<br>
+                            const settings = {<br>
+                            &nbsp;&nbsp;theme: "dark",<br>
+                            &nbsp;&nbsp;notifications: true,<br>
+                            &nbsp;&nbsp;language: "ar"<br>
+                            };<br><br>
+                            
+                            localStorage.setItem('appSettings', JSON.stringify(settings));<br><br>
+                            
+                            // استرجاع الكائن من localStorage<br>
+                            const storedSettings = JSON.parse(localStorage.getItem('appSettings'));<br>
+                            console.log(storedSettings.theme); // "dark"
+                        </div>
+                    </div>
+                    
+                    <div class="tip mt-6">
+                        <h3 class="tip-title"><i class="fas fa-exclamation-circle"></i> ملاحظة هامة</h3>
+                        <p>JSON لا يدعم جميع أنواع البيانات في JavaScript. على سبيل المثال، الدوال (Functions)، القيم غير المعرفة (undefined)، والرموز (Symbols) لا يمكن تحويلها إلى JSON.</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+            <!-- Slide 6: البرمجة غير المتزامنة -->
+        <div class="slide">
+            <main class="max-w-4xl mx-auto py-8 px-4">
+                <div class="bg-bg-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-primary-teal mb-6 border-b border-gray-700 pb-3">
+                        <i class="fas fa-sync-alt"></i> البرمجة غير المتزامنة (Asynchronous Programming)
+                    </h2>
+
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-4">الفرق بين المتزامن وغير المتزامن</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="example-box">
+                                <h4 class="font-semibold mb-2">برمجة متزامنة</h4>
+                                <p>التنفيذ خطوة بخطوة، كل عملية تنتظر انتهاء التي قبلها</p>
+                                <div class="code-block mt-3">
+                                    console.log("الخطوة 1");<br>
+                                    console.log("الخطوة 2");<br>
+                                    console.log("الخطوة 3");<br>
+                                    // الناتج: 1, 2, 3
+                                </div>
+                                <img src="https://miro.medium.com/v2/resize:fit:720/format:webp/1*Kr0Rz3ZJ4GzF4HvFyGJvXg.png" alt="برمجة متزامنة" class="lecture-img">
+                            </div>
+                            
+                            <div class="example-box">
+                                <h4 class="font-semibold mb-2">برمجة غير متزامنة</h4>
+                                <p>إمكانية تنفيذ عمليات متعددة في نفس الوقت دون الانتظار</p>
+                                <div class="code-block mt-3">
+                                    console.log("البداية");<br><br>
+                                    
+                                    setTimeout(() => {<br>
+                                    &nbsp;&nbsp;console.log("عملية غير متزامنة");<br>
+                                    }, 2000);<br><br>
+                                    
+                                    console.log("النهاية");<br>
+                                    // الناتج: البداية, النهاية, عملية غير متزامنة
+                                </div>
+                                <img src="https://miro.medium.com/v2/resize:fit:720/format:webp/1*Kr0Rz3ZJ4GzF4HvFyGJvXg.png" alt="برمجة غير متزامنة" class="lecture-img">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-4">مثال على عملية غير متزامنة</h3>
+                        <div class="flex flex-wrap gap-3">
+                            <button class="interactive-btn" id="fetchDataBtn">جلب بيانات من API</button>
+                            <button class="interactive-btn" id="simulateAsyncBtn">محاكاة عملية غير متزامنة</button>
+                        </div>
+                        <div id="asyncOutput" class="mt-4 p-4 bg-gray-800 rounded-lg min-h-[100px]"></div>
+                    </div>
+                    
+                    <div class="note">
+                        <h3 class="note-title"><i class="fas fa-lightbulb"></i> لماذا نحتاج البرمجة غير المتزامنة؟</h3>
+                        <p>في تطبيقات الويب، العديد من العمليات تستغرق وقتًا (مثل جلب البيانات من خادم، قراءة ملفات، إلخ). البرمجة غير المتزامنة تمنع تجميد واجهة المستخدم أثناء انتظار هذه العمليات.</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <!-- Slide 7: كيف يعمل JavaScript -->
+        <div class="slide">
+            <main class="max-w-4xl mx-auto py-8 px-4">
+                <div class="bg-bg-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-primary-teal mb-6 border-b border-gray-700 pb-3">
+                        <i class="fas fa-cogs"></i> كيف يعمل JavaScript خلف الكواليس
+                    </h2>
+
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-4">مكونات JavaScript Runtime</h3>
+                        
+                        <div class="runtime-visual">
+                           
+                           <div class="runtime-part"> 
+                                <h4>محرك JavaScript</h4>
+                                <p>(مثل V8 في Chrome)</p>
+                                <div class="flex justify-center mt-3">
+                                    <div class="bg-gray-700 p-3 rounded-lg">
+                                        <i class="fas fa-engine text-3xl text-yellow-500"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="runtime-part">
+                                <h4>Call Stack</h4>
+                                <p>مكدس المكالمات</p>
+                                <div class="flex justify-center mt-3">
+                                    <div class="bg-gray-700 p-3 rounded-lg">
+                                        <i class="fas fa-layer-group text-3xl text-blue-500"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="runtime-part">
+                                <h4>Event Loop</h4>
+                                <p>حلقة الأحداث</p>
+                                <div class="flex justify-center mt-3">
+                                    <div class="bg-gray-700 p-3 rounded-lg">
+                                        <i class="fas fa-redo-alt text-3xl text-green-500"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="runtime-part">
+                                <h4>Callback Queue</h4>
+                                <p>طابور الدوال الراجعة</p>
+                                <div class="flex justify-center mt-3">
+                                    <div class="bg-gray-700 p-3 rounded-lg">
+                                        <i class="fas fa-tasks text-3xl text-red-500"></i>
+                                    </div>
+                                </div>
+                            </div> 
+                        </div>
+                    </div>
+                    
+                    <div class="example-box">
+                     <img src="https://miro.medium.com/v2/da:true/resize:fit:800/1*iHhUyO4DliDwa6x_cO5E3A.gif" alt="image-js-runtime">
+                        <!-- <button class="interactive-btn w-full mt-3" id="startEventLoopBtn">تشغيل المحاكاة</button> -->
+                    </div>
+                    
+                    <div class="rounded bg-red-500 border dashed p-3">
+                        <a href="https://youtu.be/kildN99lvXA?si=2TZD6_PWOR5-8TCV">
+                            اطلع علي الفيديو ده 
+                        </a>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        <div>
+                            <h4 class="font-semibold mb-2">عملية تنفيذ الكود</h4>
+                            <ol class="property-list">
+                                <li>يتم تحميل الكود وإنشاء سياق التنفيذ</li>
+                                <li>يتم وضع الدوال في Call Stack وتنفيذها</li>
+                                <li>العمليات غير المتزامنة تُرسل إلى Web APIs</li>
+                                <li>عند اكتمال العمليات، توضع الدوال الراجعة في Callback Queue</li>
+                                <li>Event Loop تنقل الدوال من Callback Queue إلى Call Stack عندما يكون فارغًا</li>
+                            </ol>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-semibold mb-2">مثال توضيحي</h4>
+                            <div class="code-block">
+                                console.log("البداية");<br><br>
+                                
+                                setTimeout(() => {<br>
+                                &nbsp;&nbsp;console.log("setTimeout");<br>
+                                }, 0);<br><br>
+                                
+                                Promise.resolve().then(() => {<br>
+                                &nbsp;&nbsp;console.log("Promise");<br>
+                                });<br><br>
+                                
+                                console.log("النهاية");<br>
+                                // الناتج: البداية, النهاية, Promise, setTimeout
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="note mt-6">
+                        <h3 class="note-title"><i class="fas fa-lightbulb"></i> لماذا هذا الترتيب؟</h3>
+                        <p>Microtasks (مثل Promises) لها أولوية أعلى من Macrotasks (مثل setTimeout). لذلك يتم تنفيذها قبل Macrotasks عندما يكون Call Stack فارغًا.</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+      
+        <!-- Slide 7: Shopping Cart - تم التعديل -->
+        <div class="slide">
+            <main class="max-w-4xl mx-auto py-8 px-4">
+                <div class="bg-bg-card rounded-2xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-primary-teal mb-6 border-b border-gray-700 pb-3">
+                        <i class="fas fa-shopping-cart"></i> تطبيق سلة التسوق الكامل
+                    </h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- صفحة المنتجات -->
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4">صفحة المنتجات</h3>
+                            <div class="product-grid">
+                                <div class="product-card">
+                                    <div class="product-img bg-blue-200"><i class="fas fa-laptop"></i></div>
+                                    <h4>لابتوب ديل</h4>
+                                    <p>مواصفات عالية - إنتل كور i7</p>
+                                    <p class="font-bold text-lg mt-2">15,000 ج.م</p>
+                                    <button class="interactive-btn mt-2 add-to-cart" 
+                                            data-id="1001"
+                                            data-name="لابتوب ديل"
+                                            data-price="15000"
+                                            data-image="laptop">أضف للسلة</button>
+                                </div>
+                                
+                                <div class="product-card">
+                                    <div class="product-img bg-green-200"><i class="fas fa-mobile-alt"></i></div>
+                                    <h4>هاتف سامسونج</h4>
+                                    <p>شاشة 6.7 بوصة - ذاكرة 128GB</p>
+                                    <p class="font-bold text-lg mt-2">12,500 ج.م</p>
+                                    <button class="interactive-btn mt-2 add-to-cart" 
+                                            data-id="1002"
+                                            data-name="هاتف سامسونج"
+                                            data-price="12500"
+                                            data-image="phone">أضف للسلة</button>
+                                </div>
+                                
+                                <div class="product-card">
+                                    <div class="product-img bg-yellow-200"><i class="fas fa-headphones"></i></div>
+                                    <h4>سماعات لاسلكية</h4>
+                                    <p>تقنية البلوتوث 5.0 - عمر بطارية 20 ساعة</p>
+                                    <p class="font-bold text-lg mt-2">1,200 ج.م</p>
+                                    <button class="interactive-btn mt-2 add-to-cart" 
+                                            data-id="1003"
+                                            data-name="سماعات لاسلكية"
+                                            data-price="1200"
+                                            data-image="headphones">أضف للسلة</button>
+                                </div>
+                                
+                                <div class="product-card">
+                                    <div class="product-img bg-red-200"><i class="fas fa-tablet-alt"></i></div>
+                                    <h4>تابلت أبل</h4>
+                                    <p>شاشة 10.9 بوصة - شريحة A14 Bionic</p>
+                                    <p class="font-bold text-lg mt-2">18,000 ج.م</p>
+                                    <button class="interactive-btn mt-2 add-to-cart" 
+                                            data-id="1004"
+                                            data-name="تابلت أبل"
+                                            data-price="18000"
+                                            data-image="tablet">أضف للسلة</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- صفحة السلة -->
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4">سلة التسوق</h3>
+                            <div class="bg-gray-800 p-4 rounded-lg">
+                                <div id="cart-items-container">
+                                    <!-- سيتم عرض العناصر هنا -->
+                                </div>
+                                <div class="mt-4 p-3 bg-gray-700 rounded-lg flex justify-between">
+                                    <span class="font-bold">الإجمالي:</span>
+                                    <span class="font-bold" id="cart-total">0 ج.م</span>
+                                </div>
+                                <button class="interactive-btn w-full mt-3">إتمام الشراء</button>
+                            </div>
+                            
+                            <!-- كود JavaScript -->
+                            <div class="code-block mt-4">
+                                // إضافة منتج إلى السلة<br>
+                                function addToCart(product) {<br>
+                                &nbsp;&nbsp;let cart = JSON.parse(localStorage.getItem('cart')) || [];<br>
+                                &nbsp;&nbsp;const existingItem = cart.find(item => item.id === product.id);<br><br>
+                                
+                                &nbsp;&nbsp;if (existingItem) {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;existingItem.quantity += 1;<br>
+                                &nbsp;&nbsp;} else {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;cart.push({ ...product, quantity: 1 });<br>
+                                &nbsp;&nbsp;}<br><br>
+                                
+                                &nbsp;&nbsp;localStorage.setItem('cart', JSON.stringify(cart));<br>
+                                &nbsp;&nbsp;updateCartDisplay();<br>
+                                }<br><br>
+                                
+                                // تحديث عرض السلة<br>
+                                function updateCartDisplay() {<br>
+                                &nbsp;&nbsp;const cart = JSON.parse(localStorage.getItem('cart')) || [];<br>
+                                &nbsp;&nbsp;const container = document.getElementById('cart-items-container');<br>
+                                &nbsp;&nbsp;container.innerHTML = '';<br>
+                                &nbsp;&nbsp;let total = 0;<br><br>
+                                
+                                &nbsp;&nbsp;if (cart.length === 0) {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;container.innerHTML = '&lt;p class="text-center py-4"&gt;السلة فارغة&lt;/p&gt;';<br>
+                                &nbsp;&nbsp;} else {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;cart.forEach(item => {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const itemTotal = item.price * item.quantity;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;total += itemTotal;<br><br>
+                                
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const itemElement = document.createElement('div');<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;itemElement.className = 'cart-item';<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;itemElement.innerHTML = `<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div class="flex items-center gap-3"&gt;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div class="w-10 h-10 bg-gray-200 rounded"&gt;&lt;/div&gt;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&gt;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&gt;${item.name}&lt;/div&gt;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div class="text-sm"&gt;${item.price} ج.م × ${item.quantity}&lt;/div&gt;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/div&gt;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/div&gt;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div class="flex items-center gap-2"&gt;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;span class="font-bold"&gt;${itemTotal} ج.م&lt;/span&gt;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;button class="text-red-500 remove-item" data-id="${item.id}"&gt;&lt;i class="fas fa-trash"&gt;&lt;/i&gt;&lt;/button&gt;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/div&gt;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`;<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;container.appendChild(itemElement);<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;});<br>
+                                &nbsp;&nbsp;}<br><br>
+                                
+                                &nbsp;&nbsp;document.getElementById('cart-total').textContent = `${total} ج.م`;<br>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+ <div class="slide">
+  <main class="max-w-4xl mx-auto py-8 px-4">
+    <div class="bg-bg-card rounded-2xl p-6 shadow-xl text-white">
+      <h2 class="text-2xl font-bold text-primary-teal mb-6 border-b border-gray-700 pb-3">
+        <i class="fas fa-shopping-cart"></i> مشروع تطبيقي: سلة التسوق باستخدام LocalStorage
+      </h2>
+
+      <p class="mb-6 text-lg text-gray-200">
+        هذا المثال يوضح كيفية عرض المنتجات، وإضافة عناصر إلى السلة، وحفظ كل ذلك في <code>localStorage</code> باستخدام HTML وCSS وJavaScript فقط.
+      </p>
+
+      <div class="grid grid-cols-1 gap-6">
+        <!-- HTML -->
+        <div class="example-box">
+          <h3 class="text-xl font-semibold mb-4 text-yellow-400">1️⃣ HTML - الهيكل</h3>
+          <div class="code-block">
+            &lt;!-- المنتجات --&gt;<br>
+            &lt;div id="product-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10"&gt;&lt;/div&gt;<br><br>
+
+            &lt;!-- السلة --&gt;<br>
+            &lt;div class="bg-gray-800 p-4 rounded-lg"&gt;<br>
+            &nbsp;&nbsp;&lt;h3 class="text-xl font-semibold mb-4 text-white"&gt;🛒 سلة التسوق&lt;/h3&gt;<br>
+            &nbsp;&nbsp;&lt;div id="cart-items" class="text-white space-y-2"&gt;&lt;/div&gt;<br><br>
+            &nbsp;&nbsp;&lt;div class="mt-4 p-3 bg-gray-700 rounded-lg flex justify-between text-white font-bold"&gt;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;span&gt;الإجمالي:&lt;/span&gt;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;span id="cart-total"&gt;0 ج.م&lt;/span&gt;<br>
+            &nbsp;&nbsp;&lt;/div&gt;<br>
+            &nbsp;&nbsp;&lt;button class="interactive-btn w-full mt-3"&gt;إتمام الشراء&lt;/button&gt;<br>
+            &lt;/div&gt;
+          </div>
+        </div>
+
+        <!-- CSS -->
+        <div class="example-box">
+          <h3 class="text-xl font-semibold mb-4 text-pink-400">2️⃣ CSS - التنسيق</h3>
+          <div class="code-block">
+            .product-card {<br>
+            &nbsp;&nbsp;background: #2d3748;<br>
+            &nbsp;&nbsp;padding: 1rem;<br>
+            &nbsp;&nbsp;border-radius: 0.75rem;<br>
+            &nbsp;&nbsp;text-align: center;<br>
+            &nbsp;&nbsp;color: white;<br>
+            }<br><br>
+
+            .product-img {<br>
+            &nbsp;&nbsp;width: 60px;<br>
+            &nbsp;&nbsp;height: 60px;<br>
+            &nbsp;&nbsp;background: #4a5568;<br>
+            &nbsp;&nbsp;margin: 0 auto 1rem;<br>
+            &nbsp;&nbsp;display: flex;<br>
+            &nbsp;&nbsp;align-items: center;<br>
+            &nbsp;&nbsp;justify-content: center;<br>
+            &nbsp;&nbsp;border-radius: 9999px;<br>
+            }<br><br>
+
+            .interactive-btn {<br>
+            &nbsp;&nbsp;background-color: #13b9fd;<br>
+            &nbsp;&nbsp;color: white;<br>
+            &nbsp;&nbsp;padding: 0.5rem 1rem;<br>
+            &nbsp;&nbsp;border-radius: 0.5rem;<br>
+            &nbsp;&nbsp;transition: background-color 0.3s;<br>
+            }<br>
+            .interactive-btn:hover {<br>
+            &nbsp;&nbsp;background-color: #0ea5e9;<br>
+            }
+          </div>
+        </div>
+
+        <!-- JavaScript -->
+        <div class="example-box">
+          <h3 class="text-xl font-semibold mb-4 text-green-400">3️⃣ JavaScript - الوظيفة</h3>
+          <div class="code-block overflow-auto max-h-[400px]">
+            const products = [<br>
+            &nbsp;&nbsp;{ id: 1001, name: "لابتوب ديل", price: 15000, desc: "i7" },<br>
+            &nbsp;&nbsp;{ id: 1002, name: "هاتف سامسونج", price: 12500, desc: "128GB" },<br>
+            &nbsp;&nbsp;{ id: 1003, name: "سماعات لاسلكية", price: 1200, desc: "BT 5.0" },<br>
+            &nbsp;&nbsp;{ id: 1004, name: "تابلت أبل", price: 18000, desc: "A14 Bionic" },<br>
+            ];<br><br>
+
+            const productContainer = document.getElementById("product-list");<br>
+            products.forEach(product =&gt; {<br>
+            &nbsp;&nbsp;const card = document.createElement("div");<br>
+            &nbsp;&nbsp;card.className = "product-card";<br>
+            &nbsp;&nbsp;card.innerHTML = `<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;div class="product-img"&gt;&lt;i class="fas fa-box"&gt;&lt;/i&gt;&lt;/div&gt;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;h4&gt;${product.name}&lt;/h4&gt;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;p&gt;${product.desc}&lt;/p&gt;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;p class="font-bold text-lg mt-2"&gt;${product.price} ج.م&lt;/p&gt;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;button class="interactive-btn add-to-cart" data-id="${product.id}"&gt;أضف للسلة&lt;/button&gt;<br>
+            `;<br>
+            &nbsp;&nbsp;productContainer.appendChild(card);<br>
+            });<br><br>
+
+            document.addEventListener("click", e =&gt; {<br>
+            &nbsp;&nbsp;if (e.target.classList.contains("add-to-cart")) {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;const id = parseInt(e.target.dataset.id);<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;const product = products.find(p =&gt; p.id === id);<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;addToCart(product);<br>
+            &nbsp;&nbsp;}<br>
+            });<br><br>
+
+            function addToCart(product) {<br>
+            &nbsp;&nbsp;let cart = JSON.parse(localStorage.getItem("cart")) || [];<br>
+            &nbsp;&nbsp;const existing = cart.find(item =&gt; item.id === product.id);<br><br>
+
+            &nbsp;&nbsp;if (existing) { existing.quantity += 1; }<br>
+            &nbsp;&nbsp;else { cart.push({ ...product, quantity: 1 }); }<br><br>
+
+            &nbsp;&nbsp;localStorage.setItem("cart", JSON.stringify(cart));<br>
+            &nbsp;&nbsp;updateCart();<br>
+            }<br><br>
+
+            function updateCart() {<br>
+            &nbsp;&nbsp;const cart = JSON.parse(localStorage.getItem("cart")) || [];<br>
+            &nbsp;&nbsp;const container = document.getElementById("cart-items");<br>
+            &nbsp;&nbsp;container.innerHTML = "";<br>
+            &nbsp;&nbsp;let total = 0;<br><br>
+
+            &nbsp;&nbsp;cart.forEach(item =&gt; {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;const itemTotal = item.price * item.quantity;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;total += itemTotal;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;const div = document.createElement("div");<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;div.className = "flex justify-between bg-gray-700 p-2 rounded";<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;div.innerHTML = `<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&gt;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&gt;${item.name}&lt;/div&gt;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div class="text-sm"&gt;${item.price} × ${item.quantity}&lt;/div&gt;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/div&gt;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&gt;${itemTotal} ج.م&lt;/div&gt;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;`;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;container.appendChild(div);<br>
+            });<br>
+            &nbsp;&nbsp;document.getElementById("cart-total").textContent = `${total} ج.م`;<br>
+            }<br><br>
+
+            updateCart();
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+
+        <!-- Slide 10: Tasks - تم التعديل -->
+      <!-- Slide 10: تعديل المهام على المشاريع السابقة -->
+<div class="slide">
+  <main class="max-w-4xl mx-auto py-8 px-4">
+    <div class="bg-bg-card rounded-2xl p-6 shadow-xl text-white">
+      <h2 class="text-2xl font-bold text-primary-teal mb-6 border-b border-gray-700 pb-3">
+        <i class="fas fa-tools"></i> تطوير المشاريع السابقة باستخدام LocalStorage
+      </h2>
+
+      <div class="mb-8">
+        <h3 class="text-xl font-semibold mb-4">المطلوب من الطالب</h3>
+        <p class="leading-relaxed text-text-secondary">
+          سنقوم بتحديث المشاريع السابقة التي أنشأتموها لتصبح أكثر تفاعلية باستخدام <code class="text-primary-teal">localStorage</code>. إليك تفاصيل المهام:
+        </p>
+      </div>
+
+      <div class="runtime-visua">
+        <div class="runtime-part">
+          <h4 class="text-lg font-semibold mb-1">تطبيق To-Do List</h4>
+          <p>أضف حفظ واسترجاع المهام من <code>localStorage</code></p>
+          <div class="flex justify-center mt-3">
+            <div class="bg-gray-700 p-3 rounded-lg">
+              <i class="fas fa-list-check text-3xl text-yellow-400"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="runtime-part mt-3">
+          <h4 class="text-lg font-semibold mb-1">نظام تسجيل المستخدم</h4>
+          <p>تعديل مشروع التخرج لاستخدام <code>localStorage</code> لتسجيل الدخول وتخزين المستخدمين</p>
+          <div class="flex justify-center mt-3">
+            <div class="bg-gray-700 p-3 rounded-lg">
+              <i class="fas fa-user-lock text-3xl text-green-400"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1  gap-3 mt-8">
+        <div>
+          <h4 class="font-semibold mb-2 text-primary-teal">1. تطوير To-Do List</h4>
+          <ol class="property-list list-decimal list-inside leading-relaxed text-gray-300">
+            <li>افتح مشروع To-Do List الذي أنشأته سابقًا.</li>
+            <li>احفظ المهام باستخدام <code>localStorage</code>.</li>
+            <li>أعد تحميل المهام عند تشغيل الصفحة.</li>
+            <li>أضف إمكانية حذف أو تعليم المهمة كمكتملة.</li>
+          </ol>
+        </div>
+
+        <div>
+          <h4 class="font-semibold mb-2 text-primary-teal">2. تطوير نظام تسجيل الدخول</h4>
+          <ul class="list-disc list-inside text-gray-300 leading-relaxed">
+            <li>استخدم مشروع التخرج (المكوّن من 3 صفحات: تسجيل، دخول، منتجات).</li>
+            <li>عند إنشاء حساب، خزّن المستخدم في <code>localStorage</code>.</li>
+            <li>بعد تسجيل الدخول، خزّن المستخدم الحالي في <code>currentUser</code> وانتقل إلى صفحة المنتجات.</li>
+            <li>إذا فشل تسجيل الدخول، اعرض رسالة تنبيه "الرجاء تسجيل بريد جديد".</li>
+            <li>في صفحة المنتجات، اعرض اسم المستخدم وزر تسجيل الخروج الذي يمسح <code>currentUser</code> ويعيد التوجيه.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="rounded bg-yellow-100 border-l-4 border-yellow-400 p-4 mt-6 text-yellow-900">
+        <p class="font-bold mb-2"><i class="fas fa-exclamation-triangle text-yellow-500"></i> ملاحظات:</p>
+        <ul class="list-disc list-inside">
+          <li>تأكّد من التحقق من حالة تسجيل الدخول عند تحميل صفحة المنتجات.</li>
+          <li>يمكنك استخدام صفحات HTML منفصلة أو التحكم بالإظهار والإخفاء باستخدام JavaScript.</li>
+        </ul>
+      </div>
+    </div>
+  </main>
+</div>
+
+        
+    </div>
+
+    <div class="slide-nav">
+        <button class="nav-btn" id="prev-btn">→</button>
+        <button class="nav-btn" id="next-btn">←</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // كود التنقل بين الشرائح
+            // ... (الكود الأصلي للتنقل بين الشرائح)
+  const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const progressBar = document.getElementById('progress-bar');
+            const slideCounter = document.getElementById('slide-counter');
+            const themeToggle = document.getElementById('theme-toggle');
+            let currentSlide = 0;
+
+            // Initialize first slide
+            updateSlideCounter();
+            updateProgressBar();
+
+            // Navigation functions
+            function goToSlide(index) {
+                if (index < 0 || index >= slides.length) return;
+
+                slides[currentSlide].classList.remove('active');
+                slides[index].classList.add('active');
+
+                currentSlide = index;
+
+                updateSlideCounter();
+                updateProgressBar();
+            }
+
+            function nextSlide() {
+                if (currentSlide < slides.length - 1) {
+                    goToSlide(currentSlide + 1);
+                }
+            }
+
+            function prevSlide() {
+                if (currentSlide > 0) {
+                    goToSlide(currentSlide - 1);
+                }
+            }
+
+            function updateSlideCounter() {
+                slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
+            }
+
+            function updateProgressBar() {
+                const progress = ((currentSlide + 1) / slides.length) * 100;
+                progressBar.style.width = `${progress}%`;
+            }
+
+            // Theme toggle
+            function toggleTheme() {
+                document.body.classList.toggle('light-mode');
+                const isDarkMode = !document.body.classList.contains('light-mode');
+                themeToggle.textContent = isDarkMode ? '🌙' : '☀️';
+                localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+            }
+
+            // Keyboard navigation
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    nextSlide();
+                } else if (e.key === 'ArrowLeft') {
+                    prevSlide();
+                }
+            });
+
+            // Load saved theme
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                themeToggle.textContent = '☀️';
+            }
+
+            // Event listeners
+            nextBtn.addEventListener('click', nextSlide);
+            prevBtn.addEventListener('click', prevSlide);
+            themeToggle.addEventListener('click', toggleTheme);
+
+            // Web Storage Demo
+            const saveLocalBtn = document.getElementById('saveLocalBtn');
+            const saveSessionBtn = document.getElementById('saveSessionBtn');
+            const retrieveBtn = document.getElementById('retrieveBtn');
+            const clearStorageBtn = document.getElementById('clearStorageBtn');
+            const storageInput = document.getElementById('storageInput');
+            const storageOutput = document.getElementById('storageOutput');
+            
+            if (saveLocalBtn) {
+                saveLocalBtn.addEventListener('click', () => {
+                    const value = storageInput.value || 'قيمة افتراضية';
+                    localStorage.setItem('demoLocal', value);
+                    storageOutput.textContent = `تم الحفظ في localStorage: ${value}`;
+                });
+            }
+            
+            if (saveSessionBtn) {
+                saveSessionBtn.addEventListener('click', () => {
+                    const value = storageInput.value || 'قيمة افتراضية';
+                    sessionStorage.setItem('demoSession', value);
+                    storageOutput.textContent = `تم الحفظ في sessionStorage: ${value}`;
+                });
+            }
+            
+            if (retrieveBtn) {
+                retrieveBtn.addEventListener('click', () => {
+                    const localValue = localStorage.getItem('demoLocal');
+                    const sessionValue = sessionStorage.getItem('demoSession');
+                    
+                    let output = '';
+                    if (localValue) output += `localStorage: ${localValue}\n`;
+                    if (sessionValue) output += `sessionStorage: ${sessionValue}`;
+                    
+                    storageOutput.textContent = output || 'لا توجد قيم مخزنة';
+                });
+            }
+            
+            if (clearStorageBtn) {
+                clearStorageBtn.addEventListener('click', () => {
+                    localStorage.removeItem('demoLocal');
+                    sessionStorage.removeItem('demoSession');
+                    storageOutput.textContent = 'تم مسح جميع القيم المخزنة';
+                });
+            }
+            
+            // SetTimeout/SetInterval Demo
+            const setTimeoutBtn = document.getElementById('setTimeoutBtn');
+            const setIntervalBtn = document.getElementById('setIntervalBtn');
+            const clearIntervalBtn = document.getElementById('clearIntervalBtn');
+            let intervalId;
+            
+            if (setTimeoutBtn) {
+                setTimeoutBtn.addEventListener('click', () => {
+                    setTimeout(() => {
+                        alert('تم تنفيذ setTimeout بعد 3 ثواني!');
+                    }, 3000);
+                });
+            }
+            
+            if (setIntervalBtn) {
+                setIntervalBtn.addEventListener('click', () => {
+                    let counter = 0;
+                    intervalId = setInterval(() => {
+                        console.log(`تنفيذ setInterval #${++counter}`);
+                        if (counter === 5) clearInterval(intervalId);
+                    }, 1000);
+                });
+            }
+            
+            if (clearIntervalBtn) {
+                clearIntervalBtn.addEventListener('click', () => {
+                    if (intervalId) {
+                        clearInterval(intervalId);
+                        alert('تم إيقاف setInterval');
+                    }
+                });
+            }
+            
+            // Async Demo
+            const fetchDataBtn = document.getElementById('fetchDataBtn');
+            const simulateAsyncBtn = document.getElementById('simulateAsyncBtn');
+            const asyncOutput = document.getElementById('asyncOutput');
+            
+            if (fetchDataBtn) {
+                fetchDataBtn.addEventListener('click', async () => {
+                    asyncOutput.textContent = 'جاري جلب البيانات...';
+                    try {
+                        const response = await fetch('https://jsonplaceholder.typicode.com/todos/1');
+                        const data = await response.json();
+                        asyncOutput.textContent = `تم جلب البيانات: ${JSON.stringify(data)}`;
+                    } catch (error) {
+                        asyncOutput.textContent = `حدث خطأ: ${error.message}`;
+                    }
+                });
+            }
+            
+            if (simulateAsyncBtn) {
+                simulateAsyncBtn.addEventListener('click', () => {
+                    asyncOutput.textContent = 'بدء العملية غير المتزامنة...';
+                    setTimeout(() => {
+                        asyncOutput.textContent = 'اكتملت العملية غير المتزامنة بنجاح!';
+                    }, 3000);
+                });
+            }
+            
+            // Event Loop Simulation
+            const startEventLoopBtn = document.getElementById('startEventLoopBtn');
+            
+            if (startEventLoopBtn) {
+                startEventLoopBtn.addEventListener('click', () => {
+                    const callStack = document.getElementById('callStack');
+                    const callbackQueue = document.getElementById('callbackQueue');
+                    
+                    // Reset positions
+                    callStack.style.transform = 'translate(0, 0)';
+                    callbackQueue.style.transform = 'translate(0, 0)';
+                    
+                    // Animation
+                    setTimeout(() => {
+                        callStack.style.transition = 'transform 1s';
+                        callStack.style.transform = 'translate(0, 150px)';
+                        
+                        setTimeout(() => {
+                            callbackQueue.style.transition = 'transform 1s';
+                            callbackQueue.style.transform = 'translate(-200px, 150px)';
+                            
+                            setTimeout(() => {
+                                callbackQueue.style.transform = 'translate(-200px, -150px)';
+                                
+                                setTimeout(() => {
+                                    callStack.style.transform = 'translate(0, -150px)';
+                                }, 1000);
+                            }, 1000);
+                        }, 1000);
+                    }, 500);
+                });
+            }
+            // زر العودة للأعلى
+            const backToTop = document.getElementById('back-to-top');
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTop.classList.add('show');
+                } else {
+                    backToTop.classList.remove('show');
+                }
+            });
+            
+            backToTop.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            
+            // العداد التنازلي
+            const startCountdownBtn = document.getElementById('startCountdown');
+            if (startCountdownBtn) {
+                startCountdownBtn.addEventListener('click', startCountdown);
+            }
+            
+            function startCountdown() {
+                let timeLeft = 10;
+                const countdownElement = document.getElementById('countdown');
+                countdownElement.textContent = timeLeft;
+                
+                const timer = setInterval(() => {
+                    timeLeft--;
+                    countdownElement.textContent = timeLeft;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        countdownElement.textContent = 'انتهى الوقت!';
+                    }
+                }, 1000);
+            }
+            
+            // إعادة التوجيه بعد وقت
+            let redirectInterval;
+            const redirectTimerElement = document.getElementById('redirect-timer');
+            const cancelRedirectBtn = document.getElementById('cancel-redirect');
+            
+            if (redirectTimerElement) {
+                let redirectTimer = 20;
+                redirectTimerElement.textContent = redirectTimer;
+                
+                redirectInterval = setInterval(() => {
+                    redirectTimer--;
+                    redirectTimerElement.textContent = redirectTimer;
+                    
+                    if (redirectTimer <= 0) {
+                        clearInterval(redirectInterval);
+                        // window.location.href = 'https://example.com/news';
+                        redirectTimerElement.textContent = 'سيتم التوجيه الآن!';
+                    }
+                }, 1000);
+            }
+            
+            if (cancelRedirectBtn) {
+                cancelRedirectBtn.addEventListener('click', () => {
+                    clearInterval(redirectInterval);
+                    redirectTimerElement.textContent = 'تم الإلغاء';
+                });
+            }
+            
+            // تحديد الموقع الجغرافي
+            const getLocationBtn = document.getElementById('get-location');
+            const locationResult = document.getElementById('location-result');
+            
+            if (getLocationBtn) {
+                getLocationBtn.addEventListener('click', () => {
+                    if (navigator.geolocation) {
+                        locationResult.innerHTML = 'جاري تحديد الموقع...';
+                        navigator.geolocation.getCurrentPosition(
+                            position => {
+                                const lat = position.coords.latitude;
+                                const lon = position.coords.longitude;
+                                locationResult.innerHTML = `
+                                    <p>تم تحديد موقعك بنجاح:</p>
+                                    <p>خط العرض: ${lat.toFixed(6)}</p>
+                                    <p>خط الطول: ${lon.toFixed(6)}</p>
+                                `;
+                            },
+                            error => {
+                                locationResult.innerHTML = 'فشل في الحصول على الموقع: ' + error.message;
+                            }
+                        );
+                    } else {
+                        locationResult.innerHTML = 'المتصفح لا يدعم تحديد الموقع الجغرافي';
+                    }
+                });
+            }
+            
+            // حجز تذاكر الطيران (Session Storage)
+            const saveBookingBtn = document.getElementById('save-booking');
+            if (saveBookingBtn) {
+                saveBookingBtn.addEventListener('click', () => {
+                    const from = document.getElementById('flight-from').value;
+                    const to = document.getElementById('flight-to').value;
+                    const date = document.getElementById('flight-date').value;
+                    
+                    if (from && to && date) {
+                        const bookingData = { from, to, date };
+                        sessionStorage.setItem('flightBooking', JSON.stringify(bookingData));
+                        alert('تم حفظ بيانات الحجز في جلسة التصفح!');
+                    } else {
+                        alert('الرجاء ملء جميع الحقول');
+                    }
+                });
+            }
+            
+            // متابعة التسوق (Session Storage)
+            const addToSessionBtns = document.querySelectorAll('.add-to-session');
+            const sessionCart = document.getElementById('session-cart');
+            
+            if (addToSessionBtns.length > 0) {
+                addToSessionBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const productId = this.dataset.id;
+                        let cart = JSON.parse(sessionStorage.getItem('shoppingCart')) || [];
+                        
+                        if (!cart.includes(productId)) {
+                            cart.push(productId);
+                            sessionStorage.setItem('shoppingCart', JSON.stringify(cart));
+                            updateSessionCartDisplay();
+                        }
+                    });
+                });
+                
+                function updateSessionCartDisplay() {
+                    const cart = JSON.parse(sessionStorage.getItem('shoppingCart')) || [];
+                    sessionCart.innerHTML = '';
+                    
+                    if (cart.length === 0) {
+                        sessionCart.innerHTML = '<p>لا توجد منتجات في السلة</p>';
+                    } else {
+                        cart.forEach(id => {
+                            const item = document.createElement('div');
+                            item.className = 'flex justify-between py-2 border-b border-gray-700';
+                            item.innerHTML = `<span>منتج ${id}</span><button class="text-red-500 remove-session-item" data-id="${id}"><i class="fas fa-trash"></i></button>`;
+                            sessionCart.appendChild(item);
+                        });
+                    }
+                }
+                
+                updateSessionCartDisplay();
+            }
+            
+            // نظام تسجيل الدخول (Local Storage)
+            const registerBtn = document.getElementById('register-btn');
+            const loginBtn = document.getElementById('login-btn');
+            const showLogin = document.getElementById('show-login');
+            const showRegister = document.getElementById('show-register');
+            const logoutBtn = document.getElementById('logout-btn');
+            const registerSection = document.getElementById('register-section');
+            const loginSection = document.getElementById('login-section');
+            const productsSection = document.getElementById('products-section');
+            const userName = document.getElementById('user-name');
+            
+            if (registerBtn) {
+                registerBtn.addEventListener('click', () => {
+                    const name = document.getElementById('reg-name').value;
+                    const email = document.getElementById('reg-email').value;
+                    const password = document.getElementById('reg-password').value;
+                    
+                    if (name && email && password) {
+                        let users = JSON.parse(localStorage.getItem('users')) || [];
+                        const userExists = users.some(user => user.email === email);
+                        
+                        if (userExists) {
+                            alert('هذا البريد الإلكتروني مسجل مسبقًا');
+                        } else {
+                            users.push({ name, email, password });
+                            localStorage.setItem('users', JSON.stringify(users));
+                            alert('تم إنشاء الحساب بنجاح!');
+                            showLoginSection();
+                        }
+                    } else {
+                        alert('الرجاء ملء جميع الحقول');
+                    }
+                });
+            }
+            
+            if (loginBtn) {
+                loginBtn.addEventListener('click', () => {
+                    const email = document.getElementById('login-email').value;
+                    const password = document.getElementById('login-password').value;
+                    const users = JSON.parse(localStorage.getItem('users')) || [];
+                    
+                    const user = users.find(u => u.email === email && u.password === password);
+                    if (user) {
+                        localStorage.setItem('currentUser', JSON.stringify(user));
+                        showProductsSection(user);
+                    } else {
+                        alert('بيانات الدخول غير صحيحة');
+                    }
+                });
+            }
+            
+            if (showLogin) {
+                showLogin.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showLoginSection();
+                });
+            }
+            
+            if (showRegister) {
+                showRegister.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showRegisterSection();
+                });
+            }
+            
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    localStorage.removeItem('currentUser');
+                    showLoginSection();
+                });
+            }
+            
+            function showLoginSection() {
+                registerSection.classList.add('hidden');
+                productsSection.classList.add('hidden');
+                loginSection.classList.remove('hidden');
+            }
+            
+            function showRegisterSection() {
+                loginSection.classList.add('hidden');
+                productsSection.classList.add('hidden');
+                registerSection.classList.remove('hidden');
+            }
+            
+            function showProductsSection(user) {
+                registerSection.classList.add('hidden');
+                loginSection.classList.add('hidden');
+                productsSection.classList.remove('hidden');
+                userName.textContent = user.name;
+            }
+            
+            // التحقق من حالة تسجيل الدخول عند التحميل
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                showProductsSection(currentUser);
+            } else {
+                showLoginSection();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1831 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تعلم Dart - اليوم الثاني: رحلة مع عم محمد</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Fira+Code:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: "#e6f7ff",
+                100: "#bae7ff",
+                200: "#91d5ff",
+                300: "#69c0ff",
+                400: "#40a9ff",
+                500: "#1890ff",
+                600: "#096dd9",
+                700: "#0050b3",
+                800: "#003a8c",
+                900: "#002766",
+              },
+              "dart-blue": "#0175C2",
+              "dart-dark": "#01579B",
+              "uncle-warm": "#D89614",
+              "uncle-soft": "#FFF1B8",
+              "code-bg": "#1E1E1E",
+              "flutter-teal": "#13b9fd",
+              "flutter-purple": "#5e35b1",
+            },
+            fontFamily: {
+              tajawal: ["Tajawal", "sans-serif"],
+              code: ["Fira Code", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      :root {
+        --dart-blue: #0175c2;
+        --dart-dark: #01579b;
+        --uncle-warm: #d89614;
+        --text-primary: #e2e8f0;
+        --flutter-teal: #13b9fd;
+        --flutter-purple: #5e35b1;
+        --bg-dark: #0f172a;
+        --bg-card: #1e293b;
+      }
+
+      body {
+        font-family: "Tajawal", sans-serif;
+        background: radial-gradient(
+          circle at top left,
+          var(--flutter-purple),
+          #1a202c
+        );
+        color: var(--text-primary);
+        overflow-x: hidden;
+        height: 100vh;
+      }
+
+      .slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow-y: auto;
+        padding: 2rem;
+        transform: translateY(20px);
+      }
+
+      .slide.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        z-index: 10;
+      }
+
+      /* Day 1 Styled Header for Slide 1 */
+      .slide-header {
+        background: linear-gradient(
+          135deg,
+          var(--flutter-purple),
+          var(--dart-blue)
+        );
+        color: white;
+        padding: 40px 20px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        margin-bottom: 40px;
+        position: relative;
+        overflow: hidden;
+        border-left: 5px solid var(--flutter-teal);
+      }
+
+      .card {
+        background: rgba(30, 41, 59, 0.8);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 1.5rem;
+        box-shadow:
+          0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease;
+        position: relative;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow:
+          0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        border-color: var(--dart-blue);
+      }
+
+      .code-block {
+        font-family: "Fira Code", monospace;
+        background: #1e1e1e;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        direction: ltr;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid #333;
+        font-size: 0.9rem;
+      }
+
+      .code-block::before {
+        content: "CODE";
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: var(--dart-blue);
+        color: white;
+        font-size: 0.7rem;
+        padding: 0.2rem 1rem;
+        border-bottom-left-radius: 1rem;
+        font-family: "Tajawal";
+      }
+
+      .uncle-mohamed-bubble {
+        background: var(--uncle-soft);
+        color: #5b4a1a;
+        border-radius: 20px;
+        padding: 15px;
+        position: relative;
+        border: 2px solid var(--uncle-warm);
+        font-weight: bold;
+        display: inline-block;
+      }
+
+      .uncle-mohamed-bubble::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        right: 30px;
+        border-width: 10px 10px 0;
+        border-style: solid;
+        border-color: var(--uncle-warm) transparent;
+        display: block;
+        width: 0;
+      }
+
+      /* Animation Classes */
+      .fade-in-up {
+        animation: fadeInUp 0.8s ease-out forwards;
+        opacity: 0;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .delay-100 {
+        animation-delay: 0.1s;
+      }
+      .delay-200 {
+        animation-delay: 0.2s;
+      }
+      .delay-300 {
+        animation-delay: 0.3s;
+      }
+      .animate {
+        animation: fadeInUp 0.8s ease forwards;
+      }
+
+      .hidden-solution {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease-out;
+      }
+
+      .show-solution {
+        max-height: 800px;
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0f172a;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--dart-blue);
+        border-radius: 4px;
+      }
+
+      .nav-btn {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(5px);
+        transition: all 0.3s;
+      }
+      .nav-btn:hover {
+        background: var(--dart-blue);
+        transform: scale(1.1);
+      }
+
+      /* Drawer animation for variables */
+      .drawer-box {
+        transition: all 0.3s;
+        cursor: pointer;
+      }
+      .drawer-box:hover {
+        transform: translateX(-10px);
+        background: #2d3748;
+      }
+
+      /* JS vs Dart Tab */
+      .tab-btn {
+        padding: 8px 16px;
+        border-radius: 8px 8px 0 0;
+        background: rgba(255, 255, 255, 0.1);
+        cursor: pointer;
+      }
+      .tab-btn.active-tab {
+        background: var(--dart-blue);
+        color: white;
+      }
+
+      .highlight-keyword {
+        color: #c792ea;
+        font-weight: bold;
+      }
+      .highlight-string {
+        color: #c3e88d;
+      }
+      .highlight-comment {
+        color: #676e95;
+        font-style: italic;
+      }
+      .highlight-number {
+        color: #f78c6c;
+      }
+      .highlight-class {
+        color: #ffcb6b;
+      }
+    </style>
+  </head>
+  <body class="text-gray-100">
+    <!-- Navigation Controls -->
+    <div
+      class="fixed bottom-6 left-1/2 transform -translate-x-1/2 flex gap-4 z-50"
+    >
+      <button
+        onclick="prevSlide()"
+        class="nav-btn w-12 h-12 rounded-full flex items-center justify-center text-xl border border-white/20 shadow-lg"
+      >
+        <i class="fas fa-chevron-right"></i>
+      </button>
+      <div
+        class="bg-gray-800/90 backdrop-blur px-6 py-2 rounded-full flex items-center border border-white/20 font-bold shadow-lg min-w-[100px] justify-center"
+        id="slide-indicator"
+      >
+        1 / 14
+      </div>
+      <button
+        onclick="nextSlide()"
+        class="nav-btn w-12 h-12 rounded-full flex items-center justify-center text-xl border border-white/20 shadow-lg"
+      >
+        <i class="fas fa-chevron-left"></i>
+      </button>
+    </div>
+
+    <!-- Slides Container -->
+    <div class="w-full h-full relative" id="slides-wrapper">
+      <!-- Slide 1: المقدمة (Style Match Day 1) -->
+      <div class="slide active">
+        <div class="max-w-5xl mx-auto h-full flex flex-col justify-center">
+          <div class="slide-header text-center animate">
+            <h1 class="text-4xl md:text-6xl font-black mb-6">
+              Dart Programming Language
+            </h1>
+            <p class="text-2xl opacity-90 mb-2 font-light">
+              اليوم الثاني: التحكم المنطقي والدوال
+            </p>
+            <div class="w-24 h-1 bg-white/50 mx-auto rounded mt-4"></div>
+          </div>
+
+          <div
+            class="flex flex-col md:flex-row items-center justify-center gap-10 mt-8 animate delay-200"
+          >
+            <img
+              src="https://i.ibb.co/Fbpfy9Y5/ITI2.jpg"
+              alt="المحاضر مصطفى حسين"
+              class="w-32 h-32 rounded-full border-4 border-white shadow-2xl hover:scale-105 transition duration-500"
+            />
+            <div class="text-center md:text-right">
+              <p class="text-3xl font-bold text-white mb-2">م. مصطفى حسين</p>
+              <p class="text-gray-300 text-lg mb-4">
+                Senior Software Engineer & ITI instructor
+              </p>
+              <div class="flex gap-4 justify-center md:justify-start">
+                <a
+                  href="https://github.com/mostafa-hessen"
+                  class="bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-all"
+                  ><i class="fab fa-github text-xl"></i
+                ></a>
+                <a
+                  href="https://www.linkedin.com/in/mostafa-hussain-ramadan/"
+                  class="bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-all"
+                  ><i class="fab fa-linkedin text-xl"></i
+                ></a>
+                <a
+                  href="https://www.youtube.com/@js_hacks"
+                  class="bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-all"
+                  ><i class="fab fa-youtube text-xl"></i
+                ></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-12 text-center animate delay-300">
+            <span
+              class="inline-block px-6 py-2 rounded-full bg-flutter-teal/20 text-flutter-teal border border-flutter-teal/50 font-bold"
+            >
+              <i class="fas fa-rocket mr-2"></i> رحلة من الأساسيات إلى الاحتراف
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: مراجعة دسمة (Variables as Drawers) -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10">
+          <h2
+            class="text-4xl font-bold mb-8 text-center border-b-2 border-dart-blue pb-4 inline-block mx-auto"
+          >
+            <i class="fas fa-sync-alt ml-2"></i> مراجعة سريعة
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Concept: Variables -->
+            <div class="card p-6">
+              <div class="flex items-center gap-4 mb-4">
+                <div class="bg-yellow-100 p-3 rounded-lg text-yellow-600">
+                  <i class="fas fa-archive text-2xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-yellow-100">
+                  المتغيرات = "درج المكتب"
+                </h3>
+              </div>
+              <p class="text-gray-300 mb-4 leading-relaxed">
+                المتغير (Variable) هو مكان في ذاكرة الكمبيوتر (درج)، له
+                <span class="text-yellow-400 font-bold">اسم</span>، وله
+                <span class="text-green-400 font-bold">نوع معين</span> بس يقدر
+                يشيله.
+                <br />
+                <span class="text-red-300 text-sm"
+                  ><i class="fas fa-exclamation-triangle"></i> مينفعش تحط
+                  'مكواة' في درج 'الأقلام'!</span
+                >
+              </p>
+              <div class="space-y-2">
+                <div
+                  class="bg-gray-800 p-2 rounded flex justify-between items-center drawer-box border-l-4 border-purple-500"
+                >
+                  <span class="text-purple-300">درج النصوص (String)</span>
+                  <code class="text-green-300">String product = "Milk";</code>
+                </div>
+                <div
+                  class="bg-gray-800 p-2 rounded flex justify-between items-center drawer-box border-l-4 border-blue-500"
+                >
+                  <span class="text-blue-300">درج الأعداد (int)</span>
+                  <code class="text-blue-200">int stock = 15;</code>
+                </div>
+                <div
+                  class="bg-gray-800 p-2 rounded flex justify-between items-center drawer-box border-l-4 border-red-500"
+                >
+                  <span class="text-red-300">درج الكسور (double)</span>
+                  <code class="text-red-200">double weight = 1.5;</code>
+                </div>
+                <div
+                  class="bg-gray-800 p-2 rounded flex justify-between items-center drawer-box border-l-4 border-green-500"
+                >
+                  <span class="text-green-300">درج المنطق (bool)</span>
+                  <code class="text-green-200">bool hasOffer = false;</code>
+                </div>
+              </div>
+            </div>
+
+            <!-- Other Concepts -->
+            <div class="space-y-6">
+              <div class="card p-5 border-r-4 border-green-400">
+                <h3 class="text-xl font-bold text-green-400 mb-2">
+                  <i class="fas fa-shield-alt"></i> Null Safety: درع الحماية
+                </h3>
+                <p class="text-sm text-gray-400">
+                  نظام بيمنعك تستخدم "درج فاضي" وأنت مش واخد بالك، عشان البرنامج
+                  ميضربش في وش العميل!
+                </p>
+              </div>
+
+              <div class="card p-5 border-r-4 border-blue-400">
+                <h3 class="text-xl font-bold text-blue-400 mb-2">
+                  <i class="fas fa-random"></i> التحكم (Control Flow)
+                </h3>
+                <p class="text-sm text-gray-400">
+                  إشارات المرور في الكود (If, Else, Switch). بتقول للكود يمشي
+                  يمين ولا شمال.
+                </p>
+              </div>
+
+              <div class="card p-5 border-r-4 border-purple-400">
+                <h3 class="text-xl font-bold text-purple-400 mb-2">
+                  <i class="fas fa-lock"></i> الثابت والمتغير (var vs const)
+                </h3>
+                <div class="flex justify-between text-sm mt-2">
+                  <div>
+                    <code class="text-purple-300">var</code>: درج ممكن نغير
+                    محتواه.
+                  </div>
+                  <div>
+                    <code class="text-orange-300">const</code>: لحام أمير! اللي
+                    يتحط ميتغيرش.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide: Final vs Const (New) -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10">
+          <h2 class="text-4xl font-bold mb-8 text-center">
+            الثوابت: Final vs Const
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="card p-6 border-t-4 border-orange-500">
+              <h3 class="text-2xl font-bold text-orange-400 mb-4">
+                Final (ثابت بس مرن)
+              </h3>
+              <p class="text-gray-300 mb-4">
+                "بكتبه مرة واحدة بس لما أعرفه، حتى لو وقت التشغيل".
+                <br />
+                ينفع ياخد قيمة من دالة أو وقت ما البرنامج شغال.
+              </p>
+              <div class="code-block text-sm">
+                final name = "Ali"; <span class="text-green-500">// تمام</span
+                ><br />
+                final time = DateTime.now();
+                <span class="text-green-500">// تمام (وقت التشغيل)</span><br />
+                <span class="text-red-400"
+                  >// name = "Omar"; // خطأ! مينفعش تغيره</span
+                >
+              </div>
+            </div>
+
+            <div class="card p-6 border-t-4 border-blue-500">
+              <h3 class="text-2xl font-bold text-blue-400 mb-4">
+                Const (محفور من المصنع)
+              </h3>
+              <p class="text-gray-300 mb-4">
+                "ثابت وقيمته معروفة والبرنامج لسه بيكتب (Compile Time)".
+                <br />
+                مينفعش ياخد قيمة متغيرة أو وقت التشغيل.
+              </p>
+              <div class="code-block text-sm">
+                const pi = 3.14; <span class="text-green-500">// تمام</span
+                ><br />
+                <span class="text-red-400"
+                  >// const time = DateTime.now(); // خطأ!</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Input & Null Safety Advanced -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-5">
+          <div class="flex flex-col md:flex-row items-center gap-8 mb-6">
+            <img
+              src="assets/uncle_mohamed_cartoon_1769405278134.png"
+              alt="Uncle Mohamed"
+              class="w-40 h-40 rounded-full border-4 border-uncle-warm shadow-xl bg-white slide-in-bottom"
+            />
+            <div class="flex-1">
+              <div class="uncle-mohamed-bubble text-xl mb-2 text-right">
+                "أنا بكتب الأسماء في النوتة، بس ساعات الزبون بيمشي من غير ما
+                يقول اسمه، وساعات بيقولي رقم تليفونه! أعمل إيه؟"
+              </div>
+              <h2 class="text-3xl font-bold text-dart-blue">
+                الإدخال وفزورة Null Safety
+              </h2>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Null Safety Riddle Rewrite -->
+            <div class="card p-6">
+              <h3 class="text-xl font-bold mb-4 text-center text-uncle-warm">
+                <i class="fas fa-question-circle"></i> فزورة الـ Null Safety
+              </h3>
+              <div class="space-y-4">
+                <div
+                  class="bg-gray-900/50 p-4 rounded-lg flex items-start gap-3"
+                >
+                  <span class="text-2xl font-bold text-yellow-400">?</span>
+                  <div>
+                    <strong class="text-yellow-200"
+                      >علامة الشك (Nullable)</strong
+                    >
+                    <p class="text-sm text-gray-400">
+                      "يا عم محمد، العميل
+                      <span class="underline">ممكن</span> ميردش". المتغير يقبل
+                      قيمة أو يبقى فاضي (null).
+                    </p>
+                    <code
+                      class="text-xs bg-black px-2 py-1 rounded mt-1 block w-fit"
+                      >String? name;</code
+                    >
+                  </div>
+                </div>
+                <div
+                  class="bg-gray-900/50 p-4 rounded-lg flex items-start gap-3"
+                >
+                  <span class="text-2xl font-bold text-red-500">!</span>
+                  <div>
+                    <strong class="text-red-300"
+                      >علامة الثقة العمياء (Bang Operator)</strong
+                    >
+                    <p class="text-sm text-gray-400">
+                      "أنا حالف إنه هيرد!". بجبر الكمبيوتر يتعامل مع القيمة على
+                      أنها موجودة.
+                      <span class="text-red-400 font-bold"
+                        >خطر: لو مردش البرنامج هيفرقع!</span
+                      >
+                    </p>
+                    <code
+                      class="text-xs bg-black px-2 py-1 rounded mt-1 block w-fit"
+                      >String realName = name!;</code
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Input Code & Console -->
+            <div class="space-y-4">
+              <div class="card p-6 bg-gray-900 border-l-4 border-dart-blue">
+                <h3 class="text-lg font-bold mb-2 flex justify-between">
+                  <span
+                    ><i class="fas fa-keyboard"></i> استقبال رقم من العميل</span
+                  >
+                  <span
+                    class="text-xs font-normal text-gray-400 bg-gray-800 px-2 py-1 rounded"
+                    >Challenge</span
+                  >
+                </h3>
+                <div class="code-block text-sm">
+                  <span class="highlight-keyword">import</span>
+                  'dart:io';<br /><br />
+                  print(<span class="highlight-string">"دخل رقمك يا بيه:"</span
+                  >);<br />
+                  <span class="highlight-comment">// 1. نستقبل النص الأول</span
+                  ><br />
+                  <span class="highlight-class">String</span>? input =
+                  stdin.readLineSync();<br />
+                  <span class="highlight-comment"
+                    >// 2. نحوله لرقم (Parsing)</span
+                  ><br />
+                  <span class="highlight-class">int</span> number =
+                  <span class="highlight-class">int</span>.parse(input!);<br />
+                  print(<span class="highlight-string"
+                    >"الرقم بعد التحويل: $number"</span
+                  >);
+                </div>
+              </div>
+
+              <!-- Console Tip -->
+              <div
+                class="bg-yellow-900/30 border border-yellow-600/50 p-4 rounded-lg text-sm"
+              >
+                <h4 class="font-bold text-yellow-500 mb-1">
+                  <i class="fas fa-terminal"></i> معلومة خطيرة للـ VS Code!
+                </h4>
+                <p class="text-gray-300 mb-2">
+                  عشان الـ Input يشتغل معاك في الـ Terminal، لازم تعدل ملف
+                  <code>launch.json</code>:
+                </p>
+                <code class="block bg-black p-2 rounded text-xs text-green-300"
+                  >"console": "terminal"</code
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Loops & Real World -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-5">
+          <h2 class="text-4xl font-bold text-center mb-6">
+            الحلقات التكرارية (Loops): التكرار بذكاء
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- For Loop -->
+            <div
+              class="card p-5 border-t-4 border-green-500 hover:scale-105 transition"
+            >
+              <h3 class="text-xl font-bold text-green-400 mb-2">1. For Loop</h3>
+              <p class="text-sm text-gray-300 mb-3 h-10">
+                لما أكون عارف هعد كام مرة بالظبط.
+              </p>
+              <div class="bg-gray-900/50 p-3 rounded mb-2">
+                <strong class="text-xs text-green-300 block mb-1"
+                  >مثال واقعي:</strong
+                >
+                <p class="text-xs text-gray-400">
+                  عم محمد بيعبي 50 زجاجة عصير.
+                </p>
+              </div>
+              <div class="code-block text-xs">
+                <span class="highlight-keyword">for</span> (<span
+                  class="highlight-keyword"
+                  >int</span
+                >
+                i=1; i<=50; i++) {<br />
+                &nbsp;&nbsp;fillBottle(i);<br />
+                }
+              </div>
+            </div>
+
+            <!-- While Loop -->
+            <div
+              class="card p-5 border-t-4 border-yellow-500 hover:scale-105 transition"
+            >
+              <h3 class="text-xl font-bold text-yellow-400 mb-2">
+                2. While Loop
+              </h3>
+              <p class="text-sm text-gray-300 mb-3 h-10">
+                طالما الشرط موجود، شغال (مش عارف العدد).
+              </p>
+              <div class="bg-gray-900/50 p-3 rounded mb-2">
+                <strong class="text-xs text-yellow-300 block mb-1"
+                  >مثال واقعي:</strong
+                >
+                <p class="text-xs text-gray-400">
+                  فضل ياكل قصب لحد ما بطنه وجعته.
+                </p>
+              </div>
+              <div class="code-block text-xs">
+                <span class="highlight-keyword">while</span> (isHungry) {<br />
+                &nbsp;&nbsp;eatCane();<br />
+                }
+              </div>
+            </div>
+
+            <!-- Do-While Loop -->
+            <div
+              class="card p-5 border-t-4 border-red-500 hover:scale-105 transition"
+            >
+              <h3 class="text-xl font-bold text-red-400 mb-2">
+                3. Do-While Loop
+              </h3>
+              <p class="text-sm text-gray-300 mb-3 h-10">
+                نفذ مرة واحدة الأول، وبعدين شوف الشرط.
+              </p>
+              <div class="bg-gray-900/50 p-3 rounded mb-2">
+                <strong class="text-xs text-red-300 block mb-1"
+                  >مثال واقعي:</strong
+                >
+                <p class="text-xs text-gray-400">
+                  دوق العصير الأول، لو عجبك اشرب تاني.
+                </p>
+              </div>
+              <div class="code-block text-xs">
+                <span class="highlight-keyword">do</span> {<br />
+                &nbsp;&nbsp;tasteJuice();<br />
+                } <span class="highlight-keyword">while</span> (isTasty);
+              </div>
+            </div>
+          </div>
+
+          <!-- Simulation Area -->
+          <div class="bg-gray-800 rounded-xl p-6 flex flex-col items-center">
+            <h3 class="text-lg font-bold mb-4">محاكاة خط الإنتاج</h3>
+            <div id="loop-display" class="w-full">
+              <div class="text-center mb-4">
+                <button
+                  onclick="startLoopDemo()"
+                  class="bg-dart-blue hover:bg-blue-600 px-6 py-2 rounded-full font-bold shadow-lg transition"
+                >
+                  <i class="fas fa-cogs"></i> تشغيل الماكينة
+                </button>
+              </div>
+              <div
+                id="factory-line"
+                class="flex gap-2 justify-center p-4 bg-gray-900 rounded-xl min-h-[100px] overflow-x-auto items-center"
+              >
+                <span class="text-gray-500 text-sm">اضغط تشغيل للبدء...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Break & Continue (Excellent as is, just styled) -->
+      <div class="slide">
+        <div class="max-w-5xl mx-auto pt-10">
+          <h2 class="text-4xl font-bold mb-8 text-center text-white">
+            التحكم في التكرار: مشاكل عم محمد
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <!-- Continue Case -->
+            <div class="card p-8 border-r-4 border-yellow-500">
+              <div class="flex items-center gap-4 mb-4">
+                <div class="bg-yellow-500/20 p-3 rounded-full text-yellow-500">
+                  <i class="fas fa-forward text-2xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-yellow-100">Continue</h3>
+              </div>
+              <div class="mb-6">
+                <p class="mb-2 text-lg">
+                  <strong>المشكلة:</strong> عم محمد لقى برتقالة
+                  <span class="text-red-400 font-bold">بايظة</span> في القفص.
+                </p>
+                <p class="text-sm text-gray-400">
+                  الحل: يرميها ويكمل عد باقي البرتقال (مش هيقفل الدكان عشان
+                  برتقالة!).
+                </p>
+              </div>
+              <div class="code-block text-sm">
+                <span class="highlight-keyword">for</span> (<span
+                  class="highlight-keyword"
+                  >var</span
+                >
+                i=1; i<=10; i++) {<br />
+                &nbsp;&nbsp;<span class="highlight-keyword">if</span> (orange ==
+                <span class="highlight-string">"rotten"</span>) {<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;print(<span class="highlight-string"
+                  >"فوتها!"</span
+                >);<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;<span
+                  class="highlight-keyword text-yellow-400"
+                  >continue</span
+                >;<br />
+                &nbsp;&nbsp;}<br />
+                &nbsp;&nbsp;count();<br />
+                }
+              </div>
+            </div>
+
+            <!-- Break Case -->
+            <div class="card p-8 border-r-4 border-red-500">
+              <div class="flex items-center gap-4 mb-4">
+                <div class="bg-red-500/20 p-3 rounded-full text-red-500">
+                  <i class="fas fa-stop-circle text-2xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-red-100">Break</h3>
+              </div>
+              <div class="mb-6">
+                <p class="mb-2 text-lg">
+                  <strong>المشكلة:</strong> عم محمد لقى
+                  <span class="text-red-500 font-bold">ثعبان 🐍</span> في القفص!
+                </p>
+                <p class="text-sm text-gray-400">
+                  الحل: يسيب القفص ويجري فوراً (يوقف العد تماماً).
+                </p>
+              </div>
+              <div class="code-block text-sm">
+                <span class="highlight-keyword">while</span> (<span
+                  class="highlight-keyword"
+                  >true</span
+                >) {<br />
+                &nbsp;&nbsp;<span class="highlight-keyword">if</span>
+                (foundSnake) {<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;print(<span class="highlight-string"
+                  >"يا لهوي!"</span
+                >);<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;<span
+                  class="highlight-keyword text-red-400"
+                  >break</span
+                >;<br />
+                &nbsp;&nbsp;}<br />
+                &nbsp;&nbsp;count++;<br />
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Functions & DRY -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-5">
+          <div class="text-center mb-8">
+            <h2 class="text-4xl font-bold text-blue-400">
+              الدوال (Functions): مبدأ DRY
+            </h2>
+            <p class="text-xl text-gray-400 mt-2">
+              Don't Repeat Yourself (لا تكرر نفسك)
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            <!-- Explain DRY -->
+            <div class="card p-6">
+              <h3 class="text-xl font-bold mb-4 text-purple-300">
+                ليه بنستخدم دوال؟
+              </h3>
+
+              <!-- Function Anatomy -->
+              <div
+                class="bg-gray-800 p-4 rounded-xl mb-6 border border-gray-700"
+              >
+                <h4 class="text-center text-lg font-bold mb-4 text-white">
+                  تشريح الدالة (Function Anatomy)
+                </h4>
+                <div
+                  class="flex flex-wrap justify-center gap-2 text-sm font-mono"
+                >
+                  <div class="flex flex-col items-center">
+                    <span class="text-yellow-400 font-bold">void</span>
+                    <span class="text-gray-500 text-xs mt-1">ReturnType</span>
+                  </div>
+                  <div class="flex flex-col items-center">
+                    <span class="text-blue-400 font-bold px-2">makeTea</span>
+                    <span class="text-gray-500 text-xs mt-1">Name</span>
+                  </div>
+                  <div class="flex flex-col items-center">
+                    <span class="text-pink-400 font-bold">(int sugar)</span>
+                    <span class="text-gray-500 text-xs mt-1">Parameters</span>
+                  </div>
+                  <div class="flex flex-col items-center">
+                    <span class="text-white font-bold">{ ... }</span>
+                    <span class="text-gray-500 text-xs mt-1">Body</span>
+                  </div>
+                </div>
+              </div>
+              <ul class="space-y-4 text-gray-300">
+                <li class="flex items-start gap-3">
+                  <i class="fas fa-broom text-green-400 mt-1"></i>
+                  <div>
+                    <strong class="text-white">تنظيف الكود:</strong>
+                    <p class="text-sm opacity-80">
+                      بدل ما الكود يبقى "سلطة"، بنقسمه لمكعبات صغيرة كل مكعب
+                      بيعمل وظيفة وحدة.
+                    </p>
+                  </div>
+                </li>
+                <li class="flex items-start gap-3">
+                  <i class="fas fa-recycle text-blue-400 mt-1"></i>
+                  <div>
+                    <strong class="text-white">إعادة الاستخدام:</strong>
+                    <p class="text-sm opacity-80">
+                      كتبت كود "عمل الشاي" مرة؟ تقدر تستدعيه 1000 مرة من غير ما
+                      تكتب الخطوات تاني.
+                    </p>
+                  </div>
+                </li>
+                <li class="flex items-start gap-3">
+                  <i class="fas fa-bug text-red-400 mt-1"></i>
+                  <div>
+                    <strong class="text-white">سهولة الصيانة:</strong>
+                    <p class="text-sm opacity-80">
+                      لو اكتشفنا إن السكر ناقص، بنعدل في مكان واحد بس (الدالة)
+                      مش في كل البرنامج.
+                    </p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Before vs After -->
+            <div class="space-y-4">
+              <div
+                class="bg-red-900/10 border border-red-500/30 p-4 rounded-xl relative"
+              >
+                <span
+                  class="absolute top-2 left-2 text-red-500 font-bold text-xs bg-red-900/50 px-2 py-1 rounded"
+                  >Before (WET Code)</span
+                >
+                <h4 class="font-bold text-red-300 mb-2">
+                  تكرار ممل (Write Everything Twice)
+                </h4>
+                <div class="code-block text-xs opacity-70">
+                  print("سخن المية");<br />
+                  print("حط الشاي");<br />
+                  print("قلب");<br />
+                  <span class="text-gray-500">// عميل تاني جه</span><br />
+                  print("سخن المية");<br />
+                  print("حط الشاي");<br />
+                  print("قلب");
+                </div>
+              </div>
+
+              <div
+                class="bg-green-900/10 border border-green-500/30 p-4 rounded-xl relative"
+              >
+                <span
+                  class="absolute top-2 left-2 text-green-500 font-bold text-xs bg-green-900/50 px-2 py-1 rounded"
+                  >After (DRY Code)</span
+                >
+                <h4 class="font-bold text-green-300 mb-2">
+                  نظافة (Don't Repeat Yourself)
+                </h4>
+                <div class="code-block text-xs">
+                  <span class="highlight-keyword">void</span> makeTea() {<br />
+                  &nbsp;&nbsp;print("سخن، حط، قلب");<br />
+                  }<br />
+                  makeTea(); <span class="highlight-comment">// أول عميل</span
+                  ><br />
+                  makeTea(); <span class="highlight-comment">// تاني عميل</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide: Function Examples (Problems & Solutions) -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-5">
+          <h2 class="text-3xl font-bold text-center mb-8">
+            أمثلة ومشاكل: ليه بنحتاج دوال؟
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Problem -->
+            <div class="card p-6 border-red-500/50 border">
+              <h3 class="text-xl font-bold text-red-400 mb-4">
+                <i class="fas fa-times-circle"></i> المشكلة
+              </h3>
+              <p class="text-sm text-gray-300 mb-2">
+                عم محمد كل شوية يحسب سعر العصير لزبون مختلف. بيكتب نفس الكود كل
+                مرة!
+              </p>
+              <div class="code-block text-xs opacity-80">
+                <span class="text-gray-500">// زبون 1</span><br />
+                int price1 = 10 * 2; <span class="text-gray-500">// مانجو</span
+                ><br />
+                print("Hese is your check: $price1");<br /><br />
+                <span class="text-gray-500">// زبون 2</span><br />
+                int price2 = 5 * 3; <span class="text-gray-500">// قصب</span
+                ><br />
+                print("Hese is your check: $price2");
+              </div>
+            </div>
+
+            <!-- Solution -->
+            <div class="card p-6 border-green-500/50 border">
+              <h3 class="text-xl font-bold text-green-400 mb-4">
+                <i class="fas fa-check-circle"></i> الحل (Function)
+              </h3>
+              <p class="text-sm text-gray-300 mb-2">نعمل دالة ونناديها بس!</p>
+              <div class="code-block text-xs">
+                <span class="highlight-keyword">void</span> printCheck(int
+                price, int qty) {<br />
+                &nbsp;&nbsp;int total = price * qty;<br />
+                &nbsp;&nbsp;print(<span class="highlight-string"
+                  >"Hese is your check: $total"</span
+                >);<br />
+                }<br /><br />
+                <span class="highlight-comment">// الاستخدام</span><br />
+                printCheck(10, 2);<br />
+                printCheck(5, 3);
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Print vs Return (Analogy) -->
+      <div class="slide">
+        <div class="flex flex-col h-full justify-center max-w-6xl mx-auto">
+          <h2 class="text-4xl font-bold text-center mb-12">
+            الفرق القاتل: Print vs Return
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <!-- Print Model -->
+            <div class="card p-8 text-center border-t-4 border-blue-500">
+              <div
+                class="bg-blue-500/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"
+              >
+                <i class="fas fa-bullhorn text-4xl text-blue-500"></i>
+              </div>
+              <h3 class="text-2xl font-bold text-blue-400 mb-2">
+                Print (الويتر المنادي)
+              </h3>
+              <div class="bg-gray-900/50 p-4 rounded-lg mb-4 text-right">
+                <p class="text-sm text-gray-300">
+                  الويتر بيصرخ ويقول "2 شاي وصلوا!". هو بس بيعرّف الناس (بيعرض ع
+                  الشاشة)، لكن مش بيديك الشاي في إيدك.
+                </p>
+              </div>
+              <div class="code-block text-left text-xs">
+                <span class="highlight-keyword">void</span> sum(a, b) {<br />
+                &nbsp;&nbsp;print(a + b);<br />
+                }<br />
+                <span class="highlight-keyword">var</span> x = sum(5,10);
+                <span class="highlight-comment">// خطأ! x هتكون null</span>
+              </div>
+            </div>
+
+            <!-- Return Model -->
+            <div class="card p-8 text-center border-t-4 border-green-500">
+              <div
+                class="bg-green-500/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"
+              >
+                <i class="fas fa-hand-holding-usd text-4xl text-green-500"></i>
+              </div>
+              <h3 class="text-2xl font-bold text-green-400 mb-2">
+                Return (الشيف اللي بيسلمك)
+              </h3>
+              <div class="bg-gray-900/50 p-4 rounded-lg mb-4 text-right">
+                <p class="text-sm text-gray-300">
+                  الشيف بيطبخ الأكل وبيديهولك في إيدك (Return). تقدر تاخده
+                  تاكله، تديه لحد تاني، أو تحطه في الثلاجة (Variable).
+                </p>
+              </div>
+              <div class="code-block text-left text-xs">
+                <span class="highlight-keyword">int</span> sum(a, b) {<br />
+                &nbsp;&nbsp;<span class="highlight-keyword">return</span> a +
+                b;<br />
+                }<br />
+                <span class="highlight-keyword">var</span> x = sum(5,10);
+                <span class="highlight-comment">// صح! x بقيمة 15</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Parameters (Definition) -->
+      <div class="slide">
+        <div class="max-w-4xl mx-auto pt-10 text-center">
+          <h2 class="text-4xl font-bold mb-8">معاملات الدالة (Parameters)</h2>
+
+          <div class="card p-8 mb-8">
+            <h3 class="text-2xl font-bold text-purple-400 mb-4">
+              يعني إيه Parameters؟
+            </h3>
+            <p class="text-xl leading-relaxed text-gray-300">
+              دي <span class="text-white font-bold">المدخلات</span> اللي
+              الماكينة محتاجاها عشان تشتغل. <br />
+              تخيل "خلاط العصائر" (Function). عشان يطلع عصير، محتاج "فاكهة" و
+              "مية" و "سكر" (Parameters). <br />
+              من غيرهم الخلاط هيلف ع الفاضي!
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- 1. Positional -->
+            <div class="card p-4 border-l-4 border-blue-500">
+              <h3 class="font-bold text-blue-400 mb-2">
+                1. Positional (بالترتيب)
+              </h3>
+              <p class="text-xs text-gray-300 mb-2">
+                الترتيب مهم جداً! الأول للأول.
+              </p>
+              <div class="code-block text-[10px]">
+                void juice(String fruit, int sugar) { ... }<br />
+                <span class="text-green-400">// لازم فاكهة الأول ثم سكر</span
+                ><br />
+                juice("Mango", 3);
+              </div>
+            </div>
+
+            <!-- 2. Named -->
+            <div class="card p-4 border-l-4 border-purple-500">
+              <h3 class="font-bold text-purple-400 mb-2">
+                2. Named (بالاسم) 🌟
+              </h3>
+              <p class="text-xs text-gray-300 mb-2">
+                الأكثر استخداماً في Flutter. الترتيب مش مهم.
+              </p>
+              <div class="code-block text-[10px]">
+                void juice({required String fruit, int? sugar})<br />
+                <span class="text-green-400">// براحتي في الترتيب</span><br />
+                juice(sugar: 2, fruit: "Mango");
+              </div>
+            </div>
+
+            <!-- 3. Default Value -->
+            <div class="card p-4 border-l-4 border-green-500">
+              <h3 class="font-bold text-green-400 mb-2">
+                3. Default Value (الافتراضي)
+              </h3>
+              <p class="text-xs text-gray-300 mb-2">
+                لو الزبون مقالش، حطله من عندك.
+              </p>
+              <div class="code-block text-[10px]">
+                void juice({String type = "Cane"})<br />
+                juice(); <span class="text-green-400">// هيطلع قصب لوحده</span>
+              </div>
+            </div>
+
+            <!-- 4. Optional Positional -->
+            <div class="card p-4 border-l-4 border-yellow-500">
+              <h3 class="font-bold text-yellow-400 mb-2">
+                4. Optional Positional
+              </h3>
+              <p class="text-xs text-gray-300 mb-2">
+                اختياري بس لو حطيته لازم بترتيبه.
+              </p>
+              <div class="code-block text-[10px]">
+                void juice(String fruit, [bool? ice])<br />
+                juice("Lemon");
+                <span class="text-green-400">// من غير تلج عادي</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Function Types (Lambda & Anonymous) -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-5">
+          <h2 class="text-4xl font-bold text-center mb-10">
+            أنواع الدوال (Function Types)
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Arrow Function -->
+            <div class="card p-6">
+              <h3 class="text-xl font-bold text-yellow-400 mb-2">
+                1. Arrow Function (Lambda)
+              </h3>
+              <p class="text-sm text-gray-400 mb-4">
+                المختصرة. لو الدالة بتعمل حاجة واحدة بس في سطر واحد.
+              </p>
+              <div class="code-block">
+                <span class="highlight-comment">// الطريقة العادية</span><br />
+                int sum(a, b) {<br />
+                &nbsp;&nbsp;return a + b;<br />
+                }<br /><br />
+                <span class="highlight-comment">// Lambda (Arrow)</span><br />
+                int sum(a, b) <span class="highlight-keyword">=></span> a + b;
+              </div>
+            </div>
+
+            <!-- Anonymous Function + JS Comp -->
+            <div class="card p-6">
+              <h3 class="text-xl font-bold text-pink-400 mb-2">
+                2. Anonymous Function
+              </h3>
+              <p class="text-sm text-gray-400 mb-4">
+                الدالة المجهولة (من غير اسم). بتستخدم مرة واحدة زي عند الضغط على
+                زر.
+              </p>
+
+              <!-- Tabs -->
+              <div class="flex gap-2 mb-0">
+                <button
+                  class="tab-btn active-tab text-sm"
+                  onclick="showTab('dart-code', this)"
+                >
+                  Dart / Flutter
+                </button>
+                <button
+                  class="tab-btn text-sm"
+                  onclick="showTab('js-code', this)"
+                >
+                  JavaScript
+                </button>
+              </div>
+
+              <div id="dart-code" class="code-block rounded-tl-none border-t-0">
+                ElevatedButton(<br />
+                &nbsp;&nbsp;onPressed:
+                <span class="highlight-keyword">() {</span><br />
+                &nbsp;&nbsp;&nbsp;&nbsp;print(<span class="highlight-string"
+                  >"Button Clicked!"</span
+                >);<br />
+                &nbsp;&nbsp;<span class="highlight-keyword">}</span>,<br />
+                &nbsp;&nbsp;child: Text("Click Me"),<br />
+                );
+              </div>
+
+              <div
+                id="js-code"
+                class="code-block rounded-tl-none border-t-0 hidden"
+              >
+                button.addEventListener("click",
+                <span class="highlight-keyword">function() {</span><br />
+                &nbsp;&nbsp;console.log(<span class="highlight-string"
+                  >"Button Clicked!"</span
+                >);<br />
+                <span class="highlight-keyword">}</span>);<br />
+                <span class="highlight-comment">// Or ES6 Arrow</span><br />
+                button.onclick = () => console.log("Hi");
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide: Uncle Mohamed Real Example -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-5">
+          <div class="flex items-center gap-4 mb-6 justify-center">
+            <img
+              src="assets/images/uncle_mohamed.png"
+              class="w-20 h-20 rounded-full border-2 border-uncle-warm"
+            />
+            <h2 class="text-3xl font-bold">مثال حقيقي: دكان عم محمد</h2>
+          </div>
+
+          <div class="card p-6">
+            <p class="text-lg text-gray-300 mb-4 text-center">
+              عم محمد عايز برنامج يحسب "سعر الطلب" ويضيف "الضريبة" ويعمل "خصم"
+              لو الزبون حبيبه.
+            </p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="code-block text-xs">
+                <span class="highlight-keyword">double</span>
+                calculateOrder({<br />
+                &nbsp;&nbsp;<span class="highlight-keyword">required</span>
+                double price,<br />
+                &nbsp;&nbsp;<span class="highlight-keyword">required</span> int
+                quantity,<br />
+                &nbsp;&nbsp;bool isVip = false,<br />
+                }) {<br />
+                &nbsp;&nbsp;double total = price * quantity;<br /><br />
+                &nbsp;&nbsp;<span class="highlight-comment"
+                  >// خصم الحبايب 10%</span
+                ><br />
+                &nbsp;&nbsp;<span class="highlight-keyword">if</span> (isVip)
+                {<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;total = total * 0.9;<br />
+                &nbsp;&nbsp;}<br /><br />
+                &nbsp;&nbsp;<span class="highlight-comment">// الضريبة 14%</span
+                ><br />
+                &nbsp;&nbsp;total = total * 1.14;<br /><br />
+                &nbsp;&nbsp;<span class="highlight-keyword">return</span>
+                total;<br />
+                }
+              </div>
+
+              <div class="flex flex-col justify-center space-y-4">
+                <div
+                  class="bg-gray-800 p-4 rounded border-r-4 border-green-500"
+                >
+                  <p class="font-bold text-green-400">زبون عادي:</p>
+                  <code class="text-xs block mt-1"
+                    >calculateOrder(price: 10, quantity: 2);</code
+                  >
+                  <span
+                    class="text-gray-400 text-xs text-left block mt-1"
+                    dir="ltr"
+                    >-> 22.8</span
+                  >
+                </div>
+                <div
+                  class="bg-gray-800 p-4 rounded border-r-4 border-purple-500"
+                >
+                  <p class="font-bold text-purple-400">زبون VIP (خصم):</p>
+                  <code class="text-xs block mt-1"
+                    >calculateOrder(price: 10, quantity: 2, isVip: true);</code
+                  >
+                  <span
+                    class="text-gray-400 text-xs text-left block mt-1"
+                    dir="ltr"
+                    >-> 20.52</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Higher Order Functions (Definition) -->
+      <div class="slide">
+        <div class="text-center max-w-4xl mx-auto pt-10">
+          <i
+            class="fas fa-network-wired text-6xl text-purple-500 mb-6 animate-pulse"
+          ></i>
+          <h2 class="text-4xl font-bold mb-6">Higher Order Functions</h2>
+          <div
+            class="bg-gray-800/50 p-6 rounded-2xl border border-purple-500/30"
+          >
+            <p class="text-xl text-gray-300 leading-relaxed">
+              دي دوال "باشا"، بتاخد دوال تانية تشغلها عندها، أو بترجع دالة
+              كنيجة.
+              <br />زي "المقاول" اللي بيجيب "نجار" و "سباك" (دوال صغيرة) يخلصوا
+              الشغل.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Map, Reduce, Where (New Slide) -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-5">
+          <h2 class="text-4xl font-bold text-center mb-8">
+            سحر التعامل مع البيانات (Map, Where)
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Map -->
+            <div class="card p-6">
+              <h3
+                class="text-xl font-bold text-blue-400 mb-4 flex items-center gap-2"
+              >
+                <i class="fas fa-magic"></i> Map (التحويل)
+              </h3>
+              <p class="text-sm text-gray-400 mb-2">
+                بتمشي على عنصر عنصر وتحوله لحاجة تانية.
+              </p>
+
+              <div class="flex items-center gap-2 justify-center my-4">
+                <div class="bg-gray-700 p-2 rounded text-xs">[1, 2, 3]</div>
+                <i class="fas fa-arrow-right text-blue-400"></i>
+                <div class="bg-blue-900 p-2 rounded text-xs font-bold">
+                  [2, 4, 6]
+                </div>
+              </div>
+
+              <div class="code-block text-xs">
+                var nums = [1, 2, 3];<br />
+                var doubled = nums.<span class="highlight-keyword">map</span
+                >((n) => n * 2);
+              </div>
+            </div>
+
+            <!-- Where -->
+            <div class="card p-6">
+              <h3
+                class="text-xl font-bold text-green-400 mb-4 flex items-center gap-2"
+              >
+                <i class="fas fa-filter"></i> Where (الفلترة)
+              </h3>
+              <p class="text-sm text-gray-400 mb-2">
+                بتنقي العناصر اللي بتحقق شرط معين بس.
+              </p>
+
+              <div class="flex items-center gap-2 justify-center my-4">
+                <div class="bg-gray-700 p-2 rounded text-xs">[1, 5, 10]</div>
+                <i class="fas fa-arrow-right text-green-400"></i>
+                <div class="bg-green-900 p-2 rounded text-xs font-bold">
+                  [5, 10]
+                </div>
+                <span class="text-[10px] text-gray-500">(اكبر من 4)</span>
+              </div>
+
+              <div class="code-block text-xs">
+                var nums = [1, 5, 10];<br />
+                var big = nums.<span class="highlight-keyword">where</span>((n)
+                => n > 4);
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide">
+        <div class="max-w-5xl mx-auto pt-5">
+          <div class="text-center mb-8">
+            <h2 class="text-4xl font-bold text-orange-400 mb-2">
+              القوائم (Lists)
+            </h2>
+            <p class="text-xl text-gray-300">
+              "قائمة الطلبات بتاعتي كبرت! ورقة وقلم واكتبي ورايا يا ست الكل..."
+            </p>
+          </div>
+
+          <div class="card p-6 mb-8">
+            <h3 class="text-xl font-bold mb-4 text-white">
+              أهم نوع لتخزين مجموعة بيانات مع بعض
+            </h3>
+            <div class="code-block text-sm">
+              List&lt;String&gt; menu = [<br />
+              &nbsp;&nbsp;<span class="highlight-string">"قصب"</span>,<br />
+              &nbsp;&nbsp;<span class="highlight-string">"سوبيا"</span>,<br />
+              &nbsp;&nbsp;<span class="highlight-string">"خروب"</span><br />
+              ];<br /><br />
+              print(menu[0]); <span class="highlight-comment">// قصب</span>
+            </div>
+          </div>
+
+          <div class="card p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <h3 class="text-xl font-bold mb-4">العمليات الأساسية</h3>
+                <ul class="space-y-3 font-mono text-sm text-left direction-ltr">
+                  <li
+                    class="bg-black/30 p-2 rounded flex justify-between items-center px-4"
+                  >
+                    <span class="text-purple-300">list.add("Apple")</span>
+                    <span class="text-gray-500">// إضافة للنهاية</span>
+                  </li>
+                  <li
+                    class="bg-black/30 p-2 rounded flex justify-between items-center px-4"
+                  >
+                    <span class="text-purple-300">list.insert(0, "Apple")</span>
+                    <span class="text-gray-500">// إضافة في الأول</span>
+                  </li>
+                  <li
+                    class="bg-black/30 p-2 rounded flex justify-between items-center px-4"
+                  >
+                    <span class="text-purple-300">list.remove("Apple")</span>
+                    <span class="text-gray-500">// حذف بالقيمة</span>
+                  </li>
+                  <li
+                    class="bg-black/30 p-2 rounded flex justify-between items-center px-4"
+                  >
+                    <span class="text-purple-300">list.removeAt(2)</span>
+                    <span class="text-gray-500">// حذف بالترتيب</span>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h3 class="text-xl font-bold mb-4">خصائص مهمة</h3>
+                <div class="space-y-4">
+                  <div
+                    class="bg-gray-800 p-3 rounded border-r-4 border-blue-500"
+                  >
+                    <code class="text-blue-300 font-bold">list.length</code>
+                    <p class="text-xs text-gray-400 mt-1">
+                      عدد العناصر في القائمة.
+                    </p>
+                  </div>
+                  <div
+                    class="bg-gray-800 p-3 rounded border-r-4 border-green-500"
+                  >
+                    <code class="text-green-300 font-bold">list.isEmpty</code>
+                    <p class="text-xs text-gray-400 mt-1">
+                      هل القائمة فاضية ولا فيها حاجة؟
+                    </p>
+                  </div>
+                  <div
+                    class="bg-gray-800 p-3 rounded border-r-4 border-red-500"
+                  >
+                    <code class="text-red-300 font-bold"
+                      >list.first / list.last</code
+                    >
+                    <p class="text-xs text-gray-400 mt-1">
+                      أول وآخر عنصر سريعاً.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide: Math Library -->
+      <div class="slide">
+        <div class="max-w-5xl mx-auto pt-10">
+          <h2 class="text-4xl font-bold text-center mb-8 text-indigo-400">
+            مكتبة الرياضيات (dart:math) 🧮
+          </h2>
+          <div class="card p-6">
+            <div class="flex items-center gap-4 mb-6">
+              <div class="bg-indigo-500/20 p-4 rounded-full">
+                <i class="fas fa-calculator text-3xl text-indigo-400"></i>
+              </div>
+              <div>
+                <p class="text-lg text-gray-300">
+                  عم محمد بيحسب مكاسبه ومصاريفه، محتاج أدوات قوية.
+                </p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div class="code-block text-sm leading-8">
+                <span class="highlight-keyword">import</span>
+                'dart:math';<br /><br />
+                print(max(10, 5)); <span class="text-gray-500">// -> 10</span
+                ><br />
+                print(min(10, 5)); <span class="text-gray-500">// -> 5</span
+                ><br />
+                print(sqrt(9)); <span class="text-gray-500">// -> 3.0</span
+                ><br />
+                print(Random().nextInt(10));
+                <span class="text-gray-500">// -> 0..9</span>
+              </div>
+
+              <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
+                <h3 class="font-bold text-indigo-300 mb-2">
+                  🔥 مثال: رسالة تحفيزية عشوائية
+                </h3>
+                <div class="code-block text-xs">
+                  var quotes = ["عاش", "كمل", "وحش"];<br />
+                  var i = Random().nextInt(quotes.length);<br />
+                  print(quotes[i]);
+                </div>
+                <button
+                  onclick="alert('عاش يا بطل! 🚀')"
+                  class="mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded transition"
+                >
+                  جرب حظك
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Graded Exercises -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-5">
+          <h2 class="text-4xl font-bold text-center mb-8">💪 تحديات الأبطال</h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- 1 -->
+            <div class="card p-5 border-t-4 border-green-500">
+              <h3 class="font-bold text-green-400 mb-2">1. الآلة الحاسبة</h3>
+              <p class="text-sm text-gray-300 mb-4">
+                اعمل دالة <code>calc(a, b, op)</code> بتاخد رقمين وعلامة (+, -,
+                *, /) وترجع النتيجة.
+              </p>
+            </div>
+
+            <!-- 2 -->
+            <div class="card p-5 border-t-4 border-yellow-500">
+              <h3 class="font-bold text-yellow-400 mb-2">
+                2. الأسعار (List + Map)
+              </h3>
+              <p class="text-sm text-gray-300 mb-4">
+                عندك قائمة أسعار <code>[10, 20, 30]</code>. استخدم
+                <code>.map</code> عشان تزود ضريبة 14% على كل سعر.
+              </p>
+            </div>
+
+            <!-- 3 -->
+            <div class="card p-5 border-t-4 border-red-500">
+              <h3 class="font-bold text-red-400 mb-2">3. كلمة السر (Logic)</h3>
+              <p class="text-sm text-gray-300 mb-4">
+                دالة بتتشك على الـ Password: لازم تكون أطول من 6 حروف ومش بتيأدي
+                بمسافة.
+              </p>
+            </div>
+
+            <!-- 4 -->
+            <div class="card p-5 border-t-4 border-purple-500">
+              <h3 class="font-bold text-purple-400 mb-2">4. البحث (Where)</h3>
+              <p class="text-sm text-gray-300 mb-4">
+                قائمة أسماء <code>["Ali", "Amr", "Samy"]</code>. فلتر ورجع
+                الأسماء اللي بتبدأ بحرف "A" بس.
+              </p>
+            </div>
+            </div>
+          </div>
+
+          <!-- New Exercises Row -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <!-- 5 -->
+            <div class="card p-5 border-t-4 border-cyan-500">
+              <h3 class="font-bold text-cyan-400 mb-2">5. المضروب (Factorial)</h3>
+              <p class="text-sm text-gray-300 mb-4">
+                اكتب دالة تحسب مضروب الرقم. مثلاً <code>factorial(5)</code> ترجع 120 (اللي هي 5*4*3*2*1).
+              </p>
+            </div>
+
+            <!-- 6 -->
+            <div class="card p-5 border-t-4 border-pink-500">
+              <h3 class="font-bold text-pink-400 mb-2">6. الباليندروم (Palindrome)</h3>
+              <p class="text-sm text-gray-300 mb-4">
+                اكتب دالة تتأكد لو الكلمة بتتقري زي بعض من اليمين والشمال (زي "radar" أو "level").
+              </p>
+            </div>
+
+            <!-- 7 -->
+            <div class="card p-5 border-t-4 border-orange-500">
+              <h3 class="font-bold text-orange-400 mb-2">7. العدد الأولي (Prime)</h3>
+              <p class="text-sm text-gray-300 mb-4">
+                اكتب دالة بتاخد رقم وترجع <code>true</code> لو هو أولي (مبيقبلش القسمة غير على نفسه والواحد).
+              </p>
+            </div>
+
+            <!-- 8 -->
+            <div class="card p-5 border-t-4 border-lime-500">
+              <h3 class="font-bold text-lime-400 mb-2">8. أكبر رقم (Max)</h3>
+              <p class="text-sm text-gray-300 mb-4">
+                اكتب دالة بتاخد قائمة أرقام <code>[10, 5, 20, 3]</code> وترجع أكبر رقم فيهم يدوي (من غير ما تستخدم مكتبة Math).
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide: Heroes Challenges (New Added) -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-5">
+            <h2 class="text-4xl font-bold text-center mb-8 border-b-2 border-uncle-warm pb-4 inline-block mx-auto">
+                💪 تحديات الأبطال
+            </h2>
+
+            <div class="flex items-center gap-4 mb-8 justify-center">
+                <div class="uncle-mohamed-bubble text-lg">
+                    "يا بطل! عم محمد محضرلك تحديات خاصة عشان يختبر قوتك في البرمجة. <br>
+                    ابدأ بالتحدي السهل وتدرج لحد ما توصل للوحش!"
+                </div>
+                <img src="assets/uncle_mohamed_cartoon_1769405278134.png" class="w-20 h-20 rounded-full border-2 border-uncle-warm shadow-lg">
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Level 1 -->
+                <div class="card p-6 border-t-4 border-yellow-400">
+                    <h3 class="text-xl font-bold text-yellow-400 mb-4 flex items-center gap-2">
+                        <i class="fas fa-star"></i> المستوى 1: ترحيب الأبطال
+                    </h3>
+                    <div class="bg-gray-900/50 p-4 rounded-xl mb-4">
+                        <p class="text-sm text-gray-300 mb-2">
+                            <strong>المطلوب:</strong> اكتب دالة (Function) تقبل معاملات مسماة (Named Parameters) لإنشاء رسالة ترحيب.
+                        </p>
+                        <ul class="list-disc list-inside text-xs text-gray-400 space-y-1">
+                            <li>يجب أن تقبل الدالة <code>name</code> (مطلوب).</li>
+                            <li>يجب أن تقبل الدالة <code>message</code> (اختياري، القيمة الافتراضية: "wellcom").</li>
+                        </ul>
+                    </div>
+                    <div class="code-block text-xs">
+                        <span class="highlight-keyword">void</span> <span class="highlight-keyword">main</span>() {<br>
+                        &nbsp;&nbsp;<span class="highlight-comment">// قم باستدعاء الدالة هنا للتجربة</span><br>
+                        }<br><br>
+                        <span class="highlight-comment">// 👇 اكتب دالة welcomeHero هنا</span>
+                    </div>
+                </div>
+
+                <!-- Level 2 -->
+                <div class="card p-6 border-t-4 border-red-500">
+                    <h3 class="text-xl font-bold text-red-500 mb-4 flex items-center gap-2">
+                        <i class="fas fa-fire"></i> المستوى 2: مُذكر الأبطال
+                    </h3>
+                    <div class="bg-gray-900/50 p-4 rounded-xl mb-4">
+                        <p class="text-sm text-gray-300 mb-2">
+                            <strong>التحدي:</strong> عندك قائمة أذكار، وعايزين نختار ذكر عشوائي في كل مرة.
+                        </p>
+                    </div>
+                    <div class="code-block text-xs">
+                        <span class="highlight-keyword">import</span> 'dart:math';<br><br>
+                        <span class="highlight-keyword">void</span> <span class="highlight-keyword">main</span>() {<br>
+                        &nbsp;&nbsp;List&lt;String&gt; azkar = [<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight-string">"سبحان الله"</span>, <span class="highlight-string">"الحمد لله"</span><br>
+                        &nbsp;&nbsp;];<br>
+                        &nbsp;&nbsp;<span class="highlight-comment">// كود اختيار وعرض الذكر العشوائي 👇</span><br>
+                        }
+                    </div>
+                </div>
+
+            </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: End -->
+      <div class="slide">
+        <div
+          class="flex flex-col items-center justify-center h-full text-center"
+        >
+          <div
+            class="w-32 h-32 bg-green-500 rounded-full flex items-center justify-center mb-8 shadow-glow animate-pulse"
+          >
+            <i class="fas fa-check text-5xl text-white"></i>
+          </div>
+          <h1 class="text-5xl font-bold mb-6">عاش يا شباب! 🚀</h1>
+          <p class="text-2xl text-gray-400 mb-10 max-w-2xl">
+            كده معاكم سلاح الـ Logic والـ Functions. <br />
+            المحاضرة الجاية هندخل في التقيل:
+            <span class="text-dart-blue font-bold"
+              >OOP (البرمجة كائنية التوجه)</span
+            >
+          </p>
+          <button
+            class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-full transition transform hover:scale-105"
+            onclick="
+              currentSlide = 0;
+              updateSlide();
+            "
+          >
+            <i class="fas fa-redo mr-2"></i> مراجعة من الأول
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+      let currentSlide = 0;
+      const slides = document.querySelectorAll(".slide");
+      const indicator = document.getElementById("slide-indicator");
+      const totalSlides = slides.length;
+
+      function updateSlide() {
+        slides.forEach((slide, index) => {
+          slide.classList.remove("active");
+          if (index === currentSlide) {
+            slide.classList.add("active");
+          }
+        });
+        indicator.textContent = `${currentSlide + 1} / ${totalSlides}`;
+      }
+
+      function nextSlide() {
+        if (currentSlide < totalSlides - 1) {
+          currentSlide++;
+          updateSlide();
+        }
+      }
+
+      function prevSlide() {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlide();
+        }
+      }
+
+      function toggleSolution(id) {
+        const el = document.getElementById(id);
+        if (el.classList.contains("show-solution")) {
+          el.classList.remove("show-solution");
+        } else {
+          el.classList.add("show-solution");
+        }
+      }
+
+      function showTab(codeId, btn) {
+        // Hide all tabs
+        document.getElementById("dart-code").classList.add("hidden");
+        document.getElementById("js-code").classList.add("hidden");
+
+        // Remove active class from buttons
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((b) => b.classList.remove("active-tab"));
+
+        // Show selected
+        document.getElementById(codeId).classList.remove("hidden");
+        btn.classList.add("active-tab");
+      }
+
+      function startLoopDemo() {
+        const container = document.getElementById("factory-line");
+        container.innerHTML = "";
+
+        const items = ["🍎", "🍎", "🐛", "🍎", "🐍", "🍎"];
+        let i = 0;
+
+        function processItem() {
+          if (i >= items.length) {
+            container.innerHTML +=
+              '<span class="text-white font-bold ml-2">تم الانتهاء!</span>';
+            return;
+          }
+
+          const item = document.createElement("div");
+          item.className =
+            "w-12 h-12 bg-gray-700 rounded flex items-center justify-center text-2xl transition-all duration-300 scale-0 ml-2";
+          item.innerText = items[i];
+          container.appendChild(item);
+
+          // Animation loop logic
+          setTimeout(() => {
+            item.classList.remove("scale-0");
+
+            if (items[i] === "🐛") {
+              item.style.backgroundColor = "orange"; // Rotten
+              item.style.position = "relative";
+              // Simulate continue
+            } else if (items[i] === "🐍") {
+              item.style.backgroundColor = "red"; // Danger
+              container.innerHTML +=
+                '<span class="text-red-500 font-bold block w-full mt-2">خطأ فادح! توقف الماكينة (Break)</span>';
+              return; // Stop animation
+            } else {
+              item.style.backgroundColor = "green";
+            }
+
+            i++;
+            setTimeout(processItem, 800);
+          }, 100);
+        }
+
+        processItem();
+      }
+
+      // Keyboard Navigation
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowLeft") nextSlide();
+        if (e.key === "ArrowRight") prevSlide();
+      });
+
+      // Initialize slide count
+      updateSlide();
+    </script>
+  </body>
+</html>

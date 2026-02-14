@@ -1,0 +1,2000 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تعلم Dart - اليوم الخامس: من الكود إلى العالم الحقيقي مع محمد</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Fira+Code:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: "#e6f7ff",
+                100: "#bae7ff",
+                200: "#91d5ff",
+                300: "#69c0ff",
+                400: "#40a9ff",
+                500: "#1890ff",
+                600: "#096dd9",
+                700: "#0050b3",
+                800: "#003a8c",
+                900: "#002766",
+              },
+              "dart-blue": "#0175C2",
+              "dart-dark": "#01579B",
+              "mohamed-warm": "#D89614",
+              "mohamed-soft": "#FFF9E6",
+              "code-bg": "#1E1E1E",
+              "flutter-teal": "#13b9fd",
+              "flutter-purple": "#5e35b1",
+              "gold-accent": "#FFD700",
+            },
+            fontFamily: {
+              tajawal: ["Tajawal", "sans-serif"],
+              code: ["Fira Code", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      :root {
+        --dart-blue: #0175c2;
+        --dart-dark: #01579b;
+        --mohamed-warm: #d89614;
+        --text-primary: #e2e8f0;
+        --flutter-teal: #13b9fd;
+        --flutter-purple: #5e35b1;
+        --bg-dark: #0f172a;
+        --bg-card: #1e293b;
+      }
+      body {
+        font-family: "Tajawal", sans-serif;
+        background: radial-gradient(
+          circle at top left,
+          var(--flutter-purple),
+          #1a202c
+        );
+        color: var(--text-primary);
+        overflow: hidden;
+        height: 100vh;
+      }
+      .slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow-y: auto;
+        padding: 2rem;
+        transform: translateY(20px);
+      }
+      .slide.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        z-index: 10;
+      }
+      .slide-header {
+        background: linear-gradient(
+          135deg,
+          var(--flutter-purple),
+          var(--dart-blue)
+        );
+        color: white;
+        padding: 30px 20px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        margin-bottom: 30px;
+        border-right: 5px solid var(--flutter-teal);
+      }
+      .card {
+        background: rgba(30, 41, 59, 0.8);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 1.5rem;
+        transition: all 0.3s ease;
+      }
+      .card:hover {
+        transform: translateY(-5px);
+        border-color: var(--dart-blue);
+        background: rgba(30, 41, 59, 0.9);
+      }
+      .code-block {
+        font-family: "Fira Code", monospace;
+        background: #1e1e1e;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        direction: ltr;
+        text-align: left;
+        position: relative;
+        overflow-x: auto;
+        border: 1px solid #333;
+        font-size: 0.9rem;
+        margin: 1rem 0;
+      }
+      .code-block::before {
+        content: "DART";
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: var(--dart-blue);
+        color: white;
+        font-size: 0.7rem;
+        padding: 0.2rem 1rem;
+        border-bottom-left-radius: 1rem;
+      }
+      .mohamed-bubble {
+        background: var(--mohamed-soft);
+        color: #5d4c1f;
+        border-radius: 20px;
+        padding: 1.5rem;
+        position: relative;
+        border: 2px solid var(--mohamed-warm);
+        font-weight: 700;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        line-height: 1.7;
+      }
+      .mohamed-bubble::after {
+        content: "";
+        position: absolute;
+        bottom: -15px;
+        right: 40px;
+        border-width: 15px 15px 0;
+        border-style: solid;
+        border-color: var(--mohamed-warm) transparent;
+      }
+      .nav-btn {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s;
+      }
+      .nav-btn:hover {
+        background: var(--dart-blue);
+        transform: scale(1.1);
+      }
+      .highlight-keyword {
+        color: #c792ea;
+        font-weight: bold;
+      }
+      .highlight-string {
+        color: #c3e88d;
+      }
+      .highlight-comment {
+        color: #676e95;
+        font-style: italic;
+      }
+      .highlight-class {
+        color: #ffcb6b;
+      }
+      .highlight-func {
+        color: #82aaff;
+      }
+      .animate {
+        animation: fadeInUp 0.8s ease forwards;
+        opacity: 0;
+      }
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .delay-100 {
+        animation-delay: 0.1s;
+      }
+      .delay-200 {
+        animation-delay: 0.2s;
+      }
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--dart-blue);
+        border-radius: 10px;
+      }
+      .api-flow {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background: rgba(30, 41, 59, 0.6);
+        padding: 2rem;
+        border-radius: 20px;
+        border: 2px dashed var(--flutter-teal);
+        margin: 2rem 0;
+        gap: 1rem;
+      }
+      .flow-step {
+        text-align: center;
+        flex: 1;
+        position: relative;
+      }
+      .flow-step:not(:last-child)::after {
+        content: "\f060";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        position: absolute;
+        top: 50%;
+        left: -20px;
+        transform: translateY(-50%);
+        color: var(--flutter-teal);
+        font-size: 1.5rem;
+      }
+      .story-container {
+        background: linear-gradient(
+          135deg,
+          rgba(30, 41, 59, 0.9),
+          rgba(15, 23, 42, 0.95)
+        );
+        border-radius: 1.5rem;
+        padding: 2rem;
+        border-right: 5px solid var(--flutter-teal);
+      }
+      .visual-box {
+        background: var(--bg-card);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 1.5rem;
+        border-radius: 1rem;
+        text-align: center;
+        min-width: 140px;
+      }
+    </style>
+  </head>
+  <body class="text-gray-100">
+    <!-- Navigation -->
+    <div
+      class="fixed bottom-6 left-1/2 transform -translate-x-1/2 flex gap-4 z-50"
+    >
+      <button
+        onclick="prevSlide()"
+        class="nav-btn w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-2xl"
+      >
+        <i class="fas fa-chevron-right"></i>
+      </button>
+      <div
+        id="slide-indicator"
+        class="bg-gray-800/90 backdrop-blur px-6 py-2 rounded-full flex items-center border border-white/20 font-bold shadow-2xl min-w-[100px] justify-center text-white"
+      >
+        1 / 29
+      </div>
+      <button
+        onclick="nextSlide()"
+        class="nav-btn w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-2xl"
+      >
+        <i class="fas fa-chevron-left"></i>
+      </button>
+    </div>
+
+    <!-- Slides -->
+    <div class="w-full h-full relative">
+      <!-- Slide 1: Welcome -->
+      <div class="slide active">
+        <div class="max-w-5xl mx-auto h-full flex flex-col justify-center">
+          <div class="slide-header text-center animate">
+            <h1 class="text-5xl md:text-7xl font-black mb-6">
+              Advanced Dart Topics
+            </h1>
+            <p
+              class="text-2xl md:text-3xl opacity-90 font-light text-center text-white"
+            >
+              المحاضرة الخامسة: من الأساسيات لحد التعامل مع الـ API (بقصة محمد)
+            </p>
+            <div
+              class="w-32 h-1.5 bg-flutter-teal mx-auto rounded-full mt-6"
+            ></div>
+          </div>
+          <div
+            class="flex flex-col md:flex-row items-center justify-center gap-12 mt-12 animate delay-200"
+          >
+            <div class="relative">
+              <img
+                src="https://i.ibb.co/Fbpfy9Y5/ITI2.jpg"
+                alt="المحاضر مصطفى حسين"
+                class="w-40 h-40 rounded-full border-4 border-flutter-teal shadow-2xl object-cover"
+              />
+              <div
+                class="absolute -bottom-2 -right-2 bg-dart-blue p-2 rounded-full border-2 border-white"
+              >
+                <i class="fas fa-star text-white text-xs"></i>
+              </div>
+            </div>
+            <div class="text-center md:text-right">
+              <p class="text-4xl font-bold text-white mb-2">م. مصطفى حسين</p>
+              <p class="text-flutter-teal text-xl mb-6">
+                Software Engineer & Data Instructor
+              </p>
+              <div class="flex gap-4 justify-center md:justify-start">
+                <a
+                  href="https://www.youtube.com/@js_hacks"
+                  class="bg-white/10 hover:bg-dart-blue text-white p-4 rounded-xl transition-all"
+                  ><i class="fab fa-youtube text-2xl"></i
+                ></a>
+                <a
+                  href="https://www.linkedin.com/in/mostafa-hussain-ramadan/"
+                  class="bg-white/10 hover:bg-dart-blue text-white p-4 rounded-xl transition-all"
+                  ><i class="fab fa-linkedin text-2xl"></i
+                ></a>
+                <a
+                  href="https://github.com/mostafa-hessen"
+                  class="bg-white/10 hover:bg-dart-blue text-white p-4 rounded-xl transition-all"
+                  ><i class="fab fa-github text-2xl"></i
+                ></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Objectives -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10">
+          <h2 class="text-4xl font-black mb-10 text-center text-flutter-teal">
+            🎯 هدف المحاضرة
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="card p-6 border-t-4 border-blue-400">
+              <i class="fas fa-server text-3xl text-blue-400 mb-4"></i>
+              <h4 class="font-bold mb-2">أساسيات الويب</h4>
+              <p class="text-sm text-gray-400">
+                فهم يعني إيه Server / Hosting / DNS / URL وربطهم ببعض.
+              </p>
+            </div>
+            <div class="card p-6 border-t-4 border-green-400">
+              <i class="fas fa-database text-3xl text-green-400 mb-4"></i>
+              <h4 class="font-bold mb-2">قواعد البيانات</h4>
+              <p class="text-sm text-gray-400">
+                يعني إيه Database وليه بنستخدمها والفرق بين SQL و NoSQL.
+              </p>
+            </div>
+            <div class="card p-6 border-t-4 border-purple-400">
+              <i class="fas fa-plug text-3xl text-purple-400 mb-4"></i>
+              <h4 class="font-bold mb-2">عالم الـ API</h4>
+              <p class="text-sm text-gray-400">
+                فهم الـ REST API وكيفية التواصل بين الموبايل والسيرفر.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: The Story - Real Mohamed -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10">
+          <div class="flex flex-col lg:flex-row items-center gap-10">
+            <div class="lg:w-1/2">
+              <img
+                src="https://i.ibb.co/3yQgCM42/uncle-mohamed-cartoon-1769405278134.jpg"
+                class="rounded-3xl shadow-2xl border-4 border-dart-blue bg-white"
+                alt="Uncle Mohamed"
+              />
+            </div>
+            <div class="lg:w-1/2">
+              <div class="mohamed-bubble mb-8">
+                "يا باشمهندس مصطفى، أنا مش فاهم الكود بتاعي بيمشي إزاي؟ هو
+                بيتنفذ سطر سطر؟ طب لو في سطر بياخد وقت طويل جداً، هل هيفضل معطل
+                الدنيا كلها؟ أنا خايف الأبلكيشن بتاعي يهنج!"
+              </div>
+              <div class="card p-6 bg-blue-500/10 border-r-4 border-blue-400">
+                <h4 class="font-bold text-blue-300 mb-4">
+                  مخاوف محمد المشروعة
+                </h4>
+                <p class="leading-relaxed">
+                  محمد بدأ يلاحظ إن الكود التقليدي (السينكرونوس) ممكن يخلي
+                  التطبيق 'يتجمد' لو في عملية تقيلة، وعاوز يعرف إيه الحل.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Sync vs Async Intro -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10 text-right">
+          <h2 class="text-3xl font-bold mb-10 text-flutter-teal text-center">
+            ⏱️ Synchronous vs Asynchronous
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="card p-8 border-r-4 border-red-500">
+              <h3 class="text-2xl font-bold text-red-500 mb-6">
+                🔴 Synchronous (متزامن)
+              </h3>
+              <p class="mb-4 font-bold">
+                الكود بينفذ سطر سطر، وماينفعش سطر يشتغل غير لما اللي قبله يخلص.
+              </p>
+              <div class="bg-red-500/10 p-4 rounded-lg">
+                <i class="fas fa-users text-2xl mr-2"></i>
+                <strong>تشبيه:</strong> واقف في طابور، محدش بيتحرك غير لما اللي
+                قبله يمشي.
+              </div>
+            </div>
+            <div class="card p-8 border-r-4 border-green-500">
+              <h3 class="text-2xl font-bold text-green-500 mb-6">
+                🟢 Asynchronous (غير متزامن)
+              </h3>
+              <p class="mb-4 font-bold">
+                الكود يقدر يطلب حاجة وتاخد وقت، ويكمل شغله عادي لحد ما الحاجة دي
+                تيجي.
+              </p>
+              <div class="bg-green-500/10 p-4 rounded-lg">
+                <i class="fas fa-phone-alt text-2xl mr-2"></i>
+                <strong>تشبيه:</strong> طلبت أكل، وسيبت رقمك، ورجعت لما يرن 📞
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: The Blocking Problem (New Slide) -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10 text-right">
+          <h2 class="text-3xl font-bold mb-10 text-center text-red-400">
+            🔴 كابوس الـ Blocking (التعطيل)
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <div class="space-y-6">
+              <div class="card p-6 bg-red-500/5 border-r-4 border-red-500">
+                <h4 class="font-bold text-red-400 mb-4">يعني إيه Blocking؟</h4>
+                <p class="text-sm leading-loose">
+                  لما يكون في سطر كود بياخد وقت طويل (زي Loop ضخم)، المعالج
+                  بيفضل مشغول فيه ومش عارف ينفذ أي سطر تاني، ولا حتى الـ UI يقدر
+                  يستجيب لضغطة المستخدم!
+                </p>
+              </div>
+              <div class="mohamed-bubble">
+                "شوفت يا باشمهندس! الـ For Loop دي خلت الـ PRINT اللي بعدها
+                تستنى كتير جداً.. طيب ما بالك لو السطر ده كان بيحمل بيانات من
+                النت؟"
+              </div>
+            </div>
+            <div class="code-block">
+              <span class="highlight-comment"
+                >// مثال على الـ Blocking (التعطيل)</span
+              ><br />
+              print(<span class="highlight-string">'Start'</span>);<br /><br />
+              <span class="highlight-keyword">for</span> (<span
+                class="highlight-keyword"
+                >int</span
+              >
+              i = <span class="highlight-number">0</span>; i <
+              <span class="highlight-number">1000000000</span>; i++) {<br />
+              &nbsp;&nbsp;<span class="highlight-comment"
+                >// كود بياخد وقت طوووويل جداً</span
+              ><br />
+              }<br /><br />
+              print(<span class="highlight-string">'End'</span>);
+              <span class="highlight-comment">// السطر ده هيفضل محبوس!</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Future & Future.delayed -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10 text-right">
+          <h2 class="text-4xl font-black mb-10 text-center text-flutter-teal">
+            🕒 فهم الـ Future & Future.delayed
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <div class="space-y-6">
+              <div class="card p-6 border-r-4 border-flutter-teal">
+                <h4 class="font-bold text-flutter-teal mb-4 text-xl">
+                  يعني إيه Future؟
+                </h4>
+                <p class="leading-loose">
+                  هو كائن (Object) بيمثل قيمة أو خطأ لسه "هيحصل" في المستقبل. زي
+                  كأنك طلبت أوردر دليفري، اللي معاك دلوقتي هو "وصل" (Future)
+                  بالأوردر اللي لسه هيوصلك.
+                </p>
+              </div>
+              <div class="card p-6 border-r-4 border-yellow-500">
+                <h4 class="font-bold text-yellow-500 mb-4 text-xl">
+                  ليه Future.delayed؟
+                </h4>
+                <p class="leading-loose">
+                  بنستخدمها عشان نقول للغة: "من فضلك استني كذا ثانية قبل ما
+                  تنفذي الكود ده، بس من غير ما توقفي باقي البرنامج". ده جوهر الـ
+                  Non-blocking!
+                </p>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="code-block h-full">
+                <span class="highlight-keyword">void</span> main() {<br />
+                &nbsp;&nbsp;print(<span class="highlight-string"
+                  >'1. بداية البرنامج'</span
+                >);<br /><br />
+                &nbsp;&nbsp;<span class="highlight-comment"
+                  >// حجز مهمة للمستقبل (3 ثواني)</span
+                ><br />
+                &nbsp;&nbsp;<span class="highlight-class">Future</span
+                >.delayed(<span class="highlight-class">Duration</span>(seconds:
+                <span class="highlight-number">3</span>), () {<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;print(<span class="highlight-string"
+                  >'2. تم تنفيذ المهمة المؤجلة ✅'</span
+                >);<br />
+                &nbsp;&nbsp;});<br /><br />
+                &nbsp;&nbsp;print(<span class="highlight-string"
+                  >'3. تم تنفيذ السطر ده فوراً (بدون انتظار!) 🚀'</span
+                >);<br />
+                }
+              </div>
+              <div
+                class="bg-blue-500/10 p-4 rounded-2xl border border-blue-400"
+              >
+                <h5 class="font-bold text-blue-300 mb-2">
+                  💡 الترتيب في الـ Console:
+                </h5>
+                <p class="text-xs">1. بداية البرنامج</p>
+                <p class="text-xs">3. تم تنفيذ السطر ده فوراً</p>
+                <p class="text-xs text-yellow-400 font-bold">(بعد 3 ثواني)</p>
+                <p class="text-xs">2. تم تنفيذ المهمة المؤجلة</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: The Restaurant Metaphor & Details -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10">
+          <h2 class="text-3xl font-bold mb-6 text-center text-flutter-teal">
+            توضيح بالصور: ليه المحمول محتاج Async؟
+          </h2>
+          <div class="flex flex-col lg:flex-row items-center gap-10">
+            <div class="lg:w-1/2">
+              <img
+                src="C:/Users/Hosopa/.gemini/antigravity/brain/e1100ab8-ba8c-40f6-b59f-7169ca02ac1e/async_waiter_metaphor_1769975653040.png"
+                class="rounded-3xl shadow-2xl border-4 border-flutter-teal"
+                alt="Async Metaphor"
+              />
+            </div>
+            <div class="lg:w-1/2 space-y-6">
+              <div class="card p-6 border-r-4 border-yellow-500 text-right">
+                <h4 class="font-bold text-yellow-500 mb-4">تفاصيل مهمة:</h4>
+                <p class="text-sm mb-4 leading-relaxed">
+                  إحنا بنحتاج الـ Async عشان الموبايل فيه معالج (Process) واحد
+                  شغال على الـ UI الرئيسي. لو عطلناه، المستخدم هيحس إن التطبيق
+                  "تجمد" (App Not Responding).
+                </p>
+                <ul class="space-y-3 text-sm">
+                  <li>
+                    <i class="fas fa-check text-green-400 ml-1"></i> تحميل الصور
+                    الكبيرة من السيرفر.
+                  </li>
+                  <li>
+                    <i class="fas fa-check text-green-400 ml-1"></i> جلب بيانات
+                    من ملفات ضخمة.
+                  </li>
+                  <li>
+                    <i class="fas fa-check text-green-400 ml-1"></i> الربط مع
+                    الـ API الخارجي.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Mastering Async & Await -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10 text-right">
+          <h2 class="text-4xl font-black mb-10 text-center text-flutter-teal">
+            👨‍🍳 قصة المطعم: الـ Async و الـ Await بالكود
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <div class="space-y-6">
+              <div class="card p-6 border-r-4 border-flutter-purple">
+                <h4 class="font-bold text-flutter-purple mb-4 text-xl">
+                  1. الـ async (المترجم الذكي)
+                </h4>
+                <p class="leading-loose text-sm">
+                  لما بنكتب <span class="highlight-keyword">async</span> قبل الـ
+                  Function، إحنا بنقول لـ Dart: "جهزي نفسك، الوراكي دي هتاخد
+                  وقت، وممكن ترجع Future". ده معناه إن الوظيفة دي "غير متزامنة".
+                </p>
+              </div>
+              <div class="card p-6 border-r-4 border-flutter-teal">
+                <h4 class="font-bold text-flutter-teal mb-4 text-xl">
+                  2. الـ await (الانتظار الذكي)
+                </h4>
+                <p class="leading-loose text-sm">
+                  كلمة <span class="highlight-keyword">await</span> بنستخدمها
+                  جوه الـ async بس. وظيفتها إنها بتمسك الـ "Future" وتقوله: "أنا
+                  هستناك هنا لحد ما تخلص وترجع داتا، بس مش هعطل باقي البرنامج
+                  اللي بره الـ Function دي".
+                </p>
+              </div>
+              <div class="mohamed-bubble">
+                "يا سلام! يعني الـ await زي الويتر اللي بيستنى المطبخ يخلص، بس
+                المطعم نفسه شغال وباقي الزبائن بتطلب عادي؟"
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="code-block text-xs">
+                <span class="highlight-comment">// مثال واقعي لطلب بيتزا</span
+                ><br />
+                <span class="highlight-keyword">Future</span>&lt;<span
+                  class="highlight-keyword"
+                  >void</span
+                >&gt; orderPizza()
+                <span class="highlight-keyword">async</span> {<br />
+                &nbsp;&nbsp;print(<span class="highlight-string"
+                  >'1. طلبت البيتزا من الويتر 🍕'</span
+                >);<br /><br />
+                &nbsp;&nbsp;<span class="highlight-comment"
+                  >// الويتر بينتظر المطبخ (3 ثواني)</span
+                ><br />
+                &nbsp;&nbsp;<span class="highlight-keyword">String</span> result
+                =
+                <span class="highlight-keyword">await</span>
+                preparePizza();<br /><br />
+                &nbsp;&nbsp;print(<span class="highlight-string"
+                  >'3. الويتر جابلي: $result'</span
+                >);<br />
+                }<br /><br />
+                <span class="highlight-keyword">Future</span>&lt;<span
+                  class="highlight-keyword"
+                  >String</span
+                >&gt; preparePizza()
+                <span class="highlight-keyword">async</span> {<br />
+                &nbsp;&nbsp;<span class="highlight-keyword">await</span>
+                <span class="highlight-class">Future</span>.delayed(<span
+                  class="highlight-class"
+                  >Duration</span
+                >(seconds: <span class="highlight-number">3</span>));<br />
+                &nbsp;&nbsp;<span class="highlight-keyword">return</span>
+                <span class="highlight-string">'بيتزا سخنة! 🔥'</span>;<br />
+                }<br /><br />
+                <span class="highlight-keyword">void</span> main() {<br />
+                &nbsp;&nbsp;orderPizza();<br />
+                &nbsp;&nbsp;print(<span class="highlight-string"
+                  >'2. أنا بقرا كتاب عقبال ما البيتزا تجهز 📖'</span
+                >);<br />
+                }
+              </div>
+              <div
+                class="bg-gray-800 p-4 rounded-xl border border-white/10 text-xs"
+              >
+                <h5 class="font-bold text-flutter-teal mb-2">تسلسل التنفيذ:</h5>
+                <ol class="space-y-1">
+                  <li>- بتطلب البيتزا (1. طلبت البيتزا..)</li>
+                  <li>- المطبخ بيبدأ يشتغل..</li>
+                  <li>- البرنامج يكمل (2. أنا بقرا كتاب..)</li>
+                  <li>- بعد 3 ثواني (3. الويتر جابلي البيتزا!)</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: Try / Catch - Simplified vs Robust -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10 text-right">
+          <h2 class="text-3xl font-bold mb-10 text-center text-red-400">
+            ⚠️ التعامل مع الأخطاء (Try / Catch)
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="space-y-6">
+              <div class="card p-6 border-r-4 border-red-500">
+                <h4 class="font-bold text-red-500 mb-2">
+                  كارثة بدون Try/Catch:
+                </h4>
+                <p class="text-sm">
+                  تخيل لو السيستم بيقسم رقمين، والزبون كتب الرقم التاني "صفر".
+                  السيستم هيقع فوراً!
+                </p>
+                <div class="code-block text-xs">
+                  <span class="highlight-keyword">int</span> x =
+                  <span class="highlight-number">10</span> ~/
+                  <span class="highlight-number">0</span>;
+                  <span class="highlight-comment">// ❌ CRASH!!!</span>
+                </div>
+              </div>
+              <div class="card p-6 border-r-4 border-green-500">
+                <h4 class="font-bold text-green-500 mb-2">
+                  الحل مع Try/Catch:
+                </h4>
+                <p class="text-sm">
+                  إحنا بنقول له: "جرب" (Try) تنفذ الكود ده، ولو حصلت "قفشة"
+                  (Catch)، اتعامل معاها بلطف بدل ما تقفل التطبيق.
+                </p>
+              </div>
+            </div>
+            <div class="code-block">
+              <span class="highlight-comment">// كود آمن (Robust)</span><br />
+              <span class="highlight-keyword">try</span> {<br />
+              &nbsp;&nbsp;<span class="highlight-keyword">int</span> result =
+              <span class="highlight-number">10</span> ~/
+              <span class="highlight-number">0</span>;<br />
+              &nbsp;&nbsp;print(result);<br />
+              } <span class="highlight-keyword">catch</span> (e) {<br />
+              &nbsp;&nbsp;print(<span class="highlight-string"
+                >'عفواً، لا يمكن القسمة على صفر!'</span
+              >);<br />
+              &nbsp;&nbsp;print(<span class="highlight-string"
+                >'نوع الخطأ: $e'</span
+              >);<br />
+              } <span class="highlight-keyword">finally</span> {<br />
+              &nbsp;&nbsp;print(<span class="highlight-string"
+                >'تمت المحاولة بنجاح.'</span
+              >);<br />
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: What is a Server? -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10">
+          <h2 class="text-3xl font-bold mb-10 text-center text-flutter-teal">
+            🌍 يعني إيه Server؟
+          </h2>
+          <div class="flex flex-col lg:flex-row items-center gap-10">
+            <div class="lg:w-1/2">
+              <img
+                src="C:/Users/Hosopa/.gemini/antigravity/brain/e1100ab8-ba8c-40f6-b59f-7169ca02ac1e/server_cloud_tech_1769975666494.png"
+                class="rounded-3xl shadow-xl border-4 border-dart-blue"
+                alt="Server Illustration"
+              />
+            </div>
+            <div class="lg:w-1/2 space-y-4 text-right">
+              <div class="card p-6 border-r-4 border-blue-400">
+                <h4 class="font-bold mb-4">السيرفر هو:</h4>
+                <p>
+                  جهاز كمبيوتر قوي جداً، شغال 24/7، مهمته الأساسية تخزين
+                  البيانات والرد على طلبات المستخدمين.
+                </p>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="visual-box border-teal-500">
+                  <i class="fas fa-home text-3xl text-teal-500 mb-2"></i>
+                  <h5 class="font-bold">Hosting</h5>
+                  <p class="text-[10px]">حجز مكان للسيرفر</p>
+                </div>
+                <div class="visual-box border-orange-500">
+                  <i class="fas fa-book text-3xl text-orange-500 mb-2"></i>
+                  <h5 class="font-bold">DNS</h5>
+                  <p class="text-[10px]">دليل أسماء المواقع</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: URL & Protocol Breakdown -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10 text-right">
+          <h2 class="text-3xl font-bold mb-10 text-center text-flutter-teal">
+            🔗 تشريح الـ URL والبروتوكولات
+          </h2>
+          <div class="grid grid-cols-1 gap-6 mb-8">
+            <div
+              class="card p-6 bg-black/40 border-2 border-flutter-teal text-center"
+            >
+              <span class="text-blue-400 font-bold">http</span>://<span
+                class="text-purple-400 font-bold"
+                >www.youtube.com</span
+              >/<span class="text-green-400 font-bold">watch?v=xyz</span>
+            </div>
+            <div class="card p-4 bg-gray-800 text-center text-xs">
+              <span class="text-yellow-400 font-bold">file</span>:///<span
+                class="text-gray-400 font-bold"
+                >D:/Training/flutter/Dart/Day5/Advanced_Dart.html</span
+              >
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="card p-6 border-r-4 border-blue-400">
+              <h4 class="font-bold text-blue-400 mb-2">
+                1️⃣ الـ Protocol (اللغة)
+              </h4>
+              <ul class="text-sm space-y-2">
+                <li>
+                  <strong class="text-blue-300">HTTP / HTTPS:</strong> اللغة
+                  اللي المتصفح بيكلم بيها السيرفر عبر الإنترنت.
+                </li>
+                <li>
+                  <strong class="text-yellow-400">FILE:</strong> لما نفتح ملف
+                  موجود "جوه" جهازنا مباشرة (زي المحاضرة دي دلوقتي).
+                </li>
+              </ul>
+            </div>
+            <div class="card p-6 border-r-4 border-purple-400">
+              <h4 class="font-bold text-purple-400 mb-2">
+                2️⃣ الـ Domain (العنوان)
+              </h4>
+              <p class="text-sm">
+                زي <strong>youtube.com</strong>، هو الاسم اللي بنحفظه بدل ما
+                نحفظ رقم الـ IP المعقد بتاع السيرفر.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: LIVE Workshop - Upload to GitHub & Server -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10 text-right">
+          <h2 class="text-4xl font-black mb-10 text-center text-gold-accent">
+            🚀 يلا نرفع المحاضرة أونلاين!
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div class="story-container">
+              <h3 class="font-bold text-flutter-teal mb-6">
+                <i class="fab fa-github ml-2"></i> الخطوة الأولى: GitHub
+              </h3>
+              <p class="mb-4 leading-loose">
+                عشان نحفظ الكود ونشاركه مع الناس، لازم نرفعه على GitHub. ده
+                'المخزن' بتاعنا.
+              </p>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+                <h5 class="font-bold mb-2">أوامر سريعة:</h5>
+                <code class="text-xs"
+                  >git init<br />git add .<br />git commit -m "upload
+                  lecture"<br />git push</code
+                >
+              </div>
+            </div>
+            <div class="story-container border-mohamed-warm">
+              <h3 class="font-bold text-mohamed-warm mb-6">
+                <i class="fas fa-cloud-upload-alt ml-2"></i> الخطوة الثانية:
+                Hosting
+              </h3>
+              <p class="mb-4 leading-loose">
+                هنستخدم خدمة زي Firebase Hosting أو GitHub Pages عشان المحاضرة
+                تكون 'حية' وأي حد يفتحها باللينك بدلاً من الـ
+                <span class="text-yellow-400">file protocol</span> المحلي.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Database Definition & Types -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10 text-right">
+          <h2 class="text-3xl font-bold mb-10 text-center text-flutter-teal">
+            🗄️ ما هي قواعد البيانات وأنواعها؟
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div class="card p-8 border-r-4 border-indigo-500">
+              <h3 class="text-2xl font-bold mb-4">التعريف المبسط</h3>
+              <p class="leading-loose">
+                هي نظام مخصص لتخزين وتنظيم كميات ضخمة من البيانات بحيث نقدر
+                نسترجعها أو نعدلها بسرعة فائقة وأمان عالي، عكس الملفات العادية
+                اللي ممكن تضيع أو تكون بطيئة.
+              </p>
+            </div>
+            <div class="card p-8 border-r-4 border-pink-500">
+              <h3 class="text-2xl font-bold mb-4">الأنواع الرئيسية</h3>
+              <div class="space-y-4">
+                <div class="p-4 bg-white/5 rounded-xl">
+                  <span class="text-indigo-400 font-bold"
+                    >1. SQL (Relational):</span
+                  >
+                  <p class="text-xs">
+                    بيانات منظمة في جداول (زي MySQL). ممتازة للبيانات المترابطة.
+                  </p>
+                </div>
+                <div class="p-4 bg-white/5 rounded-xl">
+                  <span class="text-pink-400 font-bold"
+                    >2. NoSQL (Non-Relational):</span
+                  >
+                  <p class="text-xs">
+                    بيانات مرنة (زي Firebase). ممتازة للسرعة والتوسع الضخم.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: SQL vs NoSQL Structural Comparison -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10 text-right">
+          <h2 class="text-3xl font-bold mb-10 text-center text-flutter-teal">
+            📊 مقارنة الهيكل: SQL vs NoSQL
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- SQL Side -->
+            <div class="card p-6 shadow-2xl border-t-4 border-indigo-500">
+              <h3 class="text-xl font-bold mb-4 text-indigo-400 text-center">
+                جدول SQL (منظم)
+              </h3>
+              <div class="overflow-x-auto">
+                <table
+                  class="w-full text-[10px] border-collapse rounded-lg overflow-hidden"
+                >
+                  <thead>
+                    <tr class="bg-indigo-600">
+                      <th class="p-2 border border-white/10">id</th>
+                      <th class="p-2 border border-white/10">name</th>
+                      <th class="p-2 border border-white/10">role</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-center">
+                    <tr class="bg-white/5">
+                      <td class="p-2 border border-white/10">1</td>
+                      <td class="p-2 border border-white/10">مصطفى</td>
+                      <td class="p-2 border border-white/10">Instructor</td>
+                    </tr>
+                    <tr class="bg-white/10">
+                      <td class="p-2 border border-white/10">2</td>
+                      <td class="p-2 border border-white/10">محمد</td>
+                      <td class="p-2 border border-white/10">Developer</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="mt-4 text-[10px] text-gray-400 italic font-bold">
+                "بيانات في صفوف وأعمدة ثابتة"
+              </p>
+            </div>
+
+            <!-- NoSQL Side -->
+            <div class="card p-6 shadow-2xl border-t-4 border-pink-500">
+              <h3 class="text-xl font-bold mb-4 text-pink-400 text-center">
+                مستند NoSQL (مرن)
+              </h3>
+              <div
+                class="code-block text-[10px] m-0 !bg-pink-500/5 !border-pink-500/20"
+              >
+                {<br />
+                &nbsp;&nbsp;<span class="highlight-string">"id"</span>:
+                <span class="highlight-number">1</span>,<br />
+                &nbsp;&nbsp;<span class="highlight-string">"name"</span>:
+                <span class="highlight-string">"مصطفى"</span>,<br />
+                &nbsp;&nbsp;<span class="highlight-string">"skills"</span>:
+                [<span class="highlight-string">"Dart"</span>,
+                <span class="highlight-string">"Flutter"</span>],<br />
+                &nbsp;&nbsp;<span class="highlight-string">"address"</span>:
+                {<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight-string"
+                  >"city"</span
+                >: <span class="highlight-string">"Cairo"</span><br />
+                &nbsp;&nbsp;}<br />
+                }
+              </div>
+              <p class="mt-4 text-[10px] text-gray-400 italic font-bold">
+                "بيانات في شكل JSON (أشبه بالـ Map)"
+              </p>
+            </div>
+          </div>
+          <div class="mohamed-bubble mt-8 text-sm">
+            "شوفت الفرق يا هندسة؟ الـ SQL زي درج المكتب المنظم، والـ NoSQL زي
+            شنطة السفر، تقدر تحط فيها حاجات بأشكال مختلفة براحتك!"
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: Database Workshop - Design your Table -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10 text-right">
+          <h2 class="text-4xl font-black mb-10 text-center text-flutter-teal">
+            💡 ورشة عمل: صمم جدولك الأول
+          </h2>
+          <div
+            class="card p-10 bg-gradient-to-br from-gray-800 to-bg-dark border-2 border-dashed border-flutter-purple"
+          >
+            <h3 class="text-2xl font-bold mb-6 text-center">
+              تخيل تطبيق لـ "مكتبة" 📚
+            </h3>
+            <p class="text-center mb-8">
+              إيه البيانات اللي محتاجين نخزنها في جدول الكتب؟
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
+              <div
+                class="p-4 bg-flutter-purple/20 rounded-xl border border-flutter-purple font-bold"
+              >
+                ID (رقم الكتاب)
+              </div>
+              <div
+                class="p-4 bg-flutter-purple/20 rounded-xl border border-flutter-purple font-bold"
+              >
+                Title (العنوان)
+              </div>
+              <div
+                class="p-4 bg-flutter-purple/20 rounded-xl border border-flutter-purple font-bold"
+              >
+                Author (المؤلف)
+              </div>
+              <div
+                class="p-4 bg-flutter-purple/20 rounded-xl border border-flutter-purple font-bold"
+              >
+                Price (السعر)
+              </div>
+            </div>
+            <div
+              class="mt-10 p-6 bg-white/5 rounded-2xl italic text-center text-gray-400"
+            >
+              "الموبايل مينفعش يكلم الداتا بيز دي مباشرة.. لازم فيه وسيط في
+              النص!"
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 18: The Connector - API Introduction -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10">
+          <h2 class="text-3xl font-bold mb-10 text-center text-flutter-teal">
+            🔌 بطل القصة: الـ API
+          </h2>
+          <div class="flex flex-col lg:flex-row items-center gap-10">
+            <div class="lg:w-1/2">
+              <img
+                src="C:/Users/Hosopa/.gemini/antigravity/brain/e1100ab8-ba8c-40f6-b59f-7169ca02ac1e/api_bridge_connection_1769975681973.png"
+                class="rounded-3xl shadow-xl border-4 border-flutter-teal"
+                alt="API Bridge"
+              />
+            </div>
+            <div class="lg:w-1/2 space-y-6 text-right">
+              <div class="mohamed-bubble">
+                "يعني الـ API ده هو الكوبري اللي بينقل الداتا من السيرفر
+                للموبايل بتاعي؟"
+              </div>
+              <div class="card p-6 border-r-4 border-green-400">
+                <h4 class="font-bold mb-2">
+                  API = Application Programming Interface
+                </h4>
+                <p>
+                  هو مجموعة من القواعد والأوامر اللي بتسمح لتطبيقين مختلفين إنهم
+                  يتكلموا مع بعض.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 19: API Flow - Visual Diagram -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10 text-right">
+          <h2 class="text-3xl font-bold mb-10 text-center text-flutter-teal">
+            🗺️ فلو تواصل التطبيق مع السيرفر
+          </h2>
+          <div class="api-flow">
+            <div class="flow-step">
+              <i class="fas fa-mobile-alt text-4xl mb-3 text-flutter-teal"></i>
+              <h4 class="font-bold">التطبيق</h4>
+              <p class="text-xs">يرسل طلب (Request)</p>
+            </div>
+            <div class="flow-step">
+              <i
+                class="fas fa-exchange-alt text-4xl mb-3 text-flutter-teal"
+              ></i>
+              <h4 class="font-bold">الـ API</h4>
+              <p class="text-xs">وسيط الاتصال</p>
+            </div>
+            <div class="flow-step">
+              <i class="fas fa-server text-4xl mb-3 text-flutter-teal"></i>
+              <h4 class="font-bold">السيرفر</h4>
+              <p class="text-xs">معالجة الطلب</p>
+            </div>
+            <div class="flow-step">
+              <i class="fas fa-database text-4xl mb-3 text-flutter-teal"></i>
+              <h4 class="font-bold">قاعدة البيانات</h4>
+              <p class="text-xs">تخزين واسترجاع</p>
+            </div>
+          </div>
+          <div class="card p-6 bg-blue-500/5 text-center italic">
+            "هنا بنفهم إن الموبايل ملوش دعوة بالداتا متخزنة فين، هو بس بيطلب من
+            الـ API والـ API بيتصرف!"
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 20: REST vs SOAP | JSON vs XML -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10 text-right">
+          <h2 class="text-3xl font-bold mb-10 text-center text-flutter-teal">
+            ⚖️ مقارنة شاملة: REST vs SOAP
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="card p-6 border-t-4 border-green-500">
+              <h4 class="font-bold text-green-500 mb-4 text-xl">
+                🚀 RESTful API (المستقبل)
+              </h4>
+              <ul class="space-y-3 text-sm mb-6">
+                <li>
+                  <i class="fas fa-check text-green-400 ml-1"></i> خفيف جداً
+                  وسريع في نقل البيانات.
+                </li>
+                <li>
+                  <i class="fas fa-check text-green-400 ml-1"></i> بيستخدم
+                  <span class="font-bold text-yellow-400">JSON</span> (بسيط وسهل
+                  القراءة).
+                </li>
+                <li>
+                  <i class="fas fa-check text-green-400 ml-1"></i> المفضل تماماً
+                  لمطوري الـ Mobile و Web.
+                </li>
+              </ul>
+              <div class="code-block text-[10px]">
+                <span class="highlight-comment">// مثال لشكل JSON</span><br />
+                {<br />
+                &nbsp;&nbsp;<span class="highlight-string">"name"</span>:
+                <span class="highlight-string">"Mohamed"</span>,<br />
+                &nbsp;&nbsp;<span class="highlight-string">"age"</span>:
+                <span class="highlight-number">30</span><br />
+                }
+              </div>
+            </div>
+            <div class="card p-6 border-t-4 border-red-500 bg-red-500/5">
+              <h4 class="font-bold text-red-500 mb-4 text-xl">
+                🐢 SOAP API (الماضي)
+              </h4>
+              <ul class="space-y-3 text-sm mb-6">
+                <li>
+                  <i class="fas fa-times text-red-400 ml-1"></i> تقيل جداً بسبب
+                  تعقيد الهيكل.
+                </li>
+                <li>
+                  <i class="fas fa-times text-red-400 ml-1"></i> بيستخدم
+                  <span class="font-bold text-blue-400">XML</span> (مليان وسوم
+                  صعبة).
+                </li>
+                <li>
+                  <i class="fas fa-times text-red-400 ml-1"></i> نادر الاستخدام
+                  حالياً إلا في بنوك قديمة جداً.
+                </li>
+              </ul>
+              <div class="code-block text-[10px]">
+                <span class="highlight-comment"
+                  >&lt;!-- مثال لشكل XML --&gt;</span
+                ><br />
+                &lt;user&gt;<br />
+                &nbsp;&nbsp;&lt;name&gt;Mohamed&lt;/name&gt;<br />
+                &nbsp;&nbsp;&lt;age&gt;30&lt;/age&gt;<br />
+                &lt;/user&gt;
+              </div>
+            </div>
+          </div>
+          <div
+            class="mt-8 card p-6 bg-blue-500/10 border-l-4 border-flutter-teal"
+          >
+            <h5 class="font-bold text-flutter-teal mb-2">ليه JSON أفضل؟</h5>
+            <p class="text-sm leading-relaxed">
+              JSON أسهل للقراءة بالنسبة للإنسان، وأسرع للتحويل (Parsing) بالنسبة
+              للكمبيوتر، وحجمه أصغر بكتير في النقل عبر الشبكة مقارنة بـ XML اللي
+              بيضيع مساحة في كتابة الـ Tags.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 21: Tools of the Trade: Postman -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10">
+          <h2
+            class="text-4xl font-black mb-10 text-center text-flutter-teal flex items-center justify-center gap-4"
+          >
+            <img
+              src="https://www.vectorlogo.zone/logos/getpostman/getpostman-icon.svg"
+              class="w-12 h-12"
+              alt="Postman Icon"
+            />
+            🧡 أداة المبرمجين: Postman
+          </h2>
+          <div class="flex flex-col lg:flex-row items-center gap-10">
+           
+            <div class=" w-full space-y-6 text-right">
+              <div class="card p-6 border-r-4 border-orange-500">
+                <h4 class="font-bold text-orange-500 mb-4 text-xl">
+                  ليه بنستخدم بوستمان؟
+                </h4>
+                <ul class="space-y-3">
+                  <li>
+                    <strong>تجربة السيرفر:</strong> بنختبر الـ API قبل ما نكتب
+                    كود في التطبيق.
+                  </li>
+                  <li>
+                    <strong>فحص النتائج:</strong> بنشوف الـ JSON اللي راجع شكله
+                    إيه.
+                  </li>
+                  <li>
+                    <strong>توفير الوقت:</strong> بنعرف لو المشكلة من السيرفر
+                    ولا من كود الموبايل.
+                  </li>
+                </ul>
+              </div>
+              <div class="mohamed-bubble">
+                "بوستمان ده بجد منقذ، بدل ما أقعد أرن الأبلكيشن كل شوية عشان
+                أجرب الـ API!"
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14 (Moved): Packages and pub.dev -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10 text-right">
+          <h2
+            class="text-4xl font-black mb-10 text-center text-flutter-teal flex items-center justify-center gap-4"
+          >
+            <img
+              src="https://logowik.com/content/uploads/images/google-dart2862.jpg"
+              class="w-12 h-12"
+              alt="Dart Icon"
+            />
+            📦 محرك القوة: pub.dev و الـ Packages
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <div class="space-y-6">
+              <div class="card p-6 border-r-4 border-blue-500">
+                <h4 class="font-bold text-blue-400 mb-4">ما هو الـ Package؟</h4>
+                <p class="leading-loose text-sm">
+                  هو كود كتبه مبرمجين تانيين عشان يحلوا مشكلة معينة (زي التعامل
+                  مع النت)، وأنت بتاخد الكود ده جاهز وتستخدمه في مشروعك عشان
+                  متخترعش العجلة من جديد.
+                </p>
+              </div>
+              <div class="card p-6 border-r-4 border-dart-blue">
+                <h4 class="font-bold text-dart-blue mb-4">ما هو pub.dev؟</h4>
+                <p class="leading-loose text-sm">
+                  هو "المتجر" أو المستودع الرسمي لكل الـ Packages الخاصة بـ Dart
+                  و Flutter. أي حاجة محتاجها (خرايط، كاميرا، API) هتلاقيها هناك.
+                </p>
+              </div>
+            </div>
+            <div
+              class="card p-6 bg-white/5 border-dashed border-2 border-flutter-teal flex flex-col justify-center items-center"
+            >
+              <img
+                src="https://dart.dev/assets/shared/dart-logo-for-shares.png"
+                class="w-24 mb-6"
+                alt="Dart Logo"
+              />
+              <h3 class="text-2xl font-bold mb-4">ليه بنحتاجه؟</h3>
+              <ul class="text-right space-y-3">
+                <li>
+                  <i class="fas fa-bolt text-yellow-400 ml-2"></i> سرعة في
+                  التطوير.
+                </li>
+                <li>
+                  <i class="fas fa-shield-alt text-green-400 ml-2"></i> كود
+                  مختبر وموثوق.
+                </li>
+                <li>
+                  <i class="fas fa-users text-blue-400 ml-2"></i> دعم من مجتمع
+                  المبرمجين.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 22: pubspec.yaml -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10 text-right">
+          <h2 class="text-4xl font-black mb-10 text-center text-flutter-teal">
+            📄 ملف الـ pubspec.yaml
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <div class="space-y-6">
+              <div class="card p-6 border-r-4 border-mohamed-warm">
+                <h4 class="font-bold text-mohamed-warm mb-4 text-xl">
+                  ماهو هذا الملف؟
+                </h4>
+                <p class="leading-loose text-sm">
+                  هو "البطاقة الشخصية" لمشروعك. فيه بنكتب اسم المشروع، وصفه،
+                  والأهم من كده: <strong>المكتبات (Dependencies)</strong> اللي
+                  المشروع محتاجها عشان يشتغل.
+                </p>
+              </div>
+              <div class="card p-6 border-r-4 border-flutter-teal">
+                <h4 class="font-bold text-flutter-teal mb-4 text-xl">
+                  ليه بنستخدمه؟
+                </h4>
+                <ul class="space-y-3 text-sm">
+                  <li>
+                    <i class="fas fa-check text-green-400 ml-2"></i> إضافة
+                    مكتبات خارجية (Packages).
+                  </li>
+                  <li>
+                    <i class="fas fa-check text-green-400 ml-2"></i> تعريف الصور
+                    والخطوط (Assets).
+                  </li>
+                  <li>
+                    <i class="fas fa-check text-green-400 ml-2"></i> تحديد إصدار
+                    الـ SDK المناسب.
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="code-block text-xs">
+                <span class="highlight-comment"># مثال لشكل الملف</span><br />
+                name: my_awesome_app<br />
+                description: A new Flutter project.<br /><br />
+                environment:<br />
+                &nbsp;&nbsp;sdk: ">=3.0.0 <4.0.0"<br /><br />
+                <span class="highlight-class">dependencies:</span><br />
+                &nbsp;&nbsp;flutter:<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;sdk: flutter<br />
+                &nbsp;&nbsp;<span class="highlight-string">http: ^0.13.5</span>
+                <span class="highlight-comment"
+                  ># دي المكتبة اللي بتخلينا نكلم السيرفر</span
+                >
+              </div>
+              <div class="mohamed-bubble">
+                "خلي بالك يا محمد، أي مكتبة تجيبها من pub.dev لازم تحط اسمها هنا
+                وتعمل flutter pub get عشان تتحمل!"
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 29: Advanced API Tools (JSON Crack & Postman) -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10 text-right">
+          <h2 class="text-4xl font-black mb-10 text-center text-flutter-teal">
+            🛠️ أدوات لا غنى عنها للمحترفين
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <!-- JSON Crack -->
+            <div class="card p-8 border-t-8 border-yellow-500">
+              <div class="flex items-center gap-4 mb-6">
+                <i class="fas fa-project-diagram text-4xl text-yellow-500"></i>
+                <h3 class="text-2xl font-bold">JSON Crack</h3>
+              </div>
+              <p class="text-sm leading-loose mb-6">
+                أداة رهيبة بتحول الـ JSON المعقد لـ
+                <strong>خريطة ذهنية (Mind Map)</strong> مرئية. بتخليك تفهم علاقة
+                البيانات ببعضها بمجرد النظر بدل ما تتوه في الأقواس.
+              </p>
+              <a
+                href="https://jsoncrack.com/"
+                target="_blank"
+                class="inline-block px-6 py-2 bg-yellow-500 text-black font-bold rounded-lg hover:bg-yellow-400 transition"
+                >جربها الآن ↗</a
+              >
+            </div>
+
+            <!-- Postman Recap -->
+            <div class="card p-8 border-t-8 border-orange-500">
+              <div class="flex items-center gap-4 mb-6">
+                <i class="fas fa-rocket text-4xl text-orange-500"></i>
+                <h3 class="text-2xl font-bold">Postman + API</h3>
+              </div>
+              <p class="text-sm leading-loose mb-4">
+                تذكر دائماً أن الـ <strong>API</strong> هو العقد المبرم بينك
+                وبين السيرفر.
+              </p>
+              <ul class="text-xs space-y-2 list-disc list-inside text-gray-400">
+                <li>اختبر الروابط قبل كتابة أي سطر كود.</li>
+                <li>تأكد من الـ Headers والـ Auth.</li>
+                <li>وفر وقتك في كتابة الـ Models بفحص الـ JSON أولاً.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="mohamed-bubble mt-10">
+            "يا صديقي المبرمج، المبرمج الشاطر هو اللي بيعرف يستخدم الأدوات اللي
+            بتوفر وقته، مش اللي بيعمل كل حاجة بإيده وخلاص!"
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 23: Request & Response -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10 text-right">
+          <h2 class="text-4xl font-black mb-10 text-center text-flutter-teal">
+            🔄 الـ Request والـ Response
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <div class="card p-8 border-r-4 border-blue-500">
+              <h3 class="text-2xl font-bold mb-6 text-blue-400">
+                1. الـ Request (الطلب)
+              </h3>
+              <p class="mb-6 leading-relaxed">
+                هو الرسالة اللي الموبايل بيبعتها للسيرفر، وفيها أنواع (Methods)
+                بتحدد إحنا عاوزين إيه:
+              </p>
+              <ul class="space-y-4">
+                <li
+                  class="p-4 bg-green-500/10 rounded-xl flex justify-between items-center border border-green-500/20"
+                >
+                  <span class="font-bold text-green-400 text-xl">GET</span>
+                  <span class="text-sm">لطلب بيانات (زي عرض المنتجات)</span>
+                </li>
+                <li
+                  class="p-4 bg-blue-500/10 rounded-xl flex justify-between items-center border border-blue-500/20"
+                >
+                  <span class="font-bold text-blue-400 text-xl">POST</span>
+                  <span class="text-sm">لإرسال بيانات (زي إضافة مستخدم)</span>
+                </li>
+                <li
+                  class="p-4 bg-yellow-500/10 rounded-xl flex justify-between items-center border border-yellow-500/20"
+                >
+                  <span class="font-bold text-yellow-400 text-xl">PUT</span>
+                  <span class="text-sm">لتعديل بيانات موجودة بالكامل</span>
+                </li>
+                <li
+                  class="p-4 bg-red-500/10 rounded-xl flex justify-between items-center border border-red-500/20"
+                >
+                  <span class="font-bold text-red-400 text-xl">DELETE</span>
+                  <span class="text-sm">لمسح بيانات من السيرفر</span>
+                </li>
+              </ul>
+            </div>
+            <div class="card p-8 border-r-4 border-purple-500">
+              <h3 class="text-2xl font-bold mb-6 text-purple-400">
+                2. الـ Response و الـ Status Codes
+              </h3>
+              <p class="mb-6 leading-relaxed">
+                هو رد السيرفر عليك، وأهم حاجة فيه هي الـ
+                <strong>Status Code</strong> اللي بيقولك الحالة:
+              </p>
+              <div class="space-y-4 text-sm">
+                <div class="flex items-center gap-4 p-3 bg-white/5 rounded-lg">
+                  <span
+                    class="w-16 text-center font-bold text-green-400 text-lg"
+                    >200</span
+                  >
+                  <div class="flex flex-col">
+                    <span class="font-bold text-white">OK / Success ✅</span>
+                    <span class="text-[10px] text-gray-400"
+                      >الطلب تم بنجاح والداتا وصلت.</span
+                    >
+                  </div>
+                </div>
+                <div class="flex items-center gap-4 p-3 bg-white/5 rounded-lg">
+                  <span class="w-16 text-center font-bold text-blue-400 text-lg"
+                    >201</span
+                  >
+                  <div class="flex flex-col">
+                    <span class="font-bold text-white">Created ✨</span>
+                    <span class="text-[10px] text-gray-400"
+                      >تم إنشاء الداتا اللي بعتها بنجاح.</span
+                    >
+                  </div>
+                </div>
+                <div class="flex items-center gap-4 p-3 bg-white/5 rounded-lg">
+                  <span
+                    class="w-16 text-center font-bold text-orange-400 text-lg"
+                    >404</span
+                  >
+                  <div class="flex flex-col">
+                    <span class="font-bold text-white">Not Found ❌</span>
+                    <span class="text-[10px] text-gray-400"
+                      >الرابط اللي بتطلبه غلط أو مش موجود.</span
+                    >
+                  </div>
+                </div>
+                <div class="flex items-center gap-4 p-3 bg-white/5 rounded-lg">
+                  <span class="w-16 text-center font-bold text-red-400 text-lg"
+                    >500</span
+                  >
+                  <div class="flex flex-col">
+                    <span class="font-bold text-white">Internal Error 🔥</span>
+                    <span class="text-[10px] text-gray-400"
+                      >المشكلة من السيرفر نفسه مش من عندك.</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 24: How to handle API -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-8 px-6 text-right">
+          <h2 class="text-3xl font-bold text-teal-400 mb-8 text-center">
+            🛠️ خطوات التعامل مع الـ API في الكود بالتفصيل
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="space-y-4 h-[550px] overflow-y-auto pr-2">
+              <div class="card p-5 border-r-4 border-flutter-teal">
+                <h4 class="font-bold mb-2">1. إضافة المكتبة (Dependency)</h4>
+                <p class="text-[11px] leading-loose">
+                  بنحتاج مكتبة خارجية اسمها <code>http</code> لأن Flutter
+                  الأساسي مش بيكلم سيرفرات لوحده. بتكتبها في ملف
+                  <code>pubspec.yaml</code>.
+                </p>
+                <div class="code-block text-[10px] my-2">
+                  dependencies:<br />
+                  &nbsp;&nbsp;http: ^0.13.5
+                  <span class="highlight-comment"
+                    ># دي المكتبة اللي بتمكنا نتكلم مع السيرفر</span
+                  >
+                </div>
+              </div>
+              <div class="card p-5 border-r-4 border-blue-400">
+                <h4 class="font-bold mb-2">2. تحويل الرابط (Uri.parse)</h4>
+                <p class="text-[11px] leading-loose">
+                  السيرفر بيفهم حاجة اسمها <code>Uri</code> مش مجرد نص (String)،
+                  فلازم نحول اللينك اللي معانا لشكل الـ <code>Uri</code> عشان
+                  نستخدمه.
+                </p>
+              </div>
+              <div class="card p-5 border-r-4 border-green-500">
+                <h4 class="font-bold mb-2">
+                  3. التأكد من النجاح (statusCode == 200)
+                </h4>
+                <p class="text-[11px] leading-loose">
+                  قبل ما نستخدم الداتا، دايماً بنكشف على الـ
+                  <code>statusCode</code>. لو هو 200 يبقى تمام وكمل، غير كده
+                  يبقى فيه غلط.
+                </p>
+              </div>
+              <div class="card p-5 border-r-4 border-purple-500">
+                <h4 class="font-bold mb-2">4. فك الشفرة (jsonDecode)</h4>
+                <p class="text-[11px] leading-loose">
+                  الداتا بتيجي من النت كـ "نص طويل" (String) والكمبيوتر مش
+                  فاهمه. بنستخدم <code>jsonDecode</code> عشان نحوله لـ
+                  <code>Map</code> أو <code>List</code> حقيقية.
+                </p>
+              </div>
+            </div>
+            <div class="code-block text-[11px] h-full">
+              <span class="highlight-comment">// مثال كامل وشرح مفصل</span
+              ><br />
+              <span class="highlight-keyword">import</span>
+              <span class="highlight-string">'package:http/http.dart'</span>
+              <span class="highlight-keyword">as</span> http;<br />
+              <span class="highlight-keyword">import</span>
+              <span class="highlight-string">'dart:convert'</span>;<br /><br />
+
+              <span class="highlight-keyword">Future</span>&lt;<span
+                class="highlight-keyword"
+                >void</span
+              >&gt; getData()
+              <span class="highlight-keyword">async</span> {<br />
+              &nbsp;&nbsp;<span class="highlight-comment"
+                >// 1. نجهز الرابط ونحوله بـ Uri.parse</span
+              ><br />
+              &nbsp;&nbsp;<span class="highlight-keyword">var</span> url =
+              <span class="highlight-class">Uri</span>.parse(<span
+                class="highlight-string"
+                >'https://api.example.com/users'</span
+              >);<br /><br />
+
+              &nbsp;&nbsp;<span class="highlight-comment"
+                >// 2. نبعت الطلب ونستنى الرد (await)</span
+              ><br />
+              &nbsp;&nbsp;<span class="highlight-keyword">var</span> response =
+              <span class="highlight-keyword">await</span>
+              http.get(url);<br /><br />
+
+              &nbsp;&nbsp;<span class="highlight-comment"
+                >// 3. نكشف على الـ Status Code قبل ما نفك الداتا</span
+              ><br />
+              &nbsp;&nbsp;<span class="highlight-keyword">if</span>
+              (response.statusCode == <span class="highlight-number">200</span>)
+              {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight-comment"
+                >// 4. نحول النص لـ داتا حقيقية بـ jsonDecode</span
+              ><br />
+              &nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight-keyword">var</span>
+              data = jsonDecode(response.body);<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;print(data[<span class="highlight-number"
+                >0</span
+              >][<span class="highlight-string">'name'</span>]);
+              <span class="highlight-comment">// اطبع أول اسم جالك</span><br />
+              &nbsp;&nbsp;} <span class="highlight-keyword">else</span> {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;print(<span class="highlight-string"
+                >'فيه مشكلة: ${response.statusCode}'</span
+              >);<br />
+              &nbsp;&nbsp;}<br />
+              }
+              <div class="mt-4 mohamed-bubble !py-2 !px-4 text-[10px]">
+                "يا محمد، الـ statusCode هو أهم فحص تعمله عشان البرنامج ميخرجش
+                فجأة لو السيرفر وقع!"
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 25: Real API Example -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10 text-right">
+          <h2 class="text-4xl font-black mb-10 text-center text-flutter-teal">
+            📡 مثال حي مع API حقيقي
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <div class="space-y-6">
+              <div class="card p-6 border-r-4 border-blue-400">
+                <h4 class="font-bold text-blue-400 mb-4">شوفت السهولة؟</h4>
+                <p class="text-sm leading-loose">
+                  في الكود اللي في الشمال، إحنا بنكلم سيرفر
+                  <code>JSONPlaceholder</code> وده سيرفر مشهور المبرمجين
+                  بيستخدموه للتجارب. الطلب ده بيجيب بيانات "بوست" واحد بس من
+                  السوشيال ميديا.
+                </p>
+              </div>
+              <div class="mohamed-bubble">
+                "يا هندسة، يعني السطر بتاع الـ Uri.parse ده هو اللي بيحدد أنا
+                رايح أجيب أنهي داتا بالظبط؟"
+              </div>
+            </div>
+            <div class="code-block text-[11px]">
+              <span class="highlight-keyword">import</span>
+              <span class="highlight-string">'package:http/http.dart'</span>
+              <span class="highlight-keyword">as</span> http;<br />
+              <span class="highlight-keyword">import</span>
+              <span class="highlight-string">'dart:convert'</span>;<br /><br />
+
+              <span class="highlight-keyword">Future</span>&lt;<span
+                class="highlight-keyword"
+                >void</span
+              >&gt; fetchPost()
+              <span class="highlight-keyword">async</span> {<br />
+              &nbsp;&nbsp;<span class="highlight-keyword">final</span> url =
+              <span class="highlight-class">Uri</span>.parse(<span
+                class="highlight-string"
+                >'https://jsonplaceholder.typicode.com/posts/1'</span
+              >);<br />
+              &nbsp;&nbsp;<span class="highlight-keyword">final</span> response
+              =
+              <span class="highlight-keyword">await</span>
+              http.get(url);<br /><br />
+
+              &nbsp;&nbsp;<span class="highlight-keyword">if</span>
+              (response.statusCode == <span class="highlight-number">200</span>)
+              {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight-keyword">var</span>
+              post = jsonDecode(response.body);<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;print(<span class="highlight-string"
+                >'العنوان: ${post['title']}'</span
+              >);<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;print(<span class="highlight-string"
+                >'المحتوى: ${post['body']}'</span
+              >);<br />
+              &nbsp;&nbsp;}<br />
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 26: Expected Result -->
+      <div class="slide">
+        <div class="max-w-4xl mx-auto pt-10 text-right">
+          <h2 class="text-4xl font-black mb-10 text-center text-green-400">
+            🖼️ النتيجة النهائية المتوقعة
+          </h2>
+          <div class="card p-8 bg-black/40 border-2 border-green-500/30">
+            <p class="text-gray-400 mb-4 text-center">
+              البيانات اللي بترجع من السيرفر (Response Body):
+            </p>
+            <div class="code-block text-[10px] !bg-green-500/5">
+              {<br />
+              &nbsp;&nbsp;<span class="highlight-string">"userId"</span>:
+              <span class="highlight-number">1</span>,<br />
+              &nbsp;&nbsp;<span class="highlight-string">"id"</span>:
+              <span class="highlight-number">1</span>,<br />
+              &nbsp;&nbsp;<span class="highlight-string">"title"</span>:
+              <span class="highlight-string"
+                >"sunt aut facere repellat provident..."</span
+              >,<br />
+              &nbsp;&nbsp;<span class="highlight-string">"body"</span>:
+              <span class="highlight-string"
+                >"quia et suscipit suscipit recusandae..."</span
+              ><br />
+              }
+            </div>
+            <div class="mt-8">
+              <p class="text-gray-400 mb-2 text-center">
+                اللي هيظهر في الـ Console عندك:
+              </p>
+              <div
+                class="bg-black p-4 rounded-xl border border-white/10 direction-ltr text-left"
+              >
+                <p class="text-green-400">
+                  العنوان: sunt aut facere repellat provident...
+                </p>
+                <p class="text-green-400">
+                  المحتوى: quia et suscipit suscipit recusandae...
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="mohamed-bubble mt-8">
+            "يا سلام! يعني الـ jsonDecode هو اللي حوّل النص ده لـ Map وقدرت أوصل
+            لكل كلمة مفتاحية فيها بسهولة!"
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 27: API with Try-Catch -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10 text-right">
+          <h2 class="text-4xl font-black mb-10 text-center text-red-400">
+            🛡️ كود احترافي (API + Try Catch)
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <div class="space-y-6">
+              <div class="card p-6 border-r-4 border-red-500">
+                <h4 class="font-bold text-red-500 mb-4">
+                  ليه الـ Try Catch ضروري هنا؟
+                </h4>
+                <p class="text-sm leading-loose">
+                  تخيل لو الزبون فتح البرنامج وهو "قافل النت". لو مش مستخدمين
+                  <code>try/catch</code>، البرنامج هيقفل (Crash) في وش المستخدم.
+                  الـ <code>catch</code> بتخلينا نعرفه إن فيه مشكلة في الشبكة
+                  بلطف.
+                </p>
+              </div>
+              <div
+                class="bg-red-500/10 p-4 rounded-2xl border border-red-500/20"
+              >
+                <ul class="text-xs space-y-2">
+                  <li>
+                    - <span class="font-bold">SocketException:</span> لو مفيش نت
+                    خالص.
+                  </li>
+                  <li>
+                    - <span class="font-bold">FormatException:</span> لو السيرفر
+                    بعت داتا مش JSON.
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="code-block text-[11px]">
+              <span class="highlight-keyword">Future</span>&lt;<span
+                class="highlight-keyword"
+                >void</span
+              >&gt; fetchSafe()
+              <span class="highlight-keyword">async</span> {<br />
+              &nbsp;&nbsp;<span class="highlight-keyword">try</span> {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight-keyword"
+                >final</span
+              >
+              response =
+              <span class="highlight-keyword">await</span> http.get(<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight-class"
+                >Uri</span
+              >.parse(<span class="highlight-string"
+                >'https://api.com/post/1'</span
+              >)<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;);<br /><br />
+
+              &nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight-keyword">if</span>
+              (response.statusCode == <span class="highlight-number">200</span>)
+              {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(jsonDecode(response.body));<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;}
+              <span class="highlight-keyword">else</span> {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(<span
+                class="highlight-string"
+                >'فشل الطلب: ${response.statusCode}'</span
+              >);<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+              &nbsp;&nbsp;} <span class="highlight-keyword">catch</span> (error)
+              {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;print(<span class="highlight-string"
+                >'خطأ غير متوقع (تأكد من النت): $error'</span
+              >);<br />
+              &nbsp;&nbsp;}<br />
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 19: Summary & Next Step -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10 text-right">
+          <h2 class="text-4xl font-black mb-10 text-center text-flutter-teal">
+            🧠 الخلاصة
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="card p-8 border-l-4 border-flutter-teal">
+              <h4 class="font-bold mb-4 text-xl">محمد دلوقتي فهم:</h4>
+              <ul class="space-y-3">
+                <li>
+                  <i class="fas fa-check-circle text-green-400 ml-1"></i> الكود
+                  مش دايماً بيمشي سطر سطر (Async).
+                </li>
+                <li>
+                  <i class="fas fa-check-circle text-green-400 ml-1"></i>
+                  السيرفر والداتا بيز هما مخ السيستم.
+                </li>
+                <li>
+                  <i class="fas fa-check-circle text-green-400 ml-1"></i> الـ
+                  API هو لسان الحوار.
+                </li>
+              </ul>
+            </div>
+            <div
+              class="card p-8 border-r-4 border-gold-accent bg-gold-accent/5"
+            >
+              <h4 class="font-bold mb-4 text-xl text-gold-accent">
+                🚀 الخطوة الجاية:
+              </h4>
+              <ul class="space-y-3 text-sm">
+                <li>تحويل البيانات المعقدة لموديل Class.</li>
+                <li>بناء واجهة مستخدم حقيقية بالداتا من النت.</li>
+                <li>التعامل مع الصور والملفات الكبيرة.</li>
+              </ul>
+              <p class="mt-6 font-bold text-center">
+                أنت دلوقتي جاهز تفتح أبواب العالم الحقيقي! 🚀
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 28: Comprehensive Homework -->
+      <div class="slide">
+        <div class="max-w-6xl mx-auto pt-10 text-right">
+          <h2 class="text-4xl font-black mb-10 text-center text-indigo-400">
+            📝 التحدي العملي الشامل
+          </h2>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Part 1: Extension Functions -->
+            <div class="card p-8 border-t-8 border-indigo-400">
+              <h3 class="text-2xl font-bold mb-6 text-indigo-300">
+                <i class="fas fa-code ml-2"></i> التمرين 1: Extension Functions
+              </h3>
+              <p class="mb-4 text-sm">
+                ابحث عن مفهوم <strong>Extension Functions</strong> في Dart وقم
+                بتنفيذ المهام التالية:
+              </p>
+              <ul class="space-y-4 text-sm leading-loose">
+                <li
+                  class="p-3 bg-white/5 rounded-lg border-r-4 border-blue-400"
+                >
+                  <strong>لـ List:</strong> أنشئ دالة تمديد (Extension) تقوم
+                  بقلب ترتيب العناصر.
+                </li>
+                <li
+                  class="p-3 bg-white/5 rounded-lg border-r-4 border-green-400"
+                >
+                  <strong>لـ int:</strong> أنشئ دالة تحول الرقم لسلسلة نصية مع
+                  إضافة فواصل للآلاف (مثال: 1000 يصبح 1,000).
+                </li>
+                <li
+                  class="p-3 bg-white/5 rounded-lg border-r-4 border-purple-400"
+                >
+                  <strong>لـ DateTime:</strong> أنشئ دالة تعيد التاريخ بصيغة
+                  "يوم/شهر/سنة".
+                </li>
+              </ul>
+            </div>
+
+            <!-- Part 2: Products API -->
+            <div
+              class="card p-8 border-t-8 border-flutter-teal overflow-y-auto max-h-[600px]"
+            >
+              <h3 class="text-2xl font-bold mb-4 text-flutter-teal">
+                <i class="fas fa-plug ml-2"></i> التمرين 2: التعامل مع Products
+                API
+              </h3>
+              <p class="text-xs mb-4 text-gray-400">
+                سنستخدم مكتبة <code>http</code> للاتصال بـ API حقيقي:
+                <a
+                  href="https://dummyjson.com/docs/products"
+                  target="_blank"
+                  class="text-blue-400 underline lowercase"
+                  >dummyjson.com/products</a
+                >
+              </p>
+
+              <ul class="space-y-4 text-xs leading-relaxed">
+                <li class="flex gap-3">
+                  <span class="text-flutter-teal font-bold">1.</span>
+                  <span
+                    ><strong>جلب الكل:</strong> أنشئ دالة تجلب قائمة بجميع
+                    المنتجات وتعرضها في التطبيق.</span
+                  >
+                </li>
+                <li class="flex gap-3">
+                  <span class="text-flutter-teal font-bold">2.</span>
+                  <span
+                    ><strong>جلب بالهوية (ID):</strong> دالة تستقبل ID المنتج من
+                    المستخدم وتجلب بيانات هذا المنتج فقط
+                    (<code>/products/2</code>).</span
+                  >
+                </li>
+                <li class="flex gap-3">
+                  <span class="text-flutter-teal font-bold">3.</span>
+                  <span
+                    ><strong>تحديد العدد (Limit):</strong> دالة تستقبل رقم وتجلب
+                    عدد محدد من المنتجات (<code>/products?limit=5</code>).</span
+                  >
+                </li>
+                <li class="flex gap-3">
+                  <span class="text-flutter-teal font-bold">4.</span>
+                  <span
+                    ><strong>البحث الذكي:</strong> دالة تستقبل كلمة بحث وتجلب
+                    النتائج الموافقة لها
+                    (<code>/products/search?q=phone</code>).</span
+                  >
+                </li>
+                <li class="flex gap-3">
+                  <span class="text-flutter-teal font-bold">5.</span>
+                  <span
+                    ><strong>الأمان والسرعة:</strong> التعامل مع حالة الخطأ
+                    (Error Handling) وإظهار رسالة "جاري التحميل..." أثناء
+                    الجلب.</span
+                  >
+                </li>
+              </ul>
+
+              <div class="mohamed-bubble mt-6 !text-[10px] !py-2 !px-4">
+                "يا صديقي المبرمج، التمرين ده هو اللي هيخليك مبرمج بجد، جرب فيه
+                بكل الطرق اللي اتعلمناها!"
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+      let currentSlide = 0;
+      const slides = document.querySelectorAll(".slide");
+      const indicator = document.getElementById("slide-indicator");
+
+      function updateUI() {
+        slides.forEach((s, i) => {
+          s.classList.toggle("active", i === currentSlide);
+        });
+        indicator.innerText = `${currentSlide + 1} / ${slides.length}`;
+        triggerAnimate();
+      }
+
+      function nextSlide() {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateUI();
+        }
+      }
+
+      function prevSlide() {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateUI();
+        }
+      }
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") prevSlide();
+        if (e.key === "ArrowLeft") nextSlide();
+      });
+
+      function triggerAnimate() {
+        const actives = document.querySelectorAll(".slide.active .animate");
+        actives.forEach((el) => {
+          el.style.animation = "none";
+          el.offsetHeight; // force reflow
+          el.style.animation = "";
+        });
+      }
+    </script>
+  </body>
+</html>

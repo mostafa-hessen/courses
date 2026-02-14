@@ -1,0 +1,1943 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تحليل الواجهات وتنظيم الملفات | دورة Flutter 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Fira+Code:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --coffee-dark: #1a120b;
+        --coffee-medium: #3c2a21;
+        --coffee-light: #d4a373;
+        --coffee-cream: #eadbc8;
+        --accent-gold: #bc8f8f;
+        --flutter-blue: #02569b;
+        --flutter-cyan: #13b9fd;
+        --glass-bg: rgba(26, 18, 11, 0.95);
+        --glass-border: rgba(212, 163, 115, 0.4);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Tajawal", sans-serif;
+        background-color: var(--coffee-dark);
+        color: var(--coffee-cream);
+        overflow: hidden;
+        height: 100vh;
+        width: 100vw;
+        direction: rtl;
+      }
+
+      #slides-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.5s ease;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        background: radial-gradient(
+          circle at center,
+          var(--coffee-medium) 0%,
+          var(--coffee-dark) 100%
+        );
+      }
+
+      .slide.active {
+        opacity: 1;
+        visibility: visible;
+        z-index: 10;
+      }
+
+      .glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(15px);
+        border: 1px solid var(--glass-border);
+        border-radius: 28px;
+        padding: 40px;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+        max-width: 1200px;
+        width: 100%;
+        margin: 20px 0 100px;
+      }
+
+      .title-gradient {
+        background: linear-gradient(
+          135deg,
+          var(--coffee-light),
+          var(--accent-gold)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+      }
+
+      /* Nav */
+      .nav-controls {
+        position: fixed;
+        bottom: 25px;
+        left: 40px;
+        display: flex;
+        gap: 15px;
+        z-index: 1000;
+      }
+      .nav-btn {
+        background: var(--coffee-light);
+        color: var(--coffee-dark);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: 0.3s;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+      }
+      .nav-btn:hover {
+        background: var(--coffee-cream);
+        transform: translateY(-5px);
+      }
+
+      .slide-counter {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.5);
+        padding: 5px 20px;
+        border-radius: 20px;
+        font-weight: bold;
+        color: var(--coffee-light);
+        border: 1px solid var(--glass-border);
+        z-index: 1000;
+      }
+
+      /* Code Blocks */
+      .code-window {
+        background: #0d1117;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #30363d;
+        font-family: "Fira Code", monospace;
+        direction: ltr;
+        text-align: left;
+        margin: 15px 0;
+        width: 100%;
+      }
+      .code-header {
+        background: #161b22;
+        padding: 8px 15px;
+        display: flex;
+        gap: 8px;
+        border-bottom: 1px solid #30363d;
+        align-items: center;
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+      .red {
+        background: #ff5f56;
+      }
+      .yellow {
+        background: #ffbd2e;
+      }
+      .green {
+        background: #27c93f;
+      }
+      .code-content {
+        padding: 15px;
+        font-size: 13px;
+        line-height: 1.5;
+        color: #c9d1d9;
+        overflow-x: auto;
+      }
+      .keyword {
+        color: #ff7b72;
+      }
+      .type {
+        color: #79c0ff;
+      }
+      .string {
+        color: #a5d6ff;
+      }
+      .comment {
+        color: #8b949e;
+      }
+      .function {
+        color: #d2a8ff;
+      }
+
+      /* Visual Elements */
+      .instructor-img {
+        width: 160px;
+        height: 160px;
+        border-radius: 50% 20% 50% 20%;
+        border: 6px solid var(--coffee-light);
+        margin-bottom: 20px;
+        object-fit: cover;
+      }
+      .mock-phone {
+        width: 220px;
+        height: 440px;
+        background: #000;
+        border: 8px solid #222;
+        border-radius: 35px;
+        position: relative;
+        overflow: hidden;
+        flex-shrink: 0;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      }
+      .mock-app-bar {
+        height: 40px;
+        background: var(--flutter-blue);
+        color: white;
+        display: flex;
+        align-items: center;
+        padding: 0 12px;
+        font-size: 10px;
+        font-weight: bold;
+      }
+      .mock-body {
+        height: calc(100% - 40px);
+        background: #fdfdfd;
+        padding: 10px;
+        color: #333;
+      }
+
+      /* Step Card */
+      .step-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 20px;
+        transition: 0.3s;
+      }
+      .step-card:hover {
+        background: rgba(212, 163, 115, 0.1);
+        border-color: var(--coffee-light);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="slide-count-display" class="slide-counter">1 / 22</div>
+
+    <div class="nav-controls">
+      <div class="nav-btn" onclick="prevSlide()">
+        <i class="fas fa-chevron-right"></i>
+      </div>
+      <div class="nav-btn" onclick="nextSlide()">
+        <i class="fas fa-chevron-left"></i>
+      </div>
+    </div>
+
+    <div id="slides-container">
+      <!-- Slide 1: Intro (Updated) -->
+      <div class="slide active">
+        <div class="glass-card flex flex-col items-center text-center">
+          <img
+            src="https://i.ibb.co/Fbpfy9Y5/ITI2.jpg"
+            class="instructor-img"
+            alt="Mostafa Hussain"
+          />
+          <h1 class="text-5xl font-black title-gradient mb-2">م. مصطفى حسين</h1>
+          <p class="text-2xl text-coffee-light mb-8">
+            ITI Instructor & Software Engineer
+          </p>
+          <div class="w-32 h-1 bg-coffee-light mb-8"></div>
+          <h2 class="text-3xl font-bold mb-4">
+            المحاضرة الثانية من أيام فلاتر
+          </h2>
+          <div class="flex flex-wrap justify-center gap-4 text-lg opacity-80">
+            <span
+              class="bg-white/10 px-4 py-1 rounded-full border border-white/20"
+              >تحليل الواجهات</span
+            >
+            <span
+              class="bg-white/10 px-4 py-1 rounded-full border border-white/20"
+              >تنظيم الملفات</span
+            >
+            <span
+              class="bg-white/10 px-4 py-1 rounded-full border border-white/20"
+              >الـ Custom Widgets</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2: Scaffold -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-3xl font-bold mb-6 text-coffee-light">
+            مراجعة سريعة: Scaffold
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+            <div class="code-window">
+              <div class="code-header">
+                <div class="dot red"></div>
+                <span class="ml-4 text-xs opacity-50">Scaffold structure</span>
+              </div>
+              <div class="code-content">
+                <pre><span class="keyword">return</span> <span class="type">Scaffold</span>(
+  appBar: <span class="type">AppBar</span>(title: <span class="type">Text</span>(<span class="string">'قهوة عم محمد'</span>)),
+  body: <span class="type">Center</span>(child: <span class="type">Text</span>(<span class="string">'مرحباً بك'</span>)),
+  floatingActionButton: <span class="type">FloatingActionButton</span>(
+    onPressed: () {},
+    child: <span class="type">Icon</span>(<span class="type">Icons</span>.add),
+  ),
+);</pre>
+              </div>
+            </div>
+            <div class="mock-phone mx-auto">
+              <div class="mock-app-bar">محمصة عم محمد</div>
+              <div class="mock-body flex items-center justify-center font-bold">
+                Body Content
+              </div>
+              <div
+                class="absolute bottom-6 left-6 w-10 h-10 bg-flutter-blue rounded-full flex items-center justify-center text-white"
+              >
+                <i class="fas fa-plus"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: Container & Text -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-3xl font-bold mb-6 text-coffee-light">
+            مراجعة سريعة: Container & Text
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+            <div class="code-window">
+              <div class="code-header">
+                <div class="dot red"></div>
+                <span class="ml-4 text-xs opacity-50">Custom Box</span>
+              </div>
+              <div class="code-content">
+                <pre><span class="type">Container</span>(
+  padding: <span class="type">EdgeInsets</span>.all(<span class="keyword">20</span>),
+  decoration: <span class="type">BoxDecoration</span>(
+    color: <span class="type">Colors</span>.brown,
+    borderRadius: <span class="type">BorderRadius</span>.circular(<span class="keyword">15</span>),
+  ),
+  child: <span class="type">Text</span>(
+    <span class="string">'أفضل أنواع البن'</span>,
+    style: <span class="type">TextStyle</span>(color: <span class="type">Colors</span>.white),
+  ),
+)</pre>
+              </div>
+            </div>
+            <div
+              class="bg-white/5 p-10 rounded-3xl flex items-center justify-center"
+            >
+              <div
+                class="bg-amber-900 p-6 rounded-2xl border-4 border-white/20 text-white font-bold shadow-2xl"
+              >
+                أفضل أنواع البن
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4: Row & Column Review -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-3xl font-bold mb-10 text-center text-coffee-light">
+            تنظيم العناصر: Column & Row
+          </h2>
+          <div class="flex flex-col md:flex-row gap-16 justify-center">
+            <div class="flex-1 flex flex-col items-center">
+              <h4 class="text-orange-400 font-bold mb-4">Column (رأسي)</h4>
+              <div
+                class="p-6 border-2 border-white/10 rounded-2xl bg-white/5 flex flex-col gap-4"
+              >
+                <div
+                  class="w-32 h-10 bg-coffee-light rounded-lg border border-white/20"
+                ></div>
+                <div
+                  class="w-32 h-10 bg-coffee-light rounded-lg border border-white/20"
+                ></div>
+                <div
+                  class="w-32 h-10 bg-coffee-light rounded-lg border border-white/20"
+                ></div>
+              </div>
+            </div>
+            <div class="flex-1 flex flex-col items-center">
+              <h4 class="text-flutter-cyan font-bold mb-4">Row (أفقي)</h4>
+              <div
+                class="p-6 border-2 border-white/10 rounded-2xl bg-white/5 flex flex-row gap-4 items-center"
+              >
+                <div
+                  class="w-16 h-12 bg-accent-gold rounded-lg border border-white/20"
+                ></div>
+                <div
+                  class="w-16 h-12 bg-accent-gold rounded-lg border border-white/20"
+                ></div>
+                <div
+                  class="w-16 h-12 bg-accent-gold rounded-lg border border-white/20"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: Motivation -->
+      <div class="slide">
+        <div class="glass-card text-center py-20">
+          <i class="fas fa-microchip text-6xl text-coffee-light mb-8"></i>
+          <h2 class="text-4xl font-black mb-8">بناء تطبيق حقيقي</h2>
+          <p class="text-2xl leading-relaxed mb-6 opacity-90">
+            بمعرفتك للـ Widgets الأساسية، يمكنك بناء
+            <span class="bg-white/10 px-2 rounded">واجهة تطبيق بسيطة</span
+            >..<br />
+            لكن تطبيقات العالم الحقيقي تتطلب "معمارية" وتفكيراً هندسياً منظماً.
+          </p>
+          <div class="mt-10 animate-pulse text-flutter-cyan italic">
+            لنبدأ بالتحول من "كاتب كود" إلى "مهندس تطبيقات"
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Uncle Mohamed -->
+      <div class="slide">
+        <div class="glass-card flex flex-col md:flex-row gap-10 items-center">
+          <div
+            class="w-72 h-72 bg-coffee-light rounded-2xl flex items-center justify-center border-8 border-coffee-medium shadow-2xl relative"
+          >
+            <i class="fas fa-coffee text-[120px] text-coffee-dark"></i>
+            <div
+              class="absolute -bottom-5 bg-white text-coffee-dark px-6 py-2 rounded-full font-black shadow-lg"
+            >
+              قصة عم محمد
+            </div>
+          </div>
+          <div class="flex-1">
+            <h2 class="text-4xl font-bold mb-6 text-coffee-light">
+              المحمصة الذكية: الطلب الأول
+            </h2>
+            <p class="text-xl leading-relaxed mb-4">
+              عم محمد طلب منا تطبيقاً يساعده في عرض أنواع البن لزبائن الحي.
+            </p>
+            <p class="text-lg opacity-80 border-r-4 border-accent-gold pr-4">
+              "يا ابني الزباين زادت ومش عارف أنظم الطلبات، عايز شاشات واضحة
+              وسهلة للناس."
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Phase 1: SDLC (New) -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-3xl font-bold mb-10 text-center text-coffee-light">
+            كيف نبدأ؟ مراحل بناء البرمجيات
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="step-card text-center">
+              <div class="text-3xl mb-4 text-flutter-cyan">
+                <i class="fas fa-search"></i>
+              </div>
+              <h4 class="font-bold mb-2">1. التحليل (Analysis)</h4>
+              <p class="text-xs opacity-70">
+                فهم طلب عم محمد بالكامل، ما هي الأقسام؟ ما هي أسعار البن؟
+              </p>
+            </div>
+            <div class="step-card text-center">
+              <div class="text-3xl mb-4 text-orange-400">
+                <i class="fas fa-brain"></i>
+              </div>
+              <h4 class="font-bold mb-2">2. التفكير (Thinking)</h4>
+              <p class="text-xs opacity-70">
+                تحديد هيكل البيانات، هل نحتاج لقائمة أم صفوف؟ كيف سننظم الملفات؟
+              </p>
+            </div>
+            <div class="step-card text-center">
+              <div class="text-3xl mb-4 text-pink-500">
+                <i class="fas fa-drafting-compass"></i>
+              </div>
+              <h4 class="font-bold mb-2">3. التصميم (UX)</h4>
+              <p class="text-xs opacity-70">
+                رسم رحلة المستخدم. كيف سيتنقل الزبون داخل التطبيق؟
+              </p>
+            </div>
+            <div class="step-card text-center">
+              <div class="text-3xl mb-4 text-purple-500">
+                <i class="fas fa-palette"></i>
+              </div>
+              <h4 class="font-bold mb-2">4. التصميم (UI)</h4>
+              <p class="text-xs opacity-70">
+                اختيار الألوان والخطوط والأيقونات التي تعبر عن هوية المحمصة.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 8: UX Design (New) -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-3xl font-bold mb-10 title-gradient">
+            ما هي تجربة المستخدم (UX)؟
+          </h2>
+          <div class="flex flex-col md:flex-row gap-10 items-center">
+            <div class="flex-1 space-y-6">
+              <div
+                class="p-6 bg-white/5 rounded-2xl border-r-4 border-pink-500"
+              >
+                <h4 class="text-xl font-bold mb-2 text-pink-500">
+                  User Experience (UX)
+                </h4>
+                <p class="text-lg opacity-80">
+                  هي العلم الذي يهتم بـ "سهولة الاستخدام" و "منطقية التطبيق".
+                </p>
+              </div>
+              <ul class="space-y-4 text-sm opacity-75">
+                <li>
+                  <i class="fas fa-check text-green-500 mr-2"></i> هل الزر في
+                  مكان سهل الوصول؟
+                </li>
+                <li>
+                  <i class="fas fa-check text-green-500 mr-2"></i> هل التنقل بين
+                  الشاشات سريع ومفهوم؟
+                </li>
+                <li>
+                  <i class="fas fa-check text-green-500 mr-2"></i> هل يحل
+                  التطبيق مشكلة عم محمد فعلاً؟
+                </li>
+              </ul>
+            </div>
+            <div
+              class="flex-1 bg-black/30 p-10 rounded-3xl border border-white/10 text-center"
+            >
+              <i class="fas fa-route text-8xl opacity-20 mb-4 block"></i>
+              <p class="font-black text-2xl">
+                المصمم هنا يفكر في "خريطة" التطبيق قبل شكله.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: UI Design & Tools (New) -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-3xl font-bold mb-10 title-gradient text-center">
+            ما هي واجهة المستخدم (UI) والأدوات؟
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div>
+              <h4 class="text-xl font-bold text-purple-500 mb-4">
+                <i class="fas fa-eye"></i> User Interface (UI)
+              </h4>
+              <p class="opacity-80 mb-6 font-bold">
+                كل ما تراه العين داخل التطبيق:
+              </p>
+              <div class="grid grid-cols-2 gap-4">
+                <div
+                  class="p-3 bg-white/5 rounded-xl text-center text-xs border border-white/10"
+                >
+                  الألوان (Palette)
+                </div>
+                <div
+                  class="p-3 bg-white/5 rounded-xl text-center text-xs border border-white/10"
+                >
+                  الخطوط (Typography)
+                </div>
+                <div
+                  class="p-3 bg-white/5 rounded-xl text-center text-xs border border-white/10"
+                >
+                  الأيقونات (Icons)
+                </div>
+                <div
+                  class="p-3 bg-white/5 rounded-xl text-center text-xs border border-white/10"
+                >
+                  المساحات (Whitespaces)
+                </div>
+              </div>
+            </div>
+            <div class="p-8 bg-white/5 rounded-3xl border border-white/10">
+              <h4 class="text-xl font-bold text-orange-400 mb-6 text-center">
+                أدوات التصميم
+              </h4>
+              <div class="flex justify-around items-center">
+                <div class="flex flex-col items-center gap-2">
+                  <i class="fab fa-figma text-5xl text-pink-500"></i>
+                  <span class="font-bold">Figma</span>
+                </div>
+                <div class="flex flex-col items-center gap-2">
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/c/c2/Adobe_XD_CC_icon.svg"
+                    class="w-12 h-12"
+                    alt=""
+                  />
+                  <span class="font-bold">Adobe XD</span>
+                </div>
+              </div>
+              <p class="mt-8 text-xs text-center opacity-60 italic">
+                كمبرمج فلاتر، ستحصل غالباً على رابط Figma لتبدأ منه رحلتك
+                البرمجية.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Google Stitch -->
+      <div class="slide">
+        <div class="glass-card">
+          <div class="flex items-center gap-6 mb-8">
+            <i class="fab fa-google text-5xl text-flutter-blue"></i>
+            <h2 class="text-4xl font-black title-gradient">Google Stitch</h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div>
+              <p class="text-xl mb-6">
+                الأداة السحرية التي تحول تصاميم Figma إلى أكواد Flutter مباشرة.
+              </p>
+              <div
+                class="bg-blue-500/10 p-6 rounded-2xl border border-blue-500/30"
+              >
+                <p class="font-bold mb-2">رابط الأداة:</p>
+                <a
+                  href="https://stitch.google.com"
+                  target="_blank"
+                  class="text-flutter-cyan underline text-lg"
+                  >https://stitch.google.com</a
+                >
+              </div>
+            </div>
+            <div
+              class="bg-white/5 p-6 rounded-2xl border border-white/10 opacity-80"
+            >
+              <h4 class="font-bold mb-4">لماذا تهمنا؟</h4>
+              <p class="text-sm">
+                تختصر وقت بناء الواجهات بنسبة 70% وتضمن دقة تطبيق التصميم كما
+                جاء من المصمم.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 11: Messy Code + Output (Updated) -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-2xl font-bold mb-4 text-red-500 text-center">
+            الكود العشوائي vs النتيجة (The Nightmare)
+          </h2>
+          <div class="flex flex-col lg:flex-row gap-6 items-start">
+            <div class="code-window flex-1">
+              <div class="code-header">
+                <div class="dot red"></div>
+                <span class="ml-4 text-xs opacity-50"
+                  >main.dart (Messy approach)</span
+                >
+              </div>
+              <div
+                class="code-content"
+                style="max-height: 400px; overflow-y: scroll"
+              >
+                <pre><span class="comment">// تكرار مروع للكونتينر لكل بند</span>
+<span class="type">Container</span>(
+  padding: <span class="type">EdgeInsets</span>.all(<span class="keyword">15</span>),
+  margin: <span class="type">EdgeInsets</span>.all(<span class="keyword">10</span>),
+  decoration: <span class="type">BoxDecoration</span>(
+    color: <span class="type">Colors</span>.brown[<span class="keyword">100</span>],
+    borderRadius: <span class="type">BorderRadius</span>.circular(<span class="keyword">15</span>),
+  ),
+  child: <span class="type">Row</span>(children: [
+    <span class="type">Icon</span>(<span class="type">Icons</span>.coffee),
+    <span class="type">Text</span>(<span class="string">'لاتيه - 40 ج.م'</span>)
+  ]),
+),
+<span class="type">Container</span>(
+  padding: <span class="type">EdgeInsets</span>.all(<span class="keyword">15</span>),
+  margin: <span class="type">EdgeInsets</span>.all(<span class="keyword">10</span>),
+  decoration: <span class="type">BoxDecoration</span>(
+    color: <span class="type">Colors</span>.brown[<span class="keyword">100</span>],
+    borderRadius: <span class="type">BorderRadius</span>.circular(<span class="keyword">15</span>),
+  ),
+  child: <span class="type">Row</span>(children: [
+    <span class="type">Icon</span>(<span class="type">Icons</span>.coffee),
+    <span class="type">Text</span>(<span class="string">'موخا - 50 ج.م'</span>)
+  ]),
+),
+<span class="comment">// ... 500 line more ...</span></pre>
+              </div>
+            </div>
+            <div class="flex flex-col items-center flex-shrink-0">
+              <p class="text-xs font-bold mb-2">Output الشكل الناتج:</p>
+              <div class="mock-phone">
+                <div class="mock-app-bar">محمصة عم محمد</div>
+                <div class="mock-body flex flex-col gap-2">
+                  <div
+                    class="bg-amber-100 p-3 rounded-xl flex items-center gap-2 border border-amber-200"
+                  >
+                    <i class="fas fa-mug-hot text-amber-800"></i>
+                    <span class="text-[10px] font-bold">لاتيه - 40 ج.م</span>
+                  </div>
+                  <div
+                    class="bg-amber-100 p-3 rounded-xl flex items-center gap-2 border border-amber-200"
+                  >
+                    <i class="fas fa-mug-hot text-amber-800"></i>
+                    <span class="text-[10px] font-bold">موخا - 50 ج.م</span>
+                  </div>
+                  <div
+                    class="bg-amber-100 p-3 rounded-xl flex items-center gap-2 border border-amber-200"
+                  >
+                    <i class="fas fa-mug-hot text-amber-800"></i>
+                    <span class="text-[10px] font-bold">سبريسو - 30 ج.م</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 12: Custom Widget Solution -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-3xl font-bold mb-6 text-green-400">
+            الحل الذكي: الـ Custom Widget ✅
+          </h2>
+          <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+            <div class="code-window">
+              <div class="code-header">
+                <span class="text-xs">coffee_card.dart (Modular)</span>
+              </div>
+              <div
+                class="code-content text-xs"
+                style="max-height: 350px; overflow-y: auto"
+              >
+                <pre><span class="keyword">class</span> <span class="type">CoffeeCard</span> <span class="keyword">extends</span> <span class="type">StatelessWidget</span> {
+  <span class="keyword">final</span> <span class="type">String</span> title;
+  <span class="keyword">final</span> <span class="type">String</span> price;
+
+  <span class="type">CoffeeCard</span>({<span class="keyword">required</span> <span class="keyword">this</span>.title, <span class="keyword">required</span> <span class="keyword">this</span>.price});
+
+  @override
+  <span class="type">Widget</span> <span class="function">build</span>(<span class="type">BuildContext</span> context) {
+    <span class="keyword">return</span> <span class="type">Container</span>(
+      padding: <span class="type">EdgeInsets</span>.all(<span class="keyword">20</span>),
+      margin: <span class="type">EdgeInsets</span>.symmetric(vertical: <span class="keyword">8</span>, horizontal: <span class="keyword">16</span>),
+      decoration: <span class="type">BoxDecoration</span>(
+        color: <span class="type">Colors</span>.white,
+        borderRadius: <span class="type">BorderRadius</span>.circular(<span class="keyword">20</span>),
+        boxShadow: [<span class="type">BoxShadow</span>(color: <span class="type">Colors</span>.black12, blurRadius: <span class="keyword">10</span>)],
+      ),
+      child: <span class="type">Row</span>(children: [
+        <span class="type">Icon</span>(<span class="type">Icons</span>.coffee_maker, color: <span class="type">Colors</span>.brown),
+        <span class="type">SizedBox</span>(width: <span class="keyword">15</span>),
+        <span class="type">Text</span>(title, style: <span class="type">TextStyle</span>(fontWeight: <span class="type">FontWeight</span>.bold)),
+      ]),
+    );
+  }
+}</pre>
+              </div>
+            </div>
+            <div class="flex flex-col justify-center gap-6">
+              <h4 class="text-xl font-bold">لماذا فعلنا ذلك؟</h4>
+              <p class="opacity-80">
+                كتبنا كود التصميم الطويل "مرة واحدة فقط" ثم نستدعيه هكذا:
+              </p>
+              <div class="code-window bg-green-900/10">
+                <div class="code-content text-sm">
+                  <span class="type">CoffeeCard</span>(title:
+                  <span class="string">'لاتيه'</span>, price:
+                  <span class="string">'40'</span>),<br />
+                  <span class="type">CoffeeCard</span>(title:
+                  <span class="string">'موكا'</span>, price:
+                  <span class="string">'50'</span>),
+                </div>
+              </div>
+              <p class="text-xs text-coffee-light font-bold">
+                النتيجة: كود أقل، تنظيم أعلى، سهولة في التعديل.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 13: Analysis Strategy -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-3xl font-bold mb-10 text-center text-coffee-light">
+            استراتيجية تحليل أي تصميم
+          </h2>
+          <div
+            class="flex flex-col lg:flex-row gap-10 items-center justify-center"
+          >
+            <div class="mock-phone border-blue-400">
+              <div class="mock-app-bar">محمصة عم محمد</div>
+              <div class="p-4 flex flex-col gap-4">
+                <div
+                  class="h-24 w-full bg-blue-500/10 border-2 border-dashed border-blue-400 flex items-center justify-center text-[10px] font-bold"
+                >
+                  Top Section
+                </div>
+                <div
+                  class="h-16 w-full bg-orange-500/10 border-2 border-dashed border-orange-400 flex items-center justify-center text-[10px] font-bold"
+                >
+                  Categories
+                </div>
+                <div
+                  class="flex-grow bg-purple-500/10 border-2 border-dashed border-purple-400 flex items-center justify-center text-[10px] font-bold"
+                >
+                  Scrollable Items
+                </div>
+              </div>
+            </div>
+            <div class="flex-1 space-y-6">
+              <h4 class="text-2xl font-bold">قبل أن تلمس الكيبورد:</h4>
+              <ul class="space-y-4">
+                <li
+                  class="p-4 bg-white/5 rounded-xl border-t-2 border-flutter-cyan"
+                >
+                  <span class="font-bold">1. تقسيم الشاشة:</span> هل التصميم
+                  رأسي (Column) أم أفقي (Row)؟
+                </li>
+                <li
+                  class="p-4 bg-white/5 rounded-xl border-t-2 border-flutter-cyan"
+                >
+                  <span class="font-bold">2. المكونات المكررة:</span> أي عنصر
+                  تراه مرتين هو مرشح ليكون Custom Widget.
+                </li>
+                <li
+                  class="p-4 bg-white/5 rounded-xl border-t-2 border-flutter-cyan"
+                >
+                  <span class="font-bold">3. التمرير (Scroll):</span> هل العناصر
+                  ستخرج خارج الشاشة؟ إذاً نحتاج لـ ListView.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 14: Padding vs Margin -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-3xl font-bold mb-10 text-center text-coffee-light">
+            الفرق بين الـ Padding والـ Margin
+          </h2>
+
+          <div
+            class="flex flex-col items-center justify-center bg-black/30 p-10 rounded-3xl relative gap-10"
+          >
+            <!-- Margin Visual -->
+            <div
+              class="w-80 h-48 border-4 border-dashed border-red-500 flex items-center justify-center relative bg-white/5"
+            >
+              <span class="absolute -top-6 text-red-500 font-bold"
+                >Margin (فراغ يبعد العنصر عن جيرانه)</span
+              >
+
+              <!-- Padding Visual -->
+              <div
+                class="w-60 h-32 bg-coffee-light border-4 border-green-500 flex items-center justify-center relative"
+              >
+                <span class="absolute -top-6 text-green-600 font-bold"
+                  >Padding (حشو يبعد المحتوى عن الحواف)</span
+                >
+                <div
+                  class="bg-coffee-dark text-white p-2 text-xs font-bold rounded"
+                >
+                  محتوى (Text / Icon)
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-10 mt-10">
+            <div
+              class="p-6 bg-green-500/10 rounded-2xl border-r-4 border-green-500"
+            >
+              <h4 class="font-bold text-green-500 mb-2">Padding</h4>
+              <p class="text-sm opacity-80">
+                يخلق مساحة "داخلية". الصندوق يكبر من الداخل.
+              </p>
+            </div>
+            <div
+              class="p-6 bg-red-500/10 rounded-2xl border-r-4 border-red-500"
+            >
+              <h4 class="font-bold text-red-500 mb-2">Margin</h4>
+              <p class="text-sm opacity-80">
+                يخلق مساحة "خارجية". الصندوق يدفع من حوله.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 15: Expanded & Flex Logic -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-3xl font-bold mb-8 text-center text-coffee-light">
+            الـ Expanded وذكاء الـ Flex
+          </h2>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <!-- Visual Section -->
+            <div class="space-y-8">
+              <div
+                class="p-6 bg-red-500/5 border border-red-500/20 rounded-3xl"
+              >
+                <p class="text-red-500 font-bold mb-4">
+                  🚨 المشكلة: أحجام ثابتة (Fixed) تترك مساحات مهدرة
+                </p>
+                <div
+                  class="w-full h-20 bg-black/20 rounded-xl flex gap-3 p-3 items-center"
+                >
+                  <div
+                    class="w-20 h-full bg-accent-gold rounded-lg flex items-center justify-center text-[10px] font-bold"
+                  >
+                    100px
+                  </div>
+                  <div
+                    class="w-20 h-full bg-accent-gold rounded-lg flex items-center justify-center text-[10px] font-bold"
+                  >
+                    100px
+                  </div>
+                  <div
+                    class="w-20 h-full bg-accent-gold rounded-lg flex items-center justify-center text-[10px] font-bold"
+                  >
+                    100px
+                  </div>
+                  <div
+                    class="flex-grow h-full border-2 border-dashed border-red-500/30 flex items-center justify-center text-[10px] italic text-red-400"
+                  >
+                    فراغ ميت!
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="p-6 bg-green-500/5 border border-green-500/20 rounded-3xl"
+              >
+                <p class="text-green-500 font-bold mb-4">
+                  ✅ الحل: الـ Expanded لملء الشاشة وتحقيق التوازن
+                </p>
+                <div
+                  class="w-full h-20 bg-black/20 rounded-xl flex gap-3 p-3 items-center"
+                >
+                  <div
+                    class="flex-[1] h-full bg-flutter-cyan rounded-lg flex items-center justify-center text-[10px] font-bold text-coffee-dark shadow-lg"
+                  >
+                    Flex 1
+                  </div>
+                  <div
+                    class="flex-[2] h-full bg-flutter-cyan rounded-lg flex items-center justify-center text-[10px] font-bold text-coffee-dark shadow-xl ring-2 ring-white/20"
+                  >
+                    Flex 2 (ضعف المساحة)
+                  </div>
+                  <div
+                    class="flex-[1] h-full bg-flutter-cyan rounded-lg flex items-center justify-center text-[10px] font-bold text-coffee-dark shadow-lg"
+                  >
+                    Flex 1
+                  </div>
+                </div>
+                <p class="mt-4 text-xs opacity-70">
+                  فكرة الـ <span class="font-bold underline">Flex</span>: تقسيم
+                  المساحة المتبقية إلى أجزاء (هنا قسمنا لـ 4 أجزاء، الوسط أخذ
+                  جزئين).
+                </p>
+              </div>
+            </div>
+
+            <!-- Code Section -->
+            <div class="code-window self-center">
+              <div class="code-header">
+                <div class="dot red"></div>
+                <span class="ml-4 text-xs opacity-50"
+                  >Expanded Realistic Example</span
+                >
+              </div>
+              <div class="code-content">
+                <pre><span class="type">Row</span>(
+  children: [
+    <span class="type">Expanded</span>(
+      flex: <span class="keyword">1</span>,
+      child: <span class="type">Container</span>(color: <span class="type">Colors</span>.blue),
+    ),
+    <span class="type">Expanded</span>(
+      flex: <span class="keyword">2</span>, <span class="comment">// سيمتد ليغطي نسبة 50% من المساحة</span>
+      child: <span class="type">Container</span>(color: <span class="type">Colors</span>.cyan),
+    ),
+    <span class="type">Expanded</span>(
+      flex: <span class="keyword">1</span>,
+      child: <span class="type">Container</span>(color: <span class="type">Colors</span>.blue),
+    ),
+  ],
+)</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 16: Spacer -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-3xl font-bold mb-8 text-center text-coffee-light">
+            الـ Spacer: كود السوستة الذكي
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+            <div class="space-y-6">
+              <div class="p-10 bg-black/20 rounded-3xl border border-white/5">
+                <p
+                  class="text-[10px] opacity-30 mb-6 tracking-widest uppercase"
+                >
+                  Visual Preview
+                </p>
+                <div
+                  class="flex items-center gap-4 bg-white/10 p-5 rounded-2xl border border-white/10 shadow-lg"
+                >
+                  <i class="fas fa-coffee text-2xl text-coffee-light"></i>
+                  <span class="text-xl font-bold">قهوة عم محمد</span>
+
+                  <div class="flex-grow flex items-center gap-1 opacity-20">
+                    <div class="h-[1px] flex-grow bg-coffee-light"></div>
+                    <span class="text-[8px] font-bold italic"
+                      >SPACER PUSHING</span
+                    >
+                    <div class="h-[1px] flex-grow bg-coffee-light"></div>
+                  </div>
+
+                  <div
+                    class="p-2 bg-flutter-cyan rounded text-coffee-dark font-black shadow-xl"
+                  >
+                    40 ج.م
+                  </div>
+                </div>
+              </div>
+              <p
+                class="text-sm opacity-80 leading-relaxed bg-white/5 p-4 rounded-xl"
+              >
+                الـ <span class="text-flutter-cyan font-bold">Spacer</span> هو
+                أصغر Widget يؤدي أعظم وظيفة: امتصاص المساحة وتمريرها بين
+                العناصر، مما يجعل الواجهة "Responsive" على أي حجم شاشة.
+              </p>
+            </div>
+
+            <div class="code-window">
+              <div class="code-header">
+                <div class="dot red"></div>
+                <span class="ml-4 text-xs opacity-50"
+                  >Spacer Realistic Code</span
+                >
+              </div>
+              <div class="code-content">
+                <pre><span class="type">Row</span>(
+  mainAxisAlignment: <span class="type">MainAxisAlignment</span>.start,
+  children: [
+    <span class="type">Icon</span>(<span class="type">Icons</span>.coffee),
+    <span class="type">SizedBox</span>(width: <span class="keyword">10</span>),
+    <span class="type">Text</span>(<span class="string">'قهوة عم محمد'</span>),
+    <span class="type">Spacer</span>(), <span class="comment">// سيقوم بدفع السعر لآخر السطر تماماً</span>
+    <span class="type">Container</span>(
+      padding: <span class="type">EdgeInsets</span>.all(<span class="keyword">8</span>),
+      child: <span class="type">Text</span>(<span class="string">'40 ج.م'</span>),
+    ),
+  ],
+)</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 17: Stack -->
+      <div class="slide">
+        <div class="glass-card text-center">
+          <h2 class="text-3xl font-bold mb-10 text-coffee-light">
+            الـ Stack: الطبقات (Layers)
+          </h2>
+          <div class="relative w-72 h-72 mx-auto">
+            <!-- Base -->
+            <div
+              class="absolute inset-0 bg-coffee-light rounded-3xl shadow-2xl flex items-center justify-center border-4 border-white/10"
+            >
+              <i class="fas fa-image text-8xl text-coffee-dark opacity-20"></i>
+            </div>
+            <!-- Label -->
+            <div
+              class="absolute top-4 right-4 bg-red-600 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg"
+            >
+              New Item
+            </div>
+            <!-- Icon -->
+            <div
+              class="absolute -bottom-4 -left-4 bg-flutter-cyan w-16 h-16 rounded-full flex items-center justify-center shadow-xl border-4 border-coffee-dark"
+            >
+              <i class="fas fa-shopping-cart text-coffee-dark"></i>
+            </div>
+          </div>
+          <p class="mt-16 text-lg">
+            الـ <span class="text-flutter-cyan font-bold">Stack</span> يتيح لك
+            وضع العناصر فوق بعضها البعض (مهم جداً للصور مع الأزرار).
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 18: Overflow & SingleChildScrollView -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-3xl font-bold mb-8 text-center text-coffee-light">
+            مشكلة الـ Overflow والـ Scroll
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div class="flex flex-col items-center">
+              <h4 class="text-red-500 font-bold mb-4">Without Scroll ❌</h4>
+              <div class="mock-phone" style="border-color: #ef4444">
+                <div class="mock-body flex flex-col gap-4 overflow-hidden">
+                  <div
+                    class="h-24 w-full bg-gray-200 rounded-xl flex-shrink-0"
+                  ></div>
+                  <div
+                    class="h-24 w-full bg-gray-200 rounded-xl flex-shrink-0"
+                  ></div>
+                  <div
+                    class="h-24 w-full bg-gray-200 rounded-xl flex-shrink-0"
+                  ></div>
+                  <div
+                    class="h-24 w-full bg-gray-200 rounded-xl flex-shrink-0"
+                  ></div>
+                  <div
+                    class="h-20 w-full"
+                    style="
+                      background: repeating-linear-gradient(
+                        45deg,
+                        #000,
+                        #000 10px,
+                        #fbbf24 10px,
+                        #fbbf24 20px
+                      );
+                    "
+                  ></div>
+                </div>
+              </div>
+              <p class="text-xs mt-4 opacity-70">
+                🚨 تظهر خطوط الخطأ الصفراء والسوداء.
+              </p>
+            </div>
+            <div class="flex flex-col items-center">
+              <h4 class="text-green-500 font-bold mb-4">
+                With SingleChildScrollView ✅
+              </h4>
+              <div class="mock-phone" style="border-color: #22c55e">
+                <div class="mock-body flex flex-col gap-4 overflow-y-auto">
+                  <div
+                    class="h-24 w-full bg-gray-100 rounded-xl flex-shrink-0"
+                  ></div>
+                  <div
+                    class="h-24 w-full bg-gray-100 rounded-xl flex-shrink-0"
+                  ></div>
+                  <div
+                    class="h-24 w-full bg-gray-100 rounded-xl flex-shrink-0"
+                  ></div>
+                  <div
+                    class="h-24 w-full bg-gray-100 rounded-xl flex-shrink-0"
+                  ></div>
+                  <div
+                    class="h-24 w-full bg-gray-100 rounded-xl flex-shrink-0"
+                  ></div>
+                  <div
+                    class="h-24 w-full bg-gray-100 rounded-xl flex-shrink-0"
+                  ></div>
+                </div>
+              </div>
+              <p class="text-xs mt-4 opacity-70">
+                ✨ الصفحة تتحرك للأسفل بسلام.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 19: ListView -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-3xl font-bold mb-8 text-center text-flutter-cyan">
+            الـ ListView: بطل القوائم
+          </h2>
+          <div class="flex flex-col md:flex-row gap-10 items-center">
+            <div class="code-window flex-1">
+              <div class="code-content">
+                <pre><span class="type">ListView</span>(
+  children: [
+    <span class="type">CoffeeCard</span>(title: <span class="string">'موخا'</span>),
+    <span class="type">CoffeeCard</span>(title: <span class="string">'لاتيه'</span>),
+    <span class="type">CoffeeCard</span>(title: <span class="string">'سبريسو'</span>),
+  ],
+)</pre>
+              </div>
+            </div>
+            <div class="flex-1 space-y-4">
+              <p class="text-xl">
+                تعتبر الـ <span class="font-bold underline">ListView</span> هي
+                الطريقة الرسمية لإنشاء القوائم في فلاتر.
+              </p>
+              <ul class="text-sm opacity-80 space-y-2">
+                <li>• توفر الـ Scrolling تلقائياً.</li>
+                <li>• لا تحتاج لوضعها داخل Column (إلا بحالات خاصة).</li>
+                <li>• تدعم التمرير الأفقي أو الرأسي.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 20: Wrap & Row Problem -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-3xl font-bold mb-8 text-center text-coffee-light">
+            الـ Wrap: حل أزمة العرض المحدود
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <!-- Explain Logic -->
+            <div class="space-y-6">
+              <div
+                class="p-6 bg-red-500/5 border border-red-500/20 rounded-3xl"
+              >
+                <h4 class="text-red-500 font-bold mb-4">
+                  🚨 مشكلة الـ Row (Overflow)
+                </h4>
+                <div
+                  class="w-full h-16 bg-black/20 border-r-8 border-red-600 rounded flex gap-2 p-3 overflow-hidden"
+                >
+                  <div
+                    class="px-3 bg-white/10 rounded-full text-[10px] whitespace-nowrap"
+                  >
+                    قهوة سادة
+                  </div>
+                  <div
+                    class="px-3 bg-white/10 rounded-full text-[10px] whitespace-nowrap"
+                  >
+                    قهوة باللبن
+                  </div>
+                  <div
+                    class="px-3 bg-white/10 rounded-full text-[10px] whitespace-nowrap"
+                  >
+                    محمصة غامقة
+                  </div>
+                  <div
+                    class="px-3 bg-white/10 rounded-full text-[10px] whitespace-nowrap"
+                  >
+                    ...هنا العنصر يخرج!
+                  </div>
+                </div>
+                <p class="mt-2 text-[10px] italic text-red-400">
+                  الـ Row لا يستطيع القفز لسطر جديد، فينفجر!
+                </p>
+              </div>
+
+              <div
+                class="p-6 bg-green-500/5 border border-green-500/20 rounded-3xl"
+              >
+                <h4 class="text-green-500 font-bold mb-4">
+                  ✅ حل الـ Wrap (Smart Stacking)
+                </h4>
+                <div
+                  class="w-full bg-black/20 rounded-xl flex flex-wrap gap-2 p-3"
+                >
+                  <div
+                    class="px-3 py-1 bg-green-500/20 border border-green-500/30 rounded-full text-[10px]"
+                  >
+                    قهوة سادة
+                  </div>
+                  <div
+                    class="px-3 py-1 bg-green-500/20 border border-green-500/30 rounded-full text-[10px]"
+                  >
+                    قهوة باللبن
+                  </div>
+                  <div
+                    class="px-3 py-1 bg-green-500/20 border border-green-500/10 rounded-full text-[10px]"
+                  >
+                    محمصة غامقة
+                  </div>
+                  <div
+                    class="px-3 py-1 bg-amber-500/40 rounded-full text-[10px] font-bold shadow-lg"
+                  >
+                    عنصر نزل تحت تلقائياً
+                  </div>
+                  <div
+                    class="px-3 py-1 bg-green-500/20 border border-green-500/30 rounded-full text-[10px]"
+                  >
+                    بن يمني
+                  </div>
+                </div>
+                <p class="mt-2 text-[10px] italic text-green-400">
+                  الـ Wrap ذكي، إذا انتهت المساحة يكمل في السطر التالي.
+                </p>
+              </div>
+            </div>
+
+            <!-- Code Section -->
+            <div class="code-window">
+              <div class="code-header">
+                <div class="dot red"></div>
+                <span class="ml-4 text-xs opacity-50"
+                  >Wrap Code Implementation</span
+                >
+              </div>
+              <div class="code-content">
+                <pre><span class="type">Wrap</span>(
+  spacing: <span class="keyword">8.0</span>, <span class="comment">// المسافة الأفقية بين العناصر</span>
+  runSpacing: <span class="keyword">10.0</span>, <span class="comment">// المسافة الرأسية بين الأسطر</span>
+  children: [
+    <span class="type">Chip</span>(label: <span class="type">Text</span>(<span class="string">'قهوة سادة'</span>)),
+    <span class="type">Chip</span>(label: <span class="type">Text</span>(<span class="string">'قهوة باللبن'</span>)),
+    <span class="type">Chip</span>(label: <span class="type">Text</span>(<span class="string">'محمصة غامقة'</span>)),
+    <span class="type">Chip</span>(label: <span class="type">Text</span>(<span class="string">'بن يمني'</span>)),
+    <span class="type">Chip</span>(label: <span class="type">Text</span>(<span class="string">'إكسبريسو'</span>)),
+  ],
+)</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 21: SafeArea -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-3xl font-bold mb-10 text-center text-coffee-light">
+            الـ SafeArea: حماية المحتوى من "الواقع"
+          </h2>
+          <div
+            class="flex flex-col lg:flex-row gap-16 items-center justify-center"
+          >
+            <!-- Danger Phone -->
+            <div class="flex flex-col items-center">
+              <p class="text-red-500 font-bold mb-4">بدون SafeArea ❌</p>
+              <div class="mock-phone border-red-500/50">
+                <div
+                  class="h-6 w-20 bg-black mx-auto mt-2 rounded-full relative z-20"
+                ></div>
+                <!-- Notch -->
+                <div
+                  class="absolute top-2 w-full text-center bg-red-600 text-white text-[10px] font-bold py-1 z-10"
+                >
+                  هذا النص مختفي خلف الكاميرا!
+                </div>
+                <div class="mock-body pt-12">
+                  <div class="h-10 w-full bg-gray-200 rounded"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Safe Phone -->
+            <div class="flex flex-col items-center">
+              <p class="text-green-500 font-bold mb-4">باستخدام SafeArea ✅</p>
+              <div class="mock-phone border-green-500/50">
+                <div
+                  class="h-6 w-20 bg-black mx-auto mt-2 rounded-full relative z-20"
+                ></div>
+                <!-- Notch -->
+                <div class="mock-body">
+                  <div
+                    class="bg-green-100 border-2 border-green-500 p-2 text-[10px] font-black rounded-lg text-green-800 text-center"
+                  >
+                    SafeArea نزلت المحتوى ميكانيكياً للأسفل
+                  </div>
+                  <div class="mt-4 h-10 w-full bg-gray-100 rounded"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Explanation -->
+            <div class="max-w-xs space-y-4">
+              <p class="text-lg leading-relaxed">
+                تخيل أن زبون عم محمد يريد طلب "قهوة سادة" لكن الاسم يقع خلف
+                <span class="text-red-400 font-bold">الكاميرا الأمامية</span>
+                للهاتف!
+              </p>
+              <p
+                class="bg-white/5 p-4 rounded-xl border-r-4 border-flutter-cyan text-sm"
+              >
+                الـ <span class="font-bold">SafeArea</span> تحسب طول الـ Notch
+                أو شريط الحالة (Status Bar) تلقائياً وتدفع التطبيق للأسفل ليكون
+                كله ظاهراً.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 22: Conclusion -->
+      <div class="slide">
+        <div class="glass-card text-center py-20">
+          <h2 class="text-6xl font-black title-gradient mb-8 leading-tight">
+            فكر قبل أن تكتب الكود.
+          </h2>
+          <div class="h-1 w-40 bg-coffee-light mx-auto mb-10"></div>
+          <p class="text-2xl text-coffee-light opacity-80">
+            الهندسة هي التنظيم، والبرمجة هي تحويل هذا التنظيم إلى واقع.
+          </p>
+          <div class="mt-20 text-sm opacity-50 italic">
+            "المبرمج المحترف ليس من يكتب الكود، بل من يبني نظاماً قابلاً للنمو"
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 23: The Real Challenge -->
+      <div class="slide">
+        <div class="glass-card text-center">
+          <h1 class="text-4xl font-black title-gradient mb-10">
+            يلا نبدأ نصمم مع بعض في مشروع حقيقي ☕
+          </h1>
+          <div class="flex flex-col items-center gap-8">
+            <div class="relative group">
+              <img
+                src="./Thumbnail.png"
+                class="w-[600px] rounded-3xl border-4 border-coffee-light/20 shadow-2xl transition group-hover:scale-105"
+                alt="Real Coffee App Design"
+              />
+              <div
+                class="absolute inset-0 bg-black/40 rounded-3xl opacity-0 group-hover:opacity-100 flex items-center justify-center transition"
+              >
+                <a
+                  href="https://www.figma.com/design/bbKalHaPICf3IFedNNd4Fx/Coffee-Shop-Mobile-App-Design--Community-?node-id=421-1289&t=cwKUi9yUljaShyzX-0"
+                  target="_blank"
+                  class="bg-white text-black px-6 py-3 rounded-full font-bold"
+                  >فتح التصميم في Figma</a
+                >
+              </div>
+            </div>
+            <p class="text-xl opacity-80">
+              سنقوم معاً بتحويل هذا التصميم الفخم إلى تطبيق حي شغال!
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 24: How Flutter Dev Thinks -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-4xl font-black mb-10 text-center title-gradient">
+            كيف يفكر مبرمج فلاتر كـ "مهندس"؟ 🧠
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div class="space-y-6">
+              <div
+                class="p-6 bg-white/5 rounded-2xl border-r-4 border-flutter-cyan"
+              >
+                <h4 class="font-bold text-xl mb-2 text-flutter-cyan">
+                  1. الرؤية الشاملة
+                </h4>
+                <p class="text-sm opacity-70">
+                  النظر للتصميم ككل وتحديد الألوان والخطوط المشتركة (Theme).
+                </p>
+              </div>
+              <div
+                class="p-6 bg-white/5 rounded-2xl border-r-4 border-orange-400"
+              >
+                <h4 class="font-bold text-xl mb-2 text-orange-400">
+                  2. تقسيم المكونات
+                </h4>
+                <p class="text-sm opacity-70">
+                  أي زر أو صندوق مكرر يتم استخراجه كـ Custom Widget فوراً.
+                </p>
+              </div>
+              <div
+                class="p-6 bg-white/5 rounded-2xl border-r-4 border-pink-500"
+              >
+                <h4 class="font-bold text-xl mb-2 text-pink-500">
+                  3. إدارة البيانات
+                </h4>
+                <p class="text-sm opacity-70">
+                  من أين ستأتي أسعار القهوة؟ وما هي الأشكال التي سنعرضها؟
+                </p>
+              </div>
+            </div>
+            <div class="flex flex-col items-center justify-center">
+              <div
+                class="w-64 h-64 border-4 border-dashed border-white/20 rounded-full flex items-center justify-center animate-spin-slow"
+              >
+                <i
+                  class="fas fa-project-diagram text-[100px] text-coffee-light opacity-30"
+                ></i>
+              </div>
+              <p class="mt-10 font-black italic text-center text-sm">
+                "لا تبدأ في الكود حتى تفهم خريطة الطريق"
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 25: The main.dart Nightmare -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-3xl font-black mb-6 text-red-500 text-center">
+            كابوس وضع كل الكود في main.dart 😱
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <div class="code-window">
+              <div class="code-header">
+                <span class="text-xs">main.dart (1,500 lines...)</span>
+              </div>
+              <div class="code-content text-[10px] opacity-40">
+                <pre>
+// ... 300 line of imports ...
+void main() => runApp(MyApp());
+class MyApp extends StatelessWidget {
+  // 500 lines of Widget tree
+  // Column -> Container -> Row -> Column -> Container...
+  // Repeated styles everywhere...
+  // Repeated Colors.brown everywhere...
+  // IF YOU WANT TO CHANGE ONE THING... YOU ARE DEAD!
+}</pre
+                >
+              </div>
+            </div>
+            <div class="space-y-6">
+              <div
+                class="bg-red-500/10 p-6 rounded-2xl border border-red-500/40"
+              >
+                <h4 class="font-bold text-red-500 mb-4">
+                  لماذا هذا الأسلوب فاشل؟
+                </h4>
+                <ul class="space-y-3 text-sm">
+                  <li>
+                    ❌ <span class="font-bold">استحالة التعديل:</span> تغيير
+                    بسيط قد يخرب التطبيق كله.
+                  </li>
+                  <li>
+                    ❌ <span class="font-bold">فشل التعاون:</span> لا يستطيع
+                    مبرمجان العمل على نفس الملف.
+                  </li>
+                  <li>
+                    ❌ <span class="font-bold">صعوبة التتبع:</span> البحث عن خطأ
+                    في 1000 سطر مستحيل.
+                  </li>
+                  <li>
+                    ❌ <span class="font-bold">التكرار الممل:</span> كتابة نفس
+                    التصميم لكل صنف قهوة.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 26: Simple Folder Structure -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-4xl font-bold mb-10 text-center text-coffee-light">
+            بداية التنظيم (المستوى المبتدئ)
+          </h2>
+          <div class="flex flex-col items-center gap-10">
+            <div
+              class="bg-white/5 p-10 rounded-3xl border border-white/10 w-full max-w-lg"
+            >
+              <div class="flex items-center gap-4 text-orange-400 mb-4">
+                <i class="fas fa-folder-open text-2xl"></i
+                ><span class="font-bold">lib</span>
+              </div>
+              <div class="mr-8 space-y-3">
+                <div class="flex items-center gap-4">
+                  <i class="fas fa-folder text-blue-400"></i><span>screens</span
+                  ><span class="text-[10px] opacity-40"
+                    >(شاشات التطبيق مثل Home, Details)</span
+                  >
+                </div>
+                <div class="flex items-center gap-4">
+                  <i class="fas fa-folder text-blue-400"></i><span>widgets</span
+                  ><span class="text-[10px] opacity-40"
+                    >(المكونات المكررة مثل الزر المخصص)</span
+                  >
+                </div>
+                <div class="flex items-center gap-4">
+                  <i class="fas fa-file-code text-flutter-cyan"></i
+                  ><span>main.dart</span>
+                </div>
+              </div>
+            </div>
+            <p class="text-xl italic">"التنظيم هو أول خطوة نحو العالمية"</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 27: Intermediate Folder Structure -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-3xl font-bold mb-10 text-center text-coffee-light">
+            التنظيم المتوسط للمشاريع الكبيرة
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div class="bg-black/30 p-8 rounded-3xl border border-white/10">
+              <div class="mr-4 space-y-4">
+                <div class="flex items-center gap-3">
+                  <i class="fas fa-folder text-yellow-500"></i
+                  ><span class="font-bold">lib</span>
+                </div>
+                <div class="mr-6 space-y-3 opacity-90">
+                  <div class="flex items-center gap-3">
+                    <i class="fas fa-folder text-blue-400"></i
+                    ><span>screens</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <i class="fas fa-folder text-blue-400"></i
+                    ><span>widgets</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <i class="fas fa-folder text-blue-400"></i
+                    ><span>models</span
+                    ><span class="text-[10px] italic">(هذا ملف البيانات)</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <i class="fas fa-folder text-blue-400"></i
+                    ><span>services</span
+                    ><span class="text-[10px] italic"
+                      >(التعامل مع الـ API)</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-col justify-center gap-6">
+              <h4 class="text-2xl font-black text-flutter-cyan">
+                ما هو الـ Models؟
+              </h4>
+              <p class="opacity-80 text-sm">
+                هو القلب الذي يحمل بيانات القهوة (الاسم، السعر، الصورة) بشكل
+                منظم يفهمه الكود.
+              </p>
+              <h4 class="text-2xl font-black text-orange-400">
+                ما هو الـ Services؟
+              </h4>
+              <p class="opacity-80 text-sm">
+                هو المكان الذي نكتب فيه الأكواد التي تجلب البيانات من الإنترنت
+                أو قاعدة البيانات.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 28: Professional Folder Structure (Advanced) -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-4xl font-black mb-10 text-center title-gradient">
+            التنظيم الاحترافي (Modular Architecture) 👑
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Assets -->
+            <div class="p-6 bg-white/5 rounded-2xl border-t-4 border-pink-500">
+              <h4 class="font-bold mb-4 text-pink-500">1. Assets Folder</h4>
+              <ul class="text-[10px] space-y-2 opacity-70">
+                <li>📁 assets/fonts</li>
+                <li>📁 assets/images</li>
+                <li>📁 assets/icons</li>
+              </ul>
+            </div>
+            <!-- Core -->
+            <div
+              class="p-6 bg-white/5 rounded-2xl border-t-4 border-flutter-cyan"
+            >
+              <h4 class="font-bold mb-4 text-flutter-cyan">2. lib / core</h4>
+              <ul class="text-[10px] space-y-2 opacity-70">
+                <li>📁 constant (الألوان والكلمات الثابتة)</li>
+                <li>📁 theme (ألوان التطبيق الموحدة)</li>
+                <li>📁 utils (أدوات مساعدة)</li>
+              </ul>
+            </div>
+            <!-- Features -->
+            <div
+              class="p-6 bg-white/5 rounded-2xl border-t-4 border-orange-400"
+            >
+              <h4 class="font-bold mb-4 text-orange-400">3. lib / features</h4>
+              <ul class="text-[10px] space-y-4 opacity-70">
+                <li class="bg-white/5 p-3 rounded-xl">
+                  <span class="font-bold text-orange-400">📁 home:</span>
+                  <div
+                    class="mt-2 ml-4 space-y-2 border-r-2 border-white/10 pr-2"
+                  >
+                    <p>
+                      • <span class="text-flutter-cyan">data:</span> المسؤول عن
+                      جلب البيانات (APIs) والـ Models الخاصة بالرئيسية.
+                    </p>
+                    <p>
+                      • <span class="text-flutter-cyan">widgets:</span> العناصر
+                      الصغيرة التي لا تستخدم إلا في شاشة الـ Home.
+                    </p>
+                    <p>
+                      • <span class="text-flutter-cyan">view:</span> الشاشات
+                      الكاملة (Screens) التي يراها المستخدم.
+                    </p>
+                  </div>
+                </li>
+                <li>📁 auth (تسجيل الدخول)</li>
+                <li>📁 orders</li>
+                <li class="italic font-bold">
+                  كل ميزة مستقلة بملفاتها لمنع تداخل الكود.
+                </li>
+              </ul>
+            </div>
+          </div>
+          <p class="mt-10 text-center text-sm italic font-bold">
+            هذا التنظيم يجعلك "Senior" في نظر الشركات الكبرى.
+          </p>
+        </div>
+      </div>
+
+      <!-- Slide 29: Handling Assets (Images) -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-3xl font-bold mb-8 text-center text-coffee-light">
+            كيف ندرج الصور في المشروع؟ 🖼️
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div class="space-y-6">
+              <h4 class="text-xl font-bold">الخطوة الأولى: المجلد</h4>
+              <p class="opacity-80 text-sm">
+                ننشئ مجلد اسمه `assets` وبداخله `images` ونضع الصور فيه.
+              </p>
+              <h4 class="text-xl font-bold text-orange-400">
+                الخطوة الثانية: pubspec.yaml
+              </h4>
+              <div class="code-window">
+                <pre class="p-4 text-xs">flutter:
+  assets:
+    - assets/images/logo.png
+    - assets/images/    <span class="comment"># تفعيل المجلد كله</span></pre>
+              </div>
+            </div>
+            <div class="space-y-6">
+              <h4 class="text-xl font-bold text-flutter-cyan">
+                الخطوة الثالثة: الكود
+              </h4>
+              <div class="code-window">
+                <pre class="p-4 text-xs"><span class="type">Image</span>.asset(
+  <span class="string">'assets/images/logo.png'</span>,
+  width: <span class="keyword">200</span>,
+  height: <span class="keyword">200</span>,
+)</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 30: Google Fonts Setup -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-4xl font-black mb-10 text-center title-gradient">
+            أناقة التطبيق: Google Fonts ✍️
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <div class="space-y-6">
+              <p class="text-lg">
+                إذا أعجبك خط على
+                <span class="text-flutter-cyan font-bold underline"
+                  >Google Fonts</span
+                >، فإضافته أسهل مما تتخيل!
+              </p>
+              <div
+                class="p-6 bg-white/5 rounded-2xl border-l-4 border-pink-500 font-bold text-sm"
+              >
+                1. حمل ملف الخط (OTF/TTF).<br />
+                2. ضعه في assets/fonts.<br />
+                3. عرفه في pubspec.yaml.
+              </div>
+            </div>
+            <div class="code-window">
+              <div class="code-header">
+                <span class="text-xs">pubspec.yaml Fonts</span>
+              </div>
+              <div class="code-content">
+                <pre class="text-xs">flutter:
+  fonts:
+    - family: <span class="string">MyFont</span>
+      fonts:
+        - asset: <span class="string">assets/fonts/Tajawal-Bold.ttf</span>
+          weight: <span class="keyword">700</span></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 31: Using Custom Fonts in Code -->
+      <div class="slide">
+        <div class="glass-card">
+          <h2 class="text-3xl font-bold mb-10 text-center text-coffee-light">
+            استخدام الخطوط في الكود
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+            <div class="code-window">
+              <div class="code-header">
+                <div class="dot red"></div>
+                <span class="ml-4 text-xs opacity-50"
+                  >Local implementation</span
+                >
+              </div>
+              <div class="code-content">
+                <pre class="text-xs"><span class="type">Text</span>(
+  <span class="string">'قهوة عم محمد العالمية'</span>,
+  style: <span class="type">TextStyle</span>(
+    fontFamily: <span class="string">'MyFont'</span>,
+    fontSize: <span class="keyword">24</span>,
+    fontWeight: <span class="type">FontWeight</span>.bold,
+  ),
+)</pre>
+              </div>
+            </div>
+            <div class="text-center space-y-6">
+              <div
+                class="p-8 bg-white/10 rounded-full inline-block border-4 border-coffee-light animate-pulse"
+              >
+                <span class="text-4xl font-bold text-coffee-light"
+                  >تجربة الخط الجديد</span
+                >
+              </div>
+              <p class="text-sm opacity-60">
+                الخط يجعل التطبيق ينطق بالاحترافية!
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 32: ThemeData: The Master Switch -->
+      <div class="slide">
+        <div class="glass-card">
+          <div class="flex items-center gap-6 mb-8">
+            <i class="fas fa-palette text-5xl text-flutter-cyan"></i>
+            <h2 class="text-4xl font-black title-gradient">
+              ThemeData: المفتاح السحري
+            </h2>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <p class="text-xl leading-relaxed">
+              لماذا نغير الخط في كل شاشة؟<br />
+              نستخدم الـ
+              <span class="text-flutter-cyan font-black">ThemeData</span> لتعريف
+              خط وألوان التطبيق "مرة واحدة فقط" في الـ MaterialApp، وسينطبق على
+              كل الشاشات آلياً!
+            </p>
+            <div class="code-window">
+              <div class="code-header">
+                <span class="text-xs">Theme Configuration</span>
+              </div>
+              <div class="code-content text-[10px]">
+                <pre><span class="type">MaterialApp</span>(
+  theme: <span class="type">ThemeData</span>(
+    brightness: <span class="type">Brightness</span>.dark,
+    primaryColor: <span class="type">Colors</span>.brown,
+    fontFamily: <span class="string">'Tajawal'</span>, <span class="comment">// سيعمل في كل مكان!</span>
+  ),
+  home: <span class="type">HomePage</span>(),
+)</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 33: Assignment (Task) -->
+      <div class="slide">
+        <div class="glass-card text-center py-20">
+          <div class="mb-10 text-6xl text-orange-400">🚀</div>
+          <h2 class="text-5xl font-black title-gradient mb-8 leading-tight">
+            وقت التحدي: ابدأ مشروعك الآن!
+          </h2>
+          <p class="text-2xl text-coffee-light mb-12">
+            أنشئ مجلداتك، جهز خطوطك، وابدأ في الرسم بكود فلاتر.
+          </p>
+          <div class="flex flex-wrap justify-center gap-4 text-xs font-bold">
+            <span
+              class="bg-blue-600/20 px-4 py-2 rounded-full border border-blue-600/40"
+              >Folder Structure</span
+            >
+            <span
+              class="bg-pink-600/20 px-4 py-2 rounded-full border border-pink-600/40"
+              >Assets Info</span
+            >
+            <span
+              class="bg-green-600/20 px-4 py-2 rounded-full border border-green-600/40"
+              >Custom Widgets</span
+            >
+          </div>
+          <p class="mt-20 text-xl font-bold text-coffee-light">
+            نراكم في المحاضرة القادمة مع مشروع كامل شغال! 🔥
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let current = 1;
+      const total = 33;
+      const slides = document.querySelectorAll(".slide");
+      const countDisplay = document.getElementById("slide-count-display");
+
+      function update() {
+        slides.forEach((s, i) => {
+          s.classList.remove("active");
+          if (i === current - 1) s.classList.add("active");
+        });
+        countDisplay.innerText = `${current} / ${total}`;
+        // Sync progress? optional
+      }
+      function nextSlide() {
+        if (current < total) {
+          current++;
+          update();
+        }
+      }
+      function prevSlide() {
+        if (current > 1) {
+          current--;
+          update();
+        }
+      }
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === "Enter") prevSlide();
+        if (e.key === "ArrowLeft" || e.key === " " || e.key === "ArrowDown")
+          nextSlide();
+        if (e.key === "ArrowUp") prevSlide();
+      });
+      update();
+    </script>
+  </body>
+</html>
