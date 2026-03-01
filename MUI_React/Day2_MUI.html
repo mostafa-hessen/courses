@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>دليل شامل لـ MUI - الثيم، التخصيص، والمزيد</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: "#f0f9ff",
+              100: "#e0f2fe",
+              200: "#bae6fd",
+              300: "#7dd3fc",
+              400: "#38bdf8",
+              500: "#0ea5e9",
+              600: "#0284c7",
+              700: "#0369a1",
+              800: "#075985",
+              900: "#0c4a6e",
+            },
+            secondary: {
+              50: "#f5f3ff",
+              100: "#ede9fe",
+              200: "#ddd6fe",
+              300: "#c4b5fd",
+              400: "#a78bfa",
+              500: "#8b5cf6",
+              600: "#7c3aed",
+              700: "#6d28d9",
+              800: "#5b21b6",
+              900: "#4c1d95",
+            },
+          },
+          fontFamily: {
+            sans: ["Tajawal", "sans-serif"],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    .slide {
+      min-height: 100vh;
+      scroll-snap-align: start;
+      animation: fadeIn 0.5s ease-out forwards;
+      padding: 2rem;
+    }
+    
+    .slide-content {
+      animation: slideUp 0.7s ease-out forwards;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+      scroll-snap-type: y mandatory;
+    }
+    
+    .code-block {
+      font-family: monospace;
+      direction: ltr;
+      text-align: left;
+    }
+    
+    .theme-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    
+    .theme-table th, .theme-table td {
+      border: 1px solid #e2e8f0;
+      padding: 0.75rem;
+      text-align: center;
+    }
+    
+    .theme-table th {
+      background-color: #f8fafc;
+    }
+    
+    .dark .theme-table th, .dark .theme-table td {
+      border-color: #334155;
+    }
+    
+    .dark .theme-table th {
+      background-color: #1e293b;
+    }
+    
+    .mui-example {
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      background-color: #f8fafc;
+    }
+    
+    .dark .mui-example {
+      border-color: #334155;
+      background-color: #1e293b;
+    }
+    
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+    
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+    
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .toggle-slider {
+      background-color: #0ea5e9;
+    }
+    
+    input:checked + .toggle-slider:before {
+      transform: translateX(26px);
+    }
+    
+    .component-preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin: 1rem 0;
+      justify-content: center;
+    }
+    
+    .slide-arrow {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: none;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 40;
+      opacity: 0.7;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .slide-arrow:hover {
+      opacity: 1;
+      background-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-50%) scale(1.1);
+    }
+    
+    .arrow-left {
+      left: 20px;
+    }
+    
+    .arrow-right {
+      right: 20px;
+    }
+    
+    .slide-arrow .material-icons {
+      font-size: 32px;
+      color: white;
+    }
+    
+    .dark .slide-arrow {
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+    
+    .dark .slide-arrow:hover {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+    
+    .palette-box {
+      width: 100px;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.5rem;
+      color: white;
+      font-weight: 500;
+      text-align: center;
+      padding: 0.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .dark .palette-box {
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    pre{
+        direction: ltr;
+        text-align: left;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
+  <!-- Navigation Arrows -->
+  <button id="prevSlide" class="slide-arrow arrow-left">
+    <span class="material-icons">arrow_back</span>
+  </button>
+  <button id="nextSlide" class="slide-arrow arrow-right">
+    <span class="material-icons">arrow_forward</span>
+  </button>
+
+  <!-- Theme Toggle Button -->
+  <button id="themeToggle" class="fixed left-6 bottom-6 z-50 w-12 h-12 rounded-full bg-primary-600 dark:bg-secondary-600 flex items-center justify-center text-white shadow-lg hover:opacity-90 transition">
+    <span id="themeIcon" class="material-icons">dark_mode</span>
+  </button>
+
+
+  <section
+  id="slide1"
+  class="slide flex items-center justify-center bg-gradient-to-br from-primary-500 to-secondary-600 p-8 min-h-screen"
+>
+  <div class="slide-content max-w-4xl mx-auto text-center text-white">
+    <!-- الصورة الشخصية -->
+    <div class="mb-10">
+      <img
+        src="https://i.ibb.co/Fbpfy9Y5/ITI2.jpg"
+        alt="Mostafa Hussien Ramadan"
+        class="w-36 h-36 rounded-full mx-auto border-4 border-white shadow-xl transition-transform duration-300 hover:scale-105"
+      />
+    </div>
+
+    <!-- عنوان الدورة -->
+    <h1 class="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+      المحاضره الثانيه
+       MUI 
+    </h1>
+
+    <!-- مقدم الدورة -->
+    <h2 class="text-2xl md:text-3xl font-medium text-white/90 mb-2">
+      تقديم: <span class="font-bold">مصطفى حسين رمضان</span>
+    </h2>
+
+    <!-- الوصف -->
+    <p class="text-lg md:text-xl text-white/80 mb-10">
+      مطور واجهات أمامية | Front-End Developer  
+    </p>
+
+    <!-- زر البدء -->
+    <div class="flex justify-center">
+      <a
+        href="#slide-review-1"
+        class="inline-flex items-center gap-2 px-6 py-3 bg-white text-primary-600 rounded-full font-semibold shadow-lg hover:bg-gray-100 hover:scale-105 transition-transform duration-300"
+      >
+        <span>ابدأ المراجعة</span>
+        <span class="material-icons text-xl">arrow_downward</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="slide-agenda" class="slide flex items-center justify-center bg-white dark:bg-gray-900 p-8">
+  <div class="slide-content max-w-3xl mx-auto text-center">
+    <h2 class="text-3xl md:text-4xl font-bold text-primary-600 dark:text-secondary-400 mb-6">
+      جدول أعمال الجلسة الثانية
+    </h2>
+    <ul class="list-disc text-lg text-gray-800 dark:text-gray-300 text-right rtl-dir space-y-4 px-6">
+      <li>🔁 مراجعة اليوم الأول: أهم المفاهيم والمكونات الأساسية</li>
+      <li>🎨 التعرف على Theme وطرق تخصيصه (Theme Customization)</li>
+      <li>🌙 تفعيل الوضع الليلي والنهاري (Dark Mode & Light Mode)</li>
+      <li>📱 تصميم واجهة تواصل اجتماعي باستخدام MUI</li>
+    </ul>
+  </div>
+</section>
+<section id="slide-review-1" class="slide flex items-center justify-center bg-white dark:bg-gray-800 p-6">
+  <div class="slide-content max-w-4xl mx-auto">
+    <h2 class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400">
+      مراجعة مفاهيم MUI: sx و variant
+    </h2>
+    <div class="grid md:grid-cols-2 gap-8 items-start">
+      <div class="rtl-dir">
+        <p class="text-lg mb-4 text-gray-700 dark:text-gray-300">
+          في MUI، يمكننا تخصيص الشكل بسهولة باستخدام خاصيتين أساسيتين:
+        </p>
+        <ul class="space-y-3 mb-6">
+          <li class="flex items-start">
+            <span class="material-icons text-blue-500 mr-2">build</span>
+            <span><strong>variant:</strong> شكل جاهز من الثيم مثل: <code>contained</code>, <code>outlined</code>, <code>text</code></span>
+          </li>
+          <li class="flex items-start">
+            <span class="material-icons text-green-500 mr-2">style</span>
+            <span><strong>sx:</strong> أسلوب كتابة CSS داخل الـ theme system باستخدام JS object</span>
+          </li>
+          <li class="flex items-start">
+            <span class="material-icons text-purple-500 mr-2">edit</span>
+            <span>يمكن الجمع بين <code>sx</code> و <code>variant</code> لنفس المكون</span>
+          </li>
+        </ul>
+        <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-md">
+          <code>&lt;Button variant="contained" sx={{ bgcolor: 'primary.main', color: '#fff' }} /&gt;</code>
+        </div>
+      </div>
+      <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-xl border border-gray-200 dark:border-gray-600">
+        <h3 class="text-xl font-semibold mb-4 text-primary-600 dark:text-secondary-300">جدول مقارنة</h3>
+        <table class="w-full text-sm text-left rtl:text-right text-gray-700 dark:text-gray-300">
+          <thead>
+            <tr class="bg-gray-200 dark:bg-gray-600">
+              <th class="p-2">الخاصية</th>
+              <th class="p-2">الغرض</th>
+              <th class="p-2">مثال</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-gray-300 dark:border-gray-500">
+              <td class="p-2 font-medium">variant</td>
+              <td class="p-2">تطبيق شكل جاهز</td>
+              <td class="p-2">variant="outlined"</td>
+            </tr>
+            <tr>
+              <td class="p-2 font-medium">sx</td>
+              <td class="p-2">تخصيص دقيق للستايل</td>
+              <td class="p-2">sx={{ color: 'primary.main' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="slide-review-2" class="slide flex items-center justify-center bg-white dark:bg-gray-800 p-6">
+  <div class="slide-content max-w-4xl mx-auto">
+    <h2 class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400">
+      أهم مكونات MUI التي استخدمناها
+    </h2>
+    <div class="grid md:grid-cols-2 gap-8">
+      <ul class="space-y-4 text-lg text-gray-800 dark:text-gray-300 rtl-dir">
+        <li><span class="material-icons text-green-500 mr-2">text_fields</span> Typography – لعرض النصوص مع variant</li>
+        <li><span class="material-icons text-blue-500 mr-2">smart_button</span> Button – مع variant و color</li>
+        <li><span class="material-icons text-gray-600 mr-2">view_stream</span> Stack – لترتيب العناصر عموديًا أو أفقيًا</li>
+        <li><span class="material-icons text-gray-600 mr-2">grid_view</span> Grid – لتقسيم الواجهة واستجابة الشاشة</li>
+        <li><span class="material-icons text-purple-500 mr-2">account_circle</span> Avatar – لصورة المستخدم</li>
+        <li><span class="material-icons text-yellow-500 mr-2">credit_card</span> Card – لعرض محتوى منسق مثل البوستات</li>
+        <li><span class="material-icons text-red-500 mr-2">apps</span> Icon – لاستخدام أيقونات من مكتبة MUI</li>
+      </ul>
+      <div class="bg-gray-100 dark:bg-gray-700 p-6 rounded-xl">
+        <h3 class="text-xl font-semibold mb-4 text-primary-600 dark:text-secondary-300">ملاحظات سريعة:</h3>
+        <ul class="list-disc pl-5 space-y-2">
+          <li>معظم هذه المكونات تدعم `sx` لتخصيص التصميم</li>
+          <li>يمكن دمجها بسهولة لبناء واجهة تطبيق كاملة</li>
+          <li>تعتمد على theme افتراضي ويمكن تخصيصه</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="slide-review-3" class="slide flex items-center justify-center bg-white dark:bg-gray-800 p-6">
+  <div class="slide-content max-w-3xl mx-auto">
+    <h2 class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400">أسئلة مراجعة شفوية</h2>
+    <ul class="list-disc text-lg space-y-4 text-gray-800 dark:text-gray-200">
+      <li>ما الفرق بين <code>sx</code> و <code>style</code>؟ وأيهما يُفضل؟ ولماذا؟</li>
+      <li>ما وظيفة <code>variant</code> في المكونات؟ واذكر مثالًا عمليًا.</li>
+      <li>ما الفرق بين <code>Stack</code> و <code>Grid</code>؟ ومتى تستخدم كلًا منهما؟</li>
+      <li>اذكر 3 مكونات رئيسية من MUI استخدمناها، ومتى تستخدم كل واحدة.</li>
+      <li>كيف نضيف أيقونة بجانب زر؟ مع مثال سريع.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="slide-review-4" class="slide flex items-center justify-center bg-white dark:bg-gray-800 p-6">
+  <div class="slide-content max-w-3xl mx-auto">
+    <h2 class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400">مقدمة لدرس Theme في MUI</h2>
+    <p class="text-lg text-gray-700 dark:text-gray-300 mb-4">
+      الآن بعد ما تعلمنا استخدام المكونات الجاهزة من MUI، حان الوقت لتعلم كيفية التحكم الكامل في شكل التطبيق باستخدام <strong>Theme</strong>.
+    </p>
+    <ul class="list-disc pl-5 text-lg space-y-3 text-gray-800 dark:text-gray-200">
+      <li>ما هو <strong>Theme</strong>؟ ولماذا هو مهم في التطبيقات الكبيرة؟</li>
+      <li>كيف نخصص الألوان مثل <code>primary</code> و <code>secondary</code> في كل المكونات مرة واحدة؟</li>
+      <li>كيف نفعّل الوضع الليلي والنهاري باستخدام Theme؟</li>
+      <li>ما الفرق بين <code>primary.main</code> و <code>primary.light</code> و <code>primary.dark</code>؟</li>
+    </ul>
+    <p class="mt-6 text-lg text-primary-700 dark:text-secondary-300 font-semibold">
+      الجلسة القادمة هتكون عن Theme Customization + Dark/Light Mode 🔥
+    </p>
+  </div>
+</section>
+
+<section id="slide-theme-intro" class="slide flex items-center justify-center bg-white dark:bg-gray-800 p-8">
+  <div class="slide-content max-w-4xl mx-auto">
+    <h2 class="text-3xl md:text-4xl font-bold text-primary-600 dark:text-secondary-400 mb-6">
+      مقدمة إلى MUI Theme
+
+    
+    </h2>
+
+      <h3 class="text-xl font-semibold mb-4 text-primary-600 dark:text-secondary-300 ">
+        <a href="https://mui.com/material-ui/customization/default-theme/" target="_blank" class="underline text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
+        <i class=""></i>
+        Theme في توثيق MUI
+      </a>
+      </h3>
+    <p class="text-lg text-gray-800 dark:text-gray-300 mb-6">
+      الTheme هو نظام تصميم متكامل في MUI يسمح لك بتحديد مظهر التطبيق من حيث الألوان، المسافات، الحدود، الخطوط والمزيد. يتم تطبيق الـ Theme تلقائيًا على جميع المكونات لضمان التناسق.
+    </p>
+    <div class="bg-gray-100 dark:bg-gray-700 p-6 rounded-lg">
+      <h3 class="text-xl font-semibold mb-4 text-primary-600 dark:text-secondary-300">ما يحتويه الـ Theme الافتراضي</h3>
+      <ul class="list-disc rtl-dir text-gray-700 dark:text-gray-200 space-y-2 text-base px-5">
+        <li><strong>palette:</strong> ألوان المكونات (primary, secondary, error...)
+        <a 
+          href="https://mui.com/material-ui/customization/palette/" 
+          target="_blank" 
+          class="block my-2 text-lg font-bold underline text-blue-700 dark:text-blue-300 hover:text-blue-900 dark:hover:text-blue-100 transition"
+        >
+          🎨 نظام الألوان في MUI (Color Palette)
+        </a>
+        </li> 
+        <li><strong>typography:</strong> أنماط الخطوط (fontSize, fontFamily, headings)</li>
+        <li><strong>spacing:</strong> وحدات المسافات (1 = 8px)</li>
+        <li><strong>shape:</strong> إعدادات الشكل مثل borderRadius</li>
+        <li><strong>breakpoints:</strong> نقاط التحول للشاشات المختلفة</li>
+        <li><strong>components:</strong> تخصيص مكونات معينة (مثل: Button, Card...)</li>
+        <li><strong>zIndex:</strong> ترتيب الطبقات مثل AppBar و Modal</li>
+        <li><strong>transitions:</strong> مدة وتأثيرات الحركة</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="slide-button-primary" class="slide flex items-center justify-center bg-white dark:bg-gray-900 p-8">
+  <div class="slide-content max-w-4xl mx-auto">
+    <h2 class="text-3xl md:text-4xl font-bold text-primary-600 dark:text-secondary-400 mb-6">
+      ماذا يحدث عند كتابة <code>&lt;Button color="primary"&gt;</code>؟
+    </h2>
+    <div class="grid md:grid-cols-2 gap-8 items-start">
+      <div class="rtl-dir text-lg text-gray-700 dark:text-gray-300">
+        <ul class="list-disc space-y-4">
+          <li>يتم تمرير الـ prop <code>color="primary"</code> إلى مكون Button</li>
+          <li>داخل مكتبة MUI، يتم تحويل هذا إلى كلاس CSS يعتمد على اللون: مثل <code>.MuiButton-containedPrimary</code></li>
+          <li>الكلاس يحتوي على:</li>
+          <ul class="list-disc ml-6">
+            <li><code>background-color: theme.palette.primary.main</code></li>
+            <li><code>color: theme.palette.primary.contrastText</code></li>
+            <li>عند Hover: <code>background-color: theme.palette.primary.dark</code></li>
+          </ul>
+          <li>الكود المسؤول عن ذلك داخل ملف:
+            <a class="text-blue-600 underline" target="_blank" href="https://github.com/mui/material-ui/blob/master/packages/mui-material/src/Button/Button.js#L52">Button.js</a>
+          </li>
+        </ul>
+        <div class="mt-6 bg-yellow-100 dark:bg-yellow-800 text-yellow-900 dark:text-yellow-100 p-4 rounded">
+          <strong>ملاحظة:</strong> <code>color="primary"</code> تعمل فقط كـ prop داخل المكونات، لكن لو أردت استخدام اللون في خصائص مثل <code>sx</code> أو <code>style</code> مثل:
+          <br />
+          <code>sx={{ bgcolor: 'primary' }}</code> ❌ لن تعمل
+          <br />
+          بل يجب كتابة: <code>sx={{ bgcolor: 'primary.main' }}</code> ✅
+        </div>
+      </div>
+      <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-xl border border-gray-300 dark:border-gray-600 text-sm text-gray-900 dark:text-gray-200">
+        <h3 class="text-xl font-semibold mb-4">مثال عملي:</h3>
+        <pre class="bg-gray-200 dark:bg-gray-700 p-4 rounded">
+&lt;Button 
+  variant="contained" 
+  color="primary"
+&gt;
+  Click Me
+&lt;/Button&gt;</pre>
+        <p class="mt-4">
+          هذا الزر سيأخذ اللون <code>theme.palette.primary.main</code> كخلفية، والنص سيكون بلون <code>contrastText</code>.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section id="slide-theme-properties" class="slide flex items-center justify-center bg-gradient-to-br from-white to-gray-100 dark:from-gray-900 dark:to-gray-800 p-10">
+  <div class="slide-content max-w-6xl mx-auto">
+    <h2 class="text-4xl font-extrabold text-center text-primary-600 dark:text-secondary-400 mb-8">
+      ⚙️ الخصائص الأساسية في <code>Theme</code> في MUI
+    </h2>
+    <p class="text-lg text-center text-gray-700 dark:text-gray-300 mb-10">
+      يحتوي <code>Theme</code> الافتراضي في MUI على مجموعة من الخصائص القابلة للتخصيص والتي تتحكم في مظهر التطبيق بالكامل. إليك أهم هذه الخصائص مع القيم الافتراضية:
+    </p>
+
+    <div class="grid md:grid-cols-2 gap-10">
+      <!-- العمود الأول -->
+      <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-6">
+        <h3 class="text-xl font-bold text-primary-600 dark:text-secondary-300 mb-4">
+          🎨 palette - نظام الألوان
+        </h3>
+        <ul class="list-disc rtl-dir text-gray-800 dark:text-gray-100 space-y-2 ml-6">
+          <li><strong>primary.main:</strong> <code>#1976d2</code></li>
+          <li><strong>secondary.main:</strong> <code>#9c27b0</code></li>
+          <li><strong>error.main:</strong> <code>#d32f2f</code></li>
+          <li><strong>warning.main:</strong> <code>#ed6c02</code></li>
+          <li><strong>info.main:</strong> <code>#0288d1</code></li>
+          <li><strong>success.main:</strong> <code>#2e7d32</code></li>
+        </ul>
+      </div>
+
+      <!-- العمود الثاني -->
+      <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-6">
+        <h3 class="text-xl font-bold text-primary-600 dark:text-secondary-300 mb-4">
+          🔤 typography - إعدادات الخط
+        </h3>
+        <ul class="list-disc rtl-dir text-gray-800 dark:text-gray-100 space-y-2 ml-6">
+          <li><strong>fontFamily:</strong> "Roboto", "Helvetica", "Arial", sans-serif</li>
+          <li><strong>fontSize:</strong> 14px</li>
+          <li><strong>h1:</strong> 96px</li>
+          <li><strong>h2:</strong> 60px</li>
+          <li><strong>h3:</strong> 48px</li>
+        </ul>
+      </div>
+
+      <!-- العمود الثالث -->
+      <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-6">
+        <h3 class="text-xl font-bold text-primary-600 dark:text-secondary-300 mb-4">
+          📐 shape, spacing, zIndex
+        </h3>
+        <ul class="list-disc rtl-dir text-gray-800 dark:text-gray-100 space-y-2 ml-6">
+          <li><strong>spacing:</strong> 1 = 8px</li>
+          <li><strong>shape.borderRadius:</strong> 4px</li>
+          <li><strong>zIndex.modal:</strong> 1300</li>
+          <li><strong>zIndex.appBar:</strong> 1100</li>
+        </ul>
+      </div>
+
+      <!-- العمود الرابع -->
+      <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-6">
+        <h3 class="text-xl font-bold text-primary-600 dark:text-secondary-300 mb-4">
+          📱 breakpoints - نقاط التحول
+        </h3>
+        <ul class="list-disc rtl-dir text-gray-800 dark:text-gray-100 space-y-2 ml-6">
+          <li><strong>xs:</strong> 0</li>
+          <li><strong>sm:</strong> 600px</li>
+          <li><strong>md:</strong> 900px</li>
+          <li><strong>lg:</strong> 1200px</li>
+          <li><strong>xl:</strong> 1536px</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- أمثلة توضيحية -->
+    <div class="mt-16 bg-gray-50 dark:bg-gray-800 rounded-xl p-6 border border-gray-300 dark:border-gray-600">
+      <h3 class="text-2xl font-bold text-primary-600 dark:text-secondary-400 mb-4">🧪 أمثلة واقعية على استخدام الخصائص</h3>
+      <div class="space-y-6 text-sm text-gray-900 dark:text-gray-100 rtl-dir">
+        <div>
+          <strong>🎨 مثال استخدام palette:</strong>
+          <pre class="bg-gray-200 dark:bg-gray-700 p-4 rounded mt-2 overflow-auto">
+sx={{ bgcolor: 'primary.main', color: 'primary.contrastText' }}</pre>
+        </div>
+        <div>
+          <strong>🔤 مثال استخدام typography:</strong>
+          <pre class="bg-gray-200 dark:bg-gray-700 p-4 rounded mt-2 overflow-auto">
+&lt;Typography variant="h3"&gt;مرحبا بكم في MUI&lt;/Typography&gt;</pre>
+        </div>
+        <div>
+          <strong>📐 مثال على spacing:</strong>
+          <pre class="bg-gray-200 dark:bg-gray-700 p-4 rounded mt-2 overflow-auto">
+sx={{ p: 2, m: 3 }}  // padding: 16px, margin: 24px</pre>
+        </div>
+        <div>
+          <strong>🧱 مثال استخدام shape:</strong>
+          <pre class="bg-gray-200 dark:bg-gray-700 p-4 rounded mt-2 overflow-auto">
+&lt;Box sx={{ borderRadius: 2 }} /&gt;  // 16px (2 * 8)</pre>
+        </div>
+        <div>
+          <strong>📱 مثال على breakpoints:</strong>
+          <pre class="bg-gray-200 dark:bg-gray-700 p-4 rounded mt-2 overflow-auto">
+&lt;Box sx={{ fontSize: { xs: 12, sm: 14, md: 16 } }} /&gt;
+// يتغير الحجم حسب حجم الشاشة</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- ملاحظة إضافية -->
+    <div class="mt-10 bg-yellow-100 dark:bg-yellow-800 text-yellow-900 dark:text-yellow-100 p-5 rounded-lg text-center">
+      <strong>💡 ملاحظة:</strong> جميع هذه القيم يمكن تعديلها باستخدام <code>createTheme()</code> وتغليف التطبيق بـ <code>&lt;ThemeProvider&gt;</code>
+    </div>
+  </div>
+</section>
+
+
+<section id="slide-theme-customization" class="slide flex items-center justify-center bg-white dark:bg-gray-900 p-10">
+  <div class="slide-content max-w-5xl mx-auto">
+    <h2 class="text-4xl font-extrabold text-center text-primary-600 dark:text-secondary-400 mb-8">
+      🛠️ تخصيص الـ Theme باستخدام <code>createTheme</code>
+    </h2>
+    <p class="text-lg text-center text-gray-700 dark:text-gray-300 mb-10">
+      يتيح لك MUI تعديل التصميم العام للتطبيق عن طريق إنشاء <code>Theme</code> مخصص وتغليف التطبيق به باستخدام <code>ThemeProvider</code>.
+    </p>
+
+    <div class="grid md:grid-cols-2 gap-8 items-start">
+      <!-- الكود النظري -->
+      <div class="bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-6 text-sm text-gray-900 dark:text-gray-100">
+        <h3 class="text-xl font-semibold mb-4 text-primary-600 dark:text-secondary-300">مثال على تخصيص الألوان</h3>
+        <pre class="bg-gray-200 dark:bg-gray-700 p-4 rounded overflow-auto text-xs">
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2',
+      light: '#63a4ff',
+      dark: '#004ba0',
+      contrastText: '#fff'
+    },
+    secondary: {
+      main: '#9c27b0'
+    }
+  },
+});
+
+&lt;ThemeProvider theme={theme}&gt;
+  &lt;App /&gt;
+&lt;/ThemeProvider&gt;</pre>
+      </div>
+
+      <!-- التوضيح النظري -->
+      <div class="rtl-dir text-gray-800 dark:text-gray-200 text-lg space-y-4">
+        <p>👈 باستخدام <code>createTheme</code> يمكنك تعديل الألوان، الخطوط، الهوامش، الزوايا وغيرها.</p>
+        <p>👈 يتم تمرير الكائن إلى <code>ThemeProvider</code> لتطبيقه على جميع المكونات.</p>
+        <p>👈 يمكنك دمج أكثر من تعديل في نفس الوقت: <code>palette</code> + <code>typography</code> + <code>components</code></p>
+        <p>👈 عند تخصيص مكون معين (مثل الزر)، يمكن استخدام <code>components</code> داخل الثيم لتعديل الأنماط الافتراضية.</p>
+      </div>
+    </div>
+
+    <!-- ملاحظة -->
+    <div class="mt-10 bg-blue-50 dark:bg-blue-900 text-blue-800 dark:text-blue-100 p-5 rounded-lg text-center">
+      ✨ هذا يسمح بتوحيد تصميم الواجهة بسهولة والتحكم الكامل بالمظهر.
+    </div>
+  </div>
+</section>
+
+
+
+  <!-- Slide 3: Theme Customization - Palette -->
+  <section id="slide3" class="slide flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+    <div class="slide-content">
+      <h2 class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400">
+        تخصيص الثيم - نظام الألوان (Palette)
+      </h2>
+      
+      <p class="text-lg mb-6">
+        نظام الألوان هو أحد أهم أجزاء الثيم حيث يتحكم في الألوان الأساسية لتطبيقك.
+      </p>
+      
+      <div class="grid md:grid-cols-2 gap-8">
+        <div>
+          <h3 class="text-xl font-semibold mb-4">خصائص نظام الألوان</h3>
+          
+          <table class="theme-table">
+            <thead>
+              <tr>
+                <th>الخاصية</th>
+                <th>الوصف</th>
+                <th>مثال</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>primary.main</td>
+                <td>اللون الأساسي للمكونات</td>
+                <td class="bg-blue-500"></td>
+              </tr>
+              <tr>
+                <td>primary.light</td>
+                <td>نسخة فاتحة من اللون الأساسي</td>
+                <td class="bg-blue-300"></td>
+              </tr>
+              <tr>
+                <td>primary.dark</td>
+                <td>نسخة داكنة من اللون الأساسي</td>
+                <td class="bg-blue-700"></td>
+              </tr>
+              <tr>
+                <td>secondary.main</td>
+                <td>اللون الثانوي للمكونات</td>
+                <td class="bg-purple-500"></td>
+              </tr>
+              <tr>
+                <td>error.main</td>
+                <td>لون لحالات الخطأ</td>
+                <td class="bg-red-500"></td>
+              </tr>
+              <tr>
+                <td>warning.main</td>
+                <td>لون للتحذيرات</td>
+                <td class="bg-yellow-500"></td>
+              </tr>
+              <tr>
+                <td>success.main</td>
+                <td>لون لحالات النجاح</td>
+                <td class="bg-green-500"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div>
+          <div class="bg-gray-800 rounded-xl p-4 overflow-x-auto">
+            <h3 class="text-xl font-semibold mb-4 text-white text-center">
+              مثال تخصيص الألوان
+            </h3>
+            <pre class="text-green-400 font-mono text-sm ltr-dir">
+<code>const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#4a148c', // أرجواني داكن
+      light: '#7c43bd',
+      dark: '#12005e',
+    },
+    secondary: {
+      main: '#ff6f00', // برتقالي
+      light: '#ff9e40',
+      dark: '#c43e00',
+    },
+    error: {
+      main: '#d32f2f',
+    },
+  },
+});</code>
+            </pre>
+            
+            <div class="component-preview mt-4">
+              <div class="palette-box" style="background-color: #4a148c">primary.main</div>
+              <div class="palette-box" style="background-color: #7c43bd">primary.light</div>
+              <div class="palette-box" style="background-color: #ff6f00">secondary.main</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 4: Theme Customization - Typography -->
+  <section id="slide4" class="slide flex items-center justify-center bg-white dark:bg-gray-800">
+    <div class="slide-content">
+      <h2 class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400">
+        تخصيص الثيم - الطباعة (Typography)
+      </h2>
+      
+      <p class="text-lg mb-6">
+        نظام الطباعة يتحكم في كل ما يتعلق بالخطوط في تطبيقك، من العناوين إلى النصوص العادية.
+      </p>
+      
+      <div class="grid md:grid-cols-2 gap-8">
+        <div>
+          <h3 class="text-xl font-semibold mb-4">خصائص نظام الطباعة</h3>
+          
+          <div class="mui-example">
+            <h1 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem;">عنوان رئيسي (h1)</h1>
+            <h2 style="font-size: 2rem; font-weight: 600; margin-bottom: 1rem;">عنوان ثانوي (h2)</h2>
+            <h3 style="font-size: 1.75rem; font-weight: 500; margin-bottom: 1rem;">عنوان فرعي (h3)</h3>
+            <p style="font-size: 1rem; line-height: 1.6; margin-bottom: 1rem;">نص عادي (body1)</p>
+            <p style="font-size: 0.875rem; line-height: 1.5;">نص صغير (body2)</p>
+          </div>
+        </div>
+        
+        <div>
+          <div class="bg-gray-800 rounded-xl p-4 overflow-x-auto">
+            <h3 class="text-xl font-semibold mb-4 text-white text-center">
+              تخصيص الطباعة
+            </h3>
+            <pre class="text-green-400 font-mono text-sm ltr-dir">
+<code>const theme = createTheme({
+  typography: {
+    fontFamily: [
+      'Tajawal',
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+    ].join(','),
+    h1: {
+      fontSize: '2.5rem',
+      fontWeight: 700,
+      lineHeight: 1.2,
+    },
+    h2: {
+      fontSize: '2rem',
+      fontWeight: 600,
+      lineHeight: 1.3,
+    },
+    body1: {
+      fontSize: '1rem',
+      lineHeight: 1.6,
+    },
+    button: {
+      textTransform: 'none',
+      fontWeight: 600,
+    },
+  },
+});</code>
+            </pre>
+          </div>
+          
+          <div class="mt-4 bg-green-50 dark:bg-green-900 p-4 rounded-lg">
+            <h3 class="text-lg font-semibold mb-2">نصائح لتخصيص الطباعة:</h3>
+            <ul class="list-disc pr-5 space-y-1">
+              <li>اختر خطًا يدعم اللغة العربية جيدًا مثل Tajawal أو Cairo</li>
+              <li>تأكد من أن أحجام الخطوط مناسبة للقراءة على جميع الشاشات</li>
+              <li>استخدم ألوانًا مناسبة للنصوص حسب خلفيتها</li>
+              <li>احترم التدرج الهرمي للنصوص (عناوين، نصوص فرعية، نصوص عادية)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 5: Theme Customization - Shape & Spacing -->
+  <section id="slide5" class="slide flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+    <div class="slide-content">
+      <h2 class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400">
+        تخصيص الثيم - الأشكال والمسافات
+      </h2>
+      
+      <div class="grid md:grid-cols-2 gap-8">
+        <div>
+          <h3 class="text-xl font-semibold mb-4">تخصيص الأشكال (Shape)</h3>
+          <p class="mb-4">
+            نظام الأشكال يتحكم في الزوايا والحدود للمكونات المختلفة.
+          </p>
+          
+          <div class="mui-example">
+            <div class="mb-4">
+              <div class="bg-primary-500 text-white p-4 rounded mb-2" style="border-radius: 4px">
+                زوايا مربعة (borderRadius: 4)
+              </div>
+              <div class="bg-primary-500 text-white p-4 rounded mb-2" style="border-radius: 8px">
+                زوايا دائرية أكثر (borderRadius: 8)
+              </div>
+              <div class="bg-primary-500 text-white p-4 rounded" style="border-radius: 16px">
+                زوايا دائرية (borderRadius: 16)
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-gray-800 rounded-xl p-4 overflow-x-auto mt-4">
+            <pre class="text-green-400 font-mono text-sm ltr-dir">
+<code>const theme = createTheme({
+  shape: {
+    borderRadius: 8, // القيمة الافتراضية 4
+  },
+});</code>
+            </pre>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-xl font-semibold mb-4">تخصيص المسافات (Spacing)</h3>
+          <p class="mb-4">
+            نظام المسافات يحدد الهوامش والحشوات باستخدام مضاعفات لقيمة أساسية.
+          </p>
+          
+          <div class="mui-example">
+            <div class="mb-4">
+              <div class="bg-primary-500 text-white p-2 mb-2">مسافة صغيرة (spacing(1))</div>
+              <div class="bg-primary-500 text-white p-4 mb-2">مسافة متوسطة (spacing(2))</div>
+              <div class="bg-primary-500 text-white p-6">مسافة كبيرة (spacing(3))</div>
+            </div>
+          </div>
+          
+          <div class="bg-gray-800 rounded-xl p-4 overflow-x-auto mt-4">
+            <pre class="text-green-400 font-mono text-sm ltr-dir">
+<code>const theme = createTheme({
+  spacing: 8, // القيمة الافتراضية 4
+});</code>
+            </pre>
+          </div>
+        </div>
+      </div>
+      
+  
+    </div>
+  </section>
+
+  <section id="slide-custom-theme-key" class="slide flex items-center justify-center bg-white dark:bg-gray-900 p-10">
+  <div class="slide-content max-w-5xl mx-auto">
+    <h2 class="text-4xl font-extrabold text-center text-primary-600 dark:text-secondary-400 mb-8">
+      🧩 إضافة مفاتيح مخصصة داخل <code>Theme</code> في MUI
+    </h2>
+
+    <p class="text-lg text-gray-700 dark:text-gray-300 mb-6 text-center">
+      يمكنك إضافة أي مفتاح مخصص داخل الثيم، مثل <code>mostafa</code>، لاستخدامه في تطبيقك يدويًا.
+    </p>
+
+    <div class="grid md:grid-cols-2 gap-8 items-start">
+      <!-- النظري -->
+      <div class="rtl-dir text-gray-800 dark:text-gray-200 text-lg space-y-4">
+        <h3 class="text-xl font-semibold mb-3 text-primary-600 dark:text-secondary-300">💡 لماذا نستخدم مفاتيح مخصصة؟</h3>
+        <ul class="list-disc space-y-2 ml-6">
+          <li>لتخزين ألوان أو قيم ثابتة خاصة بتصميمك.</li>
+          <li>لتوحيد استخدام الأنماط الخاصة بفريقك أو مشروعك.</li>
+          <li>للاستفادة منها عند استخدام <code>useTheme()</code>.</li>
+        </ul>
+
+        <div class="mt-6">
+          <h4 class="text-lg font-semibold mb-2">❗ ملاحظات مهمة:</h4>
+          <ul class="list-disc space-y-2 ml-6 text-sm">
+            <li>لن تؤثر المفاتيح المخصصة على مكونات MUI تلقائيًا.</li>
+            <li>يجب استخدامها يدويًا عبر كود مثل <code>theme.mostafa.text</code>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- الكود والمثال -->
+      <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-6 text-sm text-gray-900 dark:text-gray-100">
+        <h3 class="text-xl font-semibold mb-4 text-primary-600 dark:text-secondary-300 text-center">مثال عملي</h3>
+        <pre class="bg-gray-200 dark:bg-gray-700 p-4 rounded overflow-auto text-xs mb-4">
+<code>const theme = createTheme(&#123;
+  palette: &#123;
+    primary: &#123; main: '#1976d2' &#125;
+  &#125;,
+  mostafa: &#123;
+    text: '#fff',
+    accent: '#ff4081'
+  &#125;
+&#125;);</code>
+        </pre>
+
+        <pre class="bg-gray-200 dark:bg-gray-700 p-4 rounded overflow-auto text-xs mb-4">
+<code>const theme = useTheme();
+
+&lt;Typography sx=&#123;&#123; color: theme.mostafa.text &#125;&#125;&gt;
+  نص باستخدام اللون المخصص
+&lt;/Typography&gt;</code>
+        </pre>
+
+        <div class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 p-3 rounded">
+          ✅ يمكنك الآن استخدام القيم المخصصة في أي مكان داخل التطبيق عبر useTheme().
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-10 bg-yellow-50 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-100 p-5 rounded-lg text-center">
+      ✨ تعتبر هذه الطريقة مفيدة جدًا لتنظيم التصميم المخصص داخل مشروع كبير أو متعدد الصفحات.
+    </div>
+  </div>
+</section>
+
+<section id="slide-theme-customization" class="slide flex items-center justify-center bg-white dark:bg-gray-900 p-10">
+  <div class="slide-content max-w-5xl mx-auto">
+    <h2 class="text-4xl font-extrabold text-center text-primary-600 dark:text-secondary-400 mb-8">
+      🛠️ تخصيص الـ Theme باستخدام <code>createTheme</code>
+    </h2>
+    <p class="text-lg text-center text-gray-700 dark:text-gray-300 mb-10">
+      يتيح لك MUI تعديل التصميم العام للتطبيق عن طريق إنشاء <code>Theme</code> مخصص وتغليف التطبيق به باستخدام <code>ThemeProvider</code>.
+    </p>
+
+    <div class="grid md:grid-cols-2 gap-8 items-start">
+      <!-- الكود النظري -->
+      <div class="bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-6 text-sm text-gray-900 dark:text-gray-100">
+        <h3 class="text-xl font-semibold mb-4 text-primary-600 dark:text-secondary-300">مثال كامل على تخصيص الثيم</h3>
+       <pre class="bg-gray-200 dark:bg-gray-700 p-4 rounded overflow-auto text-xs">
+<code>
+import &#123; createTheme, ThemeProvider &#125; from '@mui/material/styles';
+import &#123; Button, Typography, Box, Paper &#125; from '@mui/material';
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#4a148c',
+      light: '#7c43bd',
+      dark: '#12005e',
+    },
+    secondary: {
+      main: '#ff6f00',
+    },
+  },
+  typography: {
+    fontFamily: 'Tajawal, sans-serif',
+    fontSize: 16,
+    h1: {
+      fontSize: '2.5rem',
+      fontWeight: 700,
+    },
+  },
+  shape: {
+    borderRadius: 12,
+  },
+  spacing: 8,
+});
+
+export default function App() &#123;
+  return (
+    &lt;ThemeProvider theme=&#123;theme&#125;&gt;
+      &lt;Box sx=&#123;&#123; p: 4 &#125;&#125;&gt;
+        &lt;Typography variant="h1" gutterBottom&gt;تجربة الخط&lt;/Typography&gt;
+        &lt;Button variant="contained" color="primary"&gt;زر رئيسي&lt;/Button&gt;
+        &lt;Button variant="outlined" color="secondary" sx=&#123;&#123; ml: 2 &#125;&#125;&gt;زر ثانوي&lt;/Button&gt;
+
+        &lt;Paper elevation=&#123;3&#125; sx=&#123;&#123; mt: 4, p: 2, borderRadius: 3 &#125;&#125;&gt;
+          &lt;Typography variant="body1"&gt;محتوى داخل ورقة Paper&lt;/Typography&gt;
+        &lt;/Paper&gt;
+
+        &lt;Box sx=&#123;&#123; mt: 4, p: 2, bgcolor: 'primary.light', borderRadius: 2 &#125;&#125;&gt;
+          &lt;Typography variant="body2" color="primary.contrastText"&gt;
+            مربع بخلفية primary.light وحواف مدورة
+          &lt;/Typography&gt;
+        &lt;/Box&gt;
+      &lt;/Box&gt;
+    &lt;/ThemeProvider&gt;
+  );
+&#125;
+</code>
+</pre>
+
+      </div>
+
+      <!-- التوضيح النظري -->
+      <div class="rtl-dir text-gray-800 dark:text-gray-200 text-lg space-y-4">
+        <p>👈 باستخدام <code>createTheme</code> يمكنك تعديل الألوان، الخطوط، الهوامش، الزوايا وغيرها.</p>
+        <p>👈 يتم تمرير الكائن إلى <code>ThemeProvider</code> لتطبيقه على جميع المكونات.</p>
+        <p>👈 يمكنك دمج أكثر من تعديل في نفس الوقت: <code>palette</code> + <code>typography</code> + <code>components</code></p>
+        <p>👈 المثال يحتوي على:</p>
+        <ul class="list-disc space-y-2 ml-6">
+          <li>زر رئيسي وثانوي بالألوان المخصصة</li>
+          <li>نص بعنصر Typography يستخدم الخط المعدل</li>
+          <li>عنصر <code>Paper</code> بحواف دائرية</li>
+          <li>عنصر <code>Box</code> مع خلفية <code>primary.light</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ملاحظة -->
+    <div class="mt-10 bg-blue-50 dark:bg-blue-900 text-blue-800 dark:text-blue-100 p-5 rounded-lg text-center">
+      ✨ هذا يسمح بتوحيد تصميم الواجهة بسهولة والتحكم الكامل بالمظهر.
+    </div>
+  </div>
+</section>
+
+  <!-- Slide 6: styled API -->
+  <section id="slide6" class="slide flex items-center justify-center bg-white dark:bg-gray-800">
+    <div class="slide-content">
+      <h2 class="text-3xl md:text-4xl font-bold mb-6 text-primary-600 dark:text-secondary-400">
+        واجهة برمجة التطبيقات المنسقة (styled API)
+      </h2>
+      
+      <div class="grid md:grid-cols-2 gap-8">
+        <div>
+          <h3 class="text-xl font-semibold mb-4">ما هي واجهة styled API؟</h3>
+          <p class="mb-4">
+            واجهة styled API في MUI تسمح لك بإنشاء مكونات مخصصة باستخدام CSS-in-JS مع دعم كامل للثيم.
+          </p>
+          
+          <div class="bg-blue-50 dark:bg-blue-900 p-4 rounded-lg mb-6">
+            <h4 class="font-semibold mb-2">مميزات استخدام styled API:</h4>
+            <ul class="list-disc pr-5 space-y-1">
+              <li>تكامل كامل مع نظام الثيم</li>
+              <li>كتابة أنماط مخصصة للمكونات</li>
+              <li>استخدام قيم الثيم في الأنماط</li>
+              <li>دعم للوسائط المتعددة (Responsive Design)</li>
+              <li>أداء أفضل من CSS التقليدي في بعض الحالات</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div>
+          <div class="bg-gray-800 rounded-xl p-4 overflow-x-auto">
+            <h3 class="text-xl font-semibold mb-4 text-white text-center">
+              إنشاء مكون مخصص
+            </h3>
+            <pre class="text-green-400 font-mono text-sm ltr-dir">
+<code>import { styled } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+
+// إنشاء زر مخصص باستخدام styled API
+const CustomButton = styled(Button)(({ theme }) => ({
+  padding: theme.spacing(2),
+  borderRadius: theme.shape.borderRadius * 2,
+  fontWeight: theme.typography.fontWeightBold,
+  boxShadow: theme.shadows[4],
+  '&:hover': {
+    boxShadow: theme.shadows[8],
+    backgroundColor: theme.palette.primary.dark,
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: theme.typography.body2.fontSize,
+  },
+}));
+
+// استخدام المكون المخصص
+&lt;CustomButton variant="contained"&gt;
+  زر مخصص
+&lt;/CustomButton&gt;</code>
+            </pre>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-8">
+        <h3 class="text-xl font-semibold mb-4">مقارنة بين CSS التقليدي وstyled API</h3>
+        
+        <table class="theme-table">
+          <thead>
+            <tr>
+              <th>المعيار</th>
+              <th>CSS التقليدي</th>
+              <th>styled API</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>التكامل مع الثيم</td>
+              <td>محدود</td>
+              <td>ممتاز</td>
+            </tr>
+            <tr>
+              <td>الديناميكية</td>
+              <td>محدودة</td>
+              <td>عالية</td>
+            </tr>
+            <tr>
+              <td>إعادة الاستخدام</td>
+              <td>جيدة</td>
+              <td>ممتازة</td>
+            </tr>
+            <tr>
+              <td>الأداء</td>
+              <td>أفضل للأنماط الثابتة</td>
+              <td>أفضل للأنماط الديناميكية</td>
+            </tr>
+            <tr>
+              <td>سهولة التعلم</td>
+              <td>سهل</td>
+              <td>متوسط</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="slide-dark-vs-light" class="slide flex items-center justify-center bg-white dark:bg-gray-900 p-10">
+  <div class="slide-content max-w-5xl mx-auto">
+    <h2 class="text-4xl font-extrabold text-center text-primary-600 dark:text-secondary-400 mb-8">
+      🌗 الوضع الداكن مقابل الوضع الفاتح في MUI
+    </h2>
+
+    <p class="text-lg text-center text-gray-700 dark:text-gray-300 mb-10">
+      MUI تتيح لك بسهولة تطبيق الوضع الداكن أو الفاتح على مستوى التطبيق بالكامل عبر خاصية <code>palette.mode</code> داخل <code>createTheme</code>.
+    </p>
+
+    <div class="grid md:grid-cols-2 gap-10">
+      <!-- Light Mode -->
+      <div class="bg-gray-100 p-6 rounded-lg shadow text-center">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">☀️ الوضع الفاتح (Light)</h3>
+        <p class="text-sm text-gray-600 mb-3">النص داكن، الخلفية فاتحة</p>
+        <div class="bg-white p-4 rounded border border-gray-300">
+          <p class="text-gray-900 font-medium">راحة في النهار</p>
+        </div>
+      </div>
+
+      <!-- Dark Mode -->
+      <div class="bg-gray-800 p-6 rounded-lg shadow text-center text-white">
+        <h3 class="text-xl font-semibold text-white mb-4">🌙 الوضع الداكن (Dark)</h3>
+        <p class="text-sm text-gray-300 mb-3">النص فاتح، الخلفية داكنة</p>
+        <div class="bg-gray-900 p-4 rounded border border-gray-600">
+          <p class="text-white font-medium">راحة للعين ليلاً</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- الكود النظري -->
+    <div class="mt-10 bg-gray-800 text-white rounded-xl p-6 overflow-x-auto">
+      <h3 class="text-xl font-semibold mb-4 text-center text-secondary-300">👨‍💻 مثال على تحديد الوضع داخل createTheme</h3>
+      <pre class="text-green-400 text-sm ltr-dir font-mono">
+<code>import { createTheme } from '@mui/material/styles';
+
+const theme = createTheme({
+  palette: {
+    mode: 'dark', // يمكنك تغييره إلى 'light'
+  },
+});</code></pre>
+
+      <!-- رابط الوثائق -->
+      <div class="mt-6 text-center">
+        📚 
+        <a
+          href="https://mui.com/material-ui/customization/default-theme/"
+          target="_blank"
+          class="text-blue-400 underline hover:text-blue-300 transition"
+        >
+          MUI Docs: View Default Theme
+        </a>
+      </div>
+    </div>
+
+    <!-- الملاحظة -->
+    <div class="mt-6 bg-blue-50 dark:bg-blue-900 text-blue-800 dark:text-blue-100 p-4 rounded-lg text-center text-lg">
+      ✨ الوضع يتم تطبيقه تلقائيًا على كل المكونات بناءً على القيمة <code>'dark'</code> أو <code>'light'</code> داخل الثيم.
+    </div>
+  </div>
+</section>
+
+<section id="slide-dark-light-example" class="slide flex items-center justify-center bg-white dark:bg-gray-900 p-10">
+  <div class="slide-content max-w-5xl mx-auto">
+    <h2 class="text-4xl font-extrabold text-center text-primary-600 dark:text-secondary-400 mb-8">
+      🌙 مثال عملي متقدم للوضع الليلي والنهاري
+    </h2>
+
+    <p class="text-lg text-center text-gray-700 dark:text-gray-300 mb-8">
+      هذا المثال يعرض كيفية تطبيق الوضع الليلي والنهاري باستخدام <code>createTheme</code> مع <code>ThemeProvider</code> و <code>CssBaseline</code> وتغيير <code>palette.mode</code> ديناميكيًا.
+    </p>
+
+    <div class="grid md:grid-cols-2 gap-8 items-start">
+      <!-- الكود العملي -->
+      <div class="bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-6 text-sm text-gray-900 dark:text-gray-100 overflow-auto">
+        <h3 class="text-xl font-semibold mb-4 text-primary-600 dark:text-secondary-300">كود المثال:</h3>
+        <pre class="bg-gray-200 dark:bg-gray-700 p-4 rounded overflow-x-auto text-xs whitespace-pre-wrap"><code>&lt;ThemeProvider theme={{theme}}&gt;
+  &lt;CssBaseline /&gt;
+  &lt;AppBar position="static" color="primary"&gt;
+    &lt;Toolbar&gt;
+      &lt;Typography variant="h6" sx={{ flexGrow: 1 }}&gt;
+        MUI Dark &amp; Light Mode
+      &lt;/Typography&gt;
+      &lt;Brightness7 /&gt;
+      &lt;Switch
+        checked={{mode === 'dark'}}
+        onChange={{() =&gt; setMode(mode === 'light' ? 'dark' : 'light')}}
+        color="default"
+      /&gt;
+      &lt;Brightness4 /&gt;
+    &lt;/Toolbar&gt;
+  &lt;/AppBar&gt;
+
+  &lt;Box sx={{ p: 4 }}&gt;
+    &lt;Typography variant="h4" gutterBottom&gt;
+      الوضع الحالي: &#123;mode&#125;
+    &lt;/Typography&gt;
+
+    &lt;Grid container spacing={{4}}&gt;
+      &lt;Grid item xs={{12}}&gt;
+        &lt;Paper sx={{ p: 3 }}&gt;
+          &lt;Typography variant="h6" gutterBottom&gt;
+            نموذج تسجيل الدخول
+          &lt;/Typography&gt;
+          &lt;TextField fullWidth label="البريد الإلكتروني" margin="normal" /&gt;
+          &lt;TextField fullWidth label="كلمة المرور" type="password" margin="normal" /&gt;
+          &lt;Button variant="contained" color="primary" fullWidth sx={{ mt: 2 }}&gt;
+            تسجيل الدخول
+          &lt;/Button&gt;
+        &lt;/Paper&gt;
+      &lt;/Grid&gt;
+
+      &lt;Grid item xs={{12}}&gt;
+        &lt;Card&gt;
+          &lt;CardContent&gt;
+            &lt;Typography variant="h6"&gt;معلومات المستخدم&lt;/Typography&gt;
+            &lt;Typography color="text.secondary"&gt;الاسم: مصطفى حسين&lt;/Typography&gt;
+            &lt;Typography color="text.secondary"&gt;الدور: مطور واجهات أمامية&lt;/Typography&gt;
+          &lt;/CardContent&gt;
+        &lt;/Card&gt;
+
+        &lt;Box sx={{ mt: 3, p: 2, bgcolor: 'secondary.main', borderRadius: 2 }}&gt;
+          &lt;Typography color="secondary.contrastText"&gt;
+            هذا صندوق بلون ثانوي ويتغير مع الوضع الداكن.
+          &lt;/Typography&gt;
+        &lt;/Box&gt;
+      &lt;/Grid&gt;
+    &lt;/Grid&gt;
+  &lt;/Box&gt;
+&lt;/ThemeProvider&gt;</code></pre>
+      </div>
+
+      <!-- شرح إضافي -->
+      <div class="rtl-dir text-gray-800 dark:text-gray-200 text-lg space-y-4">
+        <p>🌗 الوضع الليلي والنهاري يتم تحديده عبر الخاصية <code>palette.mode</code>.</p>
+        <p>🌓 يتم تمرير الوضع داخل <code>createTheme</code> ليتغير تصميم التطبيق بناءً على القيمة: <code>'light'</code> أو <code>'dark'</code>.</p>
+        <p>🧩 مكون <code>CssBaseline</code> يستخدم لضبط الأنماط الافتراضية للمتصفح لتتناسب مع الثيم وتوحيد الشكل بين المتصفحات.</p>
+        <p>✨ عند استخدام <code>ThemeProvider</code> نغلف التطبيق أو جزء منه لتطبيق الثيم عليه.</p>
+        <p>🔁 يمكنك استخدام زر تبديل أو <code>Switch</code> لتغيير الوضع بشكل ديناميكي.</p>
+      </div>
+    </div>
+
+    <!-- ملاحظة توضيحية -->
+    <div class="mt-10 bg-blue-50 dark:bg-blue-900 text-blue-800 dark:text-blue-100 p-5 rounded-lg text-center">
+      <strong>CssBaseline</strong> يقوم بإزالة الفروقات الافتراضية بين المتصفحات ويوفر قاعدة تصميم نظيفة وموحدة لجميع المكونات.
+    </div>
+  </div>
+</section>
+
+
+  <!-- Slide 8: Final Slide -->
+  <section class="slide flex items-center justify-center bg-gradient-to-br from-primary-600 to-secondary-700">
+    <div class="slide-content text-center text-white">
+      <h2 class="text-3xl md:text-4xl font-bold mb-6">لقد أكملت الدليل!</h2>
+      <p class="text-xl mb-8 max-w-2xl mx-auto">
+        الآن أصبحت تملك الفهم الكافي لاستخدام الثيم، تخصيص المكونات، وتنفيذ الوضع الداكن في MUI
+      </p>
+      
+      <div class="flex flex-col items-center mb-10">
+        <div class="flex items-center justify-center mb-4">
+          <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary-600 mr-3">
+            <span class="material-icons">check</span>
+          </div>
+          <h3 class="text-xl font-semibold">المفاهيم التي تعلمتها:</h3>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="bg-white/10 p-3 rounded-lg">الثيم في MUI</div>
+          <div class="bg-white/10 p-3 rounded-lg">تخصيص الألوان</div>
+          <div class="bg-white/10 p-3 rounded-lg">تخصيص الطباعة</div>
+          <div class="bg-white/10 p-3 rounded-lg">تخصيص الأشكال</div>
+          <div class="bg-white/10 p-3 rounded-lg">واجهة styled API</div>
+          <div class="bg-white/10 p-3 rounded-lg">الوضع الداكن</div>
+          <div class="bg-white/10 p-3 rounded-lg">التبديل بين الوضعين</div>
+          <div class="bg-white/10 p-3 rounded-lg">أمثلة عملية</div>
+        </div>
+      </div>
+      
+      <div class="flex justify-center space-x-4 rtl:space-x-reverse">
+        <a href="#slide1" class="px-6 py-3 bg-white text-primary-600 rounded-lg font-medium shadow-md hover:bg-gray-100 transition">
+          العودة للبداية
+        </a>
+        <a href="#slide2" class="px-6 py-3 bg-white/20 text-white rounded-lg font-medium shadow-md hover:bg-white/30 transition">
+          مراجعة الثيم
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Theme toggle functionality
+    const themeToggle = document.getElementById("themeToggle");
+    const themeIcon = document.getElementById("themeIcon");
+    const htmlElement = document.documentElement;
+
+    themeToggle.addEventListener("click", () => {
+      htmlElement.classList.toggle("dark");
+      
+      if (htmlElement.classList.contains("dark")) {
+        themeIcon.textContent = "light_mode";
+        localStorage.setItem("theme", "dark");
+      } else {
+        themeIcon.textContent = "dark_mode";
+        localStorage.setItem("theme", "light");
+      }
+    });
+
+    // Check for saved theme preference
+    if (
+      localStorage.getItem("theme") === "dark" ||
+      (!localStorage.getItem("theme") &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      htmlElement.classList.add("dark");
+      themeIcon.textContent = "light_mode";
+    } else {
+      htmlElement.classList.remove("dark");
+      themeIcon.textContent = "dark_mode";
+    }
+
+    // Navigation arrows functionality
+    const prevArrow = document.getElementById('prevSlide');
+    const nextArrow = document.getElementById('nextSlide');
+    const slides = document.querySelectorAll('.slide');
+    let currentSlide = 0;
+
+    function goToSlide(index) {
+      if (index < 0) index = 0;
+      if (index >= slides.length) index = slides.length - 1;
+      
+      slides[index].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      currentSlide = index;
+    }
+
+    prevArrow.addEventListener('click', () => {
+      goToSlide(currentSlide - 1);
+    });
+
+    nextArrow.addEventListener('click', () => {
+      goToSlide(currentSlide + 1);
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        goToSlide(currentSlide - 1);
+      } else if (e.key === 'ArrowRight') {
+        goToSlide(currentSlide + 1);
+      }
+    });
+
+    // Update current slide on scroll
+    window.addEventListener('scroll', () => {
+      const scrollPosition = window.scrollY || window.pageYOffset;
+      
+      slides.forEach((slide, index) => {
+        const slideTop = slide.offsetTop;
+        const slideHeight = slide.offsetHeight;
+        
+        if (scrollPosition >= slideTop && scrollPosition < slideTop + slideHeight) {
+          currentSlide = index;
+        }
+      });
+    });
+  </script>
+</body>
+</html>
